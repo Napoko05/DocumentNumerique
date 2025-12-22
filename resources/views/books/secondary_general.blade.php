@@ -1,38 +1,88 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container my-5">
+<div class="container-fluid my-5">
     <h2 class="fw-bold mb-4 text-center">📘 Enseignement Secondaire - Général</h2>
 
-    <div class="row g-3 justify-content-center">
-        {{-- Carte Enseignement Secondaire --}}
+    <div class="row g-4 justify-content-center">
+        <!-- 1er Cycle -->
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <span>Secondaire - Général</span>
-                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseClasses" aria-expanded="false" aria-controls="collapseClasses">
-                        ▼
-                    </button>
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="fw-bold mb-0">1er Cycle</h4>
+                    <p class="mb-0">Classes de 6e à 3e</p>
                 </div>
-
-                {{-- Collapse pour les classes --}}
-                <div class="collapse" id="collapseClasses">
-                    <div class="card-body">
-                        {{-- 1er Cycle --}}
-                        <h6 class="fw-semibold">1er Cycle</h6>
-                        <div class="d-flex flex-wrap gap-2 mb-3">
-                            <a href="{{ route('books.secondary.general', ['cycle' => '1er-cycle']) }}" class="btn btn-outline-primary btn-sm">6ème</a>
-                            <a href="{{ route('books.secondary.general', ['cycle' => '1er-cycle']) }}" class="btn btn-outline-primary btn-sm">5ème</a>
-                            <a href="{{ route('books.secondary.general', ['cycle' => '1er-cycle']) }}" class="btn btn-outline-primary btn-sm">4ème</a>
-                            <a href="{{ route('books.secondary.general', ['cycle' => '1er-cycle']) }}" class="btn btn-outline-primary btn-sm">3ème</a>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '6e']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">6ème</h5>
+                                    <p class="text-muted">Classe du 1er cycle</p>
+                                </div>
+                            </a>
                         </div>
+                        <div class="col-md-6 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '5e']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">5ème</h5>
+                                    <p class="text-muted">Classe du 1er cycle</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '4e']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">4ème</h5>
+                                    <p class="text-muted">Classe du 1er cycle</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-6 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '3e']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">3ème</h5>
+                                    <p class="text-muted">Classe du 1er cycle</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                        {{-- 2nd Cycle --}}
-                        <h6 class="fw-semibold">2nd Cycle</h6>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle']) }}" class="btn btn-outline-primary btn-sm">2nde</a>
-                            <a href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle']) }}" class="btn btn-outline-primary btn-sm">1ère</a>
-                            <a href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle']) }}" class="btn btn-outline-primary btn-sm">Terminale</a>
+        <!-- 2nd Cycle -->
+        <div class="col-md-6">
+            <div class="card shadow-lg h-100">
+                <div class="card-header bg-success text-white text-center">
+                    <h4 class="fw-bold mb-0">2nd Cycle</h4>
+                    <p class="mb-0">Classes de 2nde à Terminale</p>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '2nde']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">2nde</h5>
+                                    <p class="text-muted">Classe du 2nd cycle</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '1ere']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">1ère</h5>
+                                    <p class="text-muted">Classe du 2nd cycle</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => 'terminale']) }}" class="text-decoration-none">
+                                <div class="card shadow-sm p-3 text-center h-100">
+                                    <h5 class="fw-bold">Terminale</h5>
+                                    <p class="text-muted">Classe du 2nd cycle</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>

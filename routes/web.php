@@ -98,7 +98,7 @@ Route::middleware(['auth', 'role:journalist'])->prefix('journalist')->name('jour
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/index', fn() => view('profile.index'))->name('index');
+    Route::get('/index', fn() => view('profile.index'))->name('profile.index');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -118,7 +118,7 @@ Route::prefix('books')->name('books.')->group(function () {
 
     // Acheter un document (doit être connecté)
     Route::post('/{book}/buy', [BookController::class, 'buy'])->middleware('auth')->name('buy');
-
+});
     // Enseignement Secondaire
     Route::prefix('secondary')->name('secondary.')->group(function () {
         Route::get('/', [BookController::class, 'secondary'])->name('index');
@@ -132,4 +132,3 @@ Route::prefix('books')->name('books.')->group(function () {
         Route::get('/general/{level}', [BookController::class, 'superiorGeneral'])->name('general');
         Route::get('/technique/{level}', [BookController::class, 'superiorTechnique'])->name('technique');
     });
-});

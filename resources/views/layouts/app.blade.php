@@ -65,7 +65,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->is('books*') ? 'active' : '' }}" href="{{ route('books.index') }}">
+                            <a class="nav-link {{ request()->is('books*') ? 'active' : '' }}" href="{{ route('secondary.index') }}">
                                 Livres numériques
                             </a>
                         </li>

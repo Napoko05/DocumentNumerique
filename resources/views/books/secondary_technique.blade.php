@@ -1,30 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container my-5">
-    <h2 class="fw-bold mb-4 text-center">📘 Enseignement Secondaire - Technique</h2>
+<div class="container-fluid my-5">
+    {{-- Grande carte plein écran --}}
+    <div class="card shadow-lg border-0 h-100">
+        <div class="card-header bg-dark text-white text-center py-4">
+            <h2 class="fw-bold mb-0">📘 Enseignement Secondaire - Technique</h2>
+        </div>
 
-    <div class="row g-3 justify-content-center">
-        {{-- Carte Enseignement Secondaire --}}
-        <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <span>Secondaire - Technique</span>
-                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTechnique" aria-expanded="false" aria-controls="collapseTechnique">
-                        ▼
-                    </button>
-                </div>
-
-                {{-- Collapse pour les niveaux techniques --}}
-                <div class="collapse" id="collapseTechnique">
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap gap-2 mb-2">
-                            <a href="{{ route('books.secondary.technique', ['level' => 'seconde-bep']) }}" class="btn btn-outline-secondary btn-sm">Seconde (BEP)</a>
-                            <a href="{{ route('books.secondary.technique', ['level' => 'premiere-bacpro']) }}" class="btn btn-outline-secondary btn-sm">Première (BAC Pro)</a>
-                            <a href="{{ route('books.secondary.technique', ['level' => 'terminale-bacpro']) }}" class="btn btn-outline-secondary btn-sm">Terminale (BAC Pro)</a>
+        <div class="card-body p-5">
+            <div class="row g-4 justify-content-center">
+                {{-- Sous-cartes pour chaque classe technique --}}
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h4 class="fw-bold">Seconde (BEP)</h4>
+                            <p class="text-muted">Classe de Seconde technique (BEP).</p>
+                            <a href="{{ route('secondary.technique', ['level' => 'seconde-bep']) }}" class="btn btn-outline-primary btn-sm">
+                                Accéder
+                            </a>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h4 class="fw-bold">Première (BAC )</h4>
+                            <p class="text-muted">Classe de Première technique (BAC Pro).</p>
+                            <a href="{{ route('secondary.technique', ['level' => 'premiere-bacpro']) }}" class="btn btn-outline-primary btn-sm">
+                                Accéder
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h4 class="fw-bold">Terminale (BAC Pro)</h4>
+                            <p class="text-muted">Classe de Terminale technique (BAC Pro).</p>
+                            <a href="{{ route('secondary.technique', ['level' => 'terminale-bacpro']) }}" class="btn btn-outline-primary btn-sm">
+                                Accéder
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Tu peux ajouter d’autres sous-cartes ici pour d’autres classes techniques --}}
             </div>
         </div>
     </div>

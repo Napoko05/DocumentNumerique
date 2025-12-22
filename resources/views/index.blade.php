@@ -41,7 +41,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('livres-populaires') ? 'active' : '' }}" href="{{ url('/livres-populaires') }}">
+                        <a class="nav-link {{ request()->routeIs('livres-populaires') ? 'active' : '' }}" href="{{ route('secondary.index') }}">
                             Livres populaires
                         </a>
                     </li>
@@ -52,7 +52,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('books.*') ? 'active' : '' }}" href="{{ route('books.index') }}">
+                        <a class="nav-link {{ request()->routeIs('books.*') ? 'active' : '' }}" href="profile.index">
                             profil
                         </a>
                     </li>
@@ -69,9 +69,7 @@
                     $dashboardRoute = route('journalist.dashboard');
                     } else {
                 
-                    $dashboardRoute = route('home'); // utilisateur standard reste sur accueil
-                    }
-
+                    $dashboardRoute = route('home'); 
                     }
                     @endphp
                     <a href="{{ $dashboardRoute }}" class="btn btn-outline-success me-2">Tableau de bord</a>
