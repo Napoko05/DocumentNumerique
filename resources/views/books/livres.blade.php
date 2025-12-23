@@ -35,10 +35,10 @@
                                     1er cycle
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdown1erCycle">
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '1er-cycle', 'classe' => '6e']) }}">6ème</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '1er-cycle', 'classe' => '5e']) }}">5ème</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '1er-cycle', 'classe' => '4e']) }}">4ème</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '1er-cycle', 'classe' => '3e']) }}">3ème</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '6e']) }}">6ème</a></li>
+                                    <li><a class="dropdown-item" href="{{ rsecondary.general', ['cycle' => '1er-cycle', 'classe' => '5e']) }}">5ème</a></li>
+                                    <li><a class="dropdown-item" href="{{ rsecondary.general', ['cycle' => '1er-cycle', 'classe' => '4e']) }}">4ème</a></li>
+                                    <li><a class="dropdown-item" href="{{ rsecondary.general', ['cycle' => '1er-cycle', 'classe' => '3e']) }}">3ème</a></li>
                                 </ul>
                             </div>
 
@@ -49,9 +49,9 @@
                                     2nd cycle
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdown2ndCycle">
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle', 'classe' => '2nde']) }}">2nde</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle', 'classe' => '1ere']) }}">1ère</a></li>
-                                    <li><a class="dropdown-item" href="{{ route('books.secondary.general', ['cycle' => '2nd-cycle', 'classe' => 'terminale']) }}">Terminale</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '2nde']) }}">2nde</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '1ere']) }}">1ère</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => 'terminale']) }}">Terminale</a></li>
                                 </ul>
                             </div>
 

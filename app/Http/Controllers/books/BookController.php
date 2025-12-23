@@ -79,12 +79,12 @@ class BookController extends Controller
 
     public function secondary()
     {
-        return view('books.secondary');
+        return view('books.niveau_etudes');
     }
 
     public function secondaryGeneral($cycle)
     {
-        return view('books.secondary_general', compact('cycle'));
+        return view('books.niveau_superieur', compact('cycle'));
     }
 
     public function secondaryTechnique($level)
@@ -110,4 +110,9 @@ class BookController extends Controller
     {
         return view('books.superior_technique', compact('level'));
     }
+    
+    /** * Affiche toutes les filières et spécialités du supérieur. */
+     public function niveauFiliereSuperieur()
+     { // Ici tu peux passer des données dynamiques si besoin 
+        return view('books.niveau_filiere_superieur'); }
 }

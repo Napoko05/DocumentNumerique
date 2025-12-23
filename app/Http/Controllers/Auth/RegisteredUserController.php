@@ -43,8 +43,6 @@ class RegisteredUserController extends Controller
         // Déclenchement de l’événement Registered (utile si tu envoies des mails de confirmation)
         event(new Registered($user));
 
-        // ⚠️ On ne connecte PAS l’utilisateur ici (donc pas de Auth::login($user))
-
         // Redirection vers la page de connexion
         return redirect()->route('login')->with('success', 'Inscription réussie, veuillez vous connecter.');
     }

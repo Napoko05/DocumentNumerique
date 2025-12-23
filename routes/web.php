@@ -132,3 +132,5 @@ Route::prefix('books')->name('books.')->group(function () {
         Route::get('/general/{level}', [BookController::class, 'superiorGeneral'])->name('general');
         Route::get('/technique/{level}', [BookController::class, 'superiorTechnique'])->name('technique');
     });
+    // Niveau, filière et spécialité du supérieur
+    Route::get('/niveau-filiere-superieur', [BookController::class, 'niveauFiliereSuperieur'])->name('niveau_filiere.superieur');   
