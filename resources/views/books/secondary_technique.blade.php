@@ -5,7 +5,7 @@
     {{-- Grande carte plein écran --}}
     <div class="card shadow-lg border-0 h-100">
         <div class="card-header bg-dark text-white text-center py-4">
-            <h2 class="fw-bold mb-0">📘 Enseignement Secondaire - Technique</h2>
+            <h2 class="fw-bold mb-0"> Enseignement Secondaire - Technique</h2>
         </div>
 
         <div class="card-body p-5">

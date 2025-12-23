@@ -13,7 +13,7 @@
             <!-- Texte inspirant défilant -->
             <div class="bg-light p-3 mb-4 rounded shadow-sm">
                 <div class="scrolling-text text-primary fw-semibold">
-                    📖 "Le savoir est une lumière qui éclaire chaque étape du parcours académique.
+                     "Le savoir est une lumière qui éclaire chaque étape du parcours académique.
                     Explorez les licences pour bâtir vos fondations, les masters pour approfondir vos connaissances,
                     et les doctorats pour repousser les limites de la recherche."
                 </div>
@@ -25,7 +25,7 @@
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-header bg-light fw-bold">Licence</div>
-                        <div class="card-body d-flex flex-column gap-2">
+                        <div class="card-body d-flex flex-wrap gap-2 justify-content-center">
                             <a href="#" class="btn btn-filiere">Licence en Droit</a>
                             <a href="#" class="btn btn-filiere">Licence en Lettres Modernes</a>
                             <a href="#" class="btn btn-filiere">Licence en Sciences Économiques</a>
@@ -39,7 +39,7 @@
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-header bg-light fw-bold">Master</div>
-                        <div class="card-body d-flex flex-column gap-2">
+                        <div class="card-body d-flex flex-wrap gap-2 justify-content-center">
                             <a href="#" class="btn btn-filiere">Master en Droit Public</a>
                             <a href="#" class="btn btn-filiere">Master en Sciences de Gestion</a>
                             <a href="#" class="btn btn-filiere">Master en Informatique</a>
@@ -53,7 +53,7 @@
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-header bg-light fw-bold">Doctorat</div>
-                        <div class="card-body d-flex flex-column gap-2">
+                        <div class="card-body d-flex flex-wrap gap-2 justify-content-center">
                             <a href="#" class="btn btn-filiere">Doctorat en Droit</a>
                             <a href="#" class="btn btn-filiere">Doctorat en Sciences Économiques</a>
                             <a href="#" class="btn btn-filiere">Doctorat en Informatique</a>
@@ -74,7 +74,7 @@
             <!-- Texte inspirant défilant -->
             <div class="bg-light p-3 mb-4 rounded shadow-sm">
                 <div class="scrolling-text text-success fw-semibold">
-                    ⚙️ "Les filières techniques forgent l’expertise pratique.
+                     "Les filières techniques forgent l’expertise pratique.
                     Les licences professionnelles ouvrent la voie aux métiers spécialisés,
                     tandis que les masters professionnels affinent vos compétences pour devenir acteur du progrès."
                 </div>
@@ -86,7 +86,7 @@
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-header bg-light fw-bold">Licence Professionnelle</div>
-                        <div class="card-body d-flex flex-column gap-2">
+                        <div class="card-body d-flex flex-wrap gap-2 justify-content-center">
                             <a href="#" class="btn btn-filiere">Licence Pro en Réseaux & Télécoms</a>
                             <a href="#" class="btn btn-filiere">Licence Pro en Génie Civil</a>
                             <a href="#" class="btn btn-filiere">Licence Pro en Électronique</a>
@@ -99,7 +99,7 @@
                 <div class="col-md-6">
                     <div class="card shadow-sm h-100 text-center">
                         <div class="card-header bg-light fw-bold">Master Professionnel</div>
-                        <div class="card-body d-flex flex-column gap-2">
+                        <div class="card-body d-flex flex-wrap gap-2 justify-content-center">
                             <a href="#" class="btn btn-filiere">Master Pro en Informatique</a>
                             <a href="#" class="btn btn-filiere">Master Pro en Énergie</a>
                             <a href="#" class="btn btn-filiere">Master Pro en Génie Industriel</a>
@@ -132,17 +132,20 @@
         }
     }
 
-    /* Boutons filières */
+    /* Boutons filières compacts */
     .btn-filiere {
+        display: inline-block;
+        width: auto;
         background-color: #f8f9fa;
         /* blanc sale */
         color: #333;
         border: 1px solid #ddd;
         border-radius: 20px;
-        padding: 8px 18px;
-        font-size: 0.9rem;
+        padding: 6px 14px;
+        font-size: 0.85rem;
         font-weight: 500;
         transition: all 0.3s ease;
+        text-align: center;
     }
 
     .btn-filiere:hover {

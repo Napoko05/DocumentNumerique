@@ -40,12 +40,15 @@
           <!-- Actions -->
           <div class="d-flex justify-content-between align-items-center mt-4">
             <a href="{{ route('login') }}" class="text-decoration-none small text-muted">
-              {{ __('Déjà inscrit ?') }}
+              {{ __("je n'ai pas de compte!") }}
             </a>
             <x-primary-button>
               {{ __('Inscription') }}
             </x-primary-button>
           </div>
+          <a href="{{ route('home') }}" class="btn btn-danger mt-1">
+            Annuler
+          </a>
         </form>
       </div>
     </div>

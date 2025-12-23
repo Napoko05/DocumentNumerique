@@ -43,5 +43,9 @@
                 {{ __('Log in') }}
             </x-primary-button>
         </div>
+      <a href="{{ route('home') }}" class="btn btn-outline-secondary text-danger">
+         Annuler
+    </a>
+
     </form>
 </x-guest-layout>

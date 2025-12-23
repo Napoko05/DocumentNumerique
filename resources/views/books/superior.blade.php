@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container my-5">
-    <h2 class="fw-bold text-center mb-4">🎓 Enseignement Supérieur</h2>
+    <h2 class="fw-bold text-center mb-4">Enseignement Supérieur</h2>
 
     <!-- Grande carte englobante -->
     <div class="card shadow-lg border-2">

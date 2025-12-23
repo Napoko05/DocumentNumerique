@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container my-5">
-    <h2 class="fw-bold mb-4 text-center">📘 Enseignement</h2>
+    <h2 class="fw-bold mb-4 text-center"> Enseignement</h2>
 
     <!-- Grande carte englobante -->
     <div class="card shadow-lg border-2">
@@ -23,29 +23,29 @@
                             <h6 class="fw-semibold">1er Cycle</h6>
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '6e']) }}" class="btn btn-outline-primary w-100">6ème</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">6ème</a>
                                 </div>
                                 <div class="col-6">
-                                    <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '5e']) }}" class="btn btn-outline-primary w-100">5ème</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">5ème</a>
                                 </div>
                                 <div class="col-6">
-                                    <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '4e']) }}" class="btn btn-outline-primary w-100">4ème</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">4ème</a>
                                 </div>
                                 <div class="col-6">
-                                    <a href="{{ route('secondary.general', ['cycle' => '1er-cycle', 'classe' => '3e']) }}" class="btn btn-outline-primary w-100">3ème</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">3ème</a>
                                 </div>
                             </div>
 
                             <h6 class="fw-semibold">2nd Cycle</h6>
                             <div class="row g-2">
                                 <div class="col-4">
-                                    <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '2nde']) }}" class="btn btn-outline-primary w-100">2nde</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">2nde</a>
                                 </div>
                                 <div class="col-4">
-                                    <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => '1ere']) }}" class="btn btn-outline-primary w-100">1ère</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">1ère</a>
                                 </div>
                                 <div class="col-4">
-                                    <a href="{{ route('secondary.general', ['cycle' => '2nd-cycle', 'classe' => 'terminale']) }}" class="btn btn-outline-primary w-100">Terminale</a>
+                                    <a href="#" class="btn btn-outline-primary w-100">Terminale</a>
                                 </div>
                             </div>
                         </div>
@@ -61,13 +61,13 @@
                         <div class="card-body">
                             <div class="row g-2">
                                 <div class="col-12">
-                                    <a href="{{ route('secondary.technique', ['level' => 'seconde-bep']) }}" class="btn btn-outline-warning w-100">Seconde (BEP)</a>
+                                    <a href="#" class="btn btn-outline-warning w-100">Seconde (BEP)</a>
                                 </div>
                                 <div class="col-12">
-                                    <a href="{{ route('secondary.technique', ['level' => 'premiere-bacpro']) }}" class="btn btn-outline-warning w-100">Première (BAC Pro)</a>
+                                    <a href=" #" class="btn btn-outline-warning w-100">Première (BAC Pro)</a>
                                 </div>
                                 <div class="col-12">
-                                    <a href="{{ route('secondary.technique', ['level' => 'terminale-bacpro']) }}" class="btn btn-outline-warning w-100">Terminale (BAC Pro)</a>
+                                    <a href="#" class="btn btn-outline-warning w-100">Terminale (BAC Pro)</a>
                                 </div>
                             </div>
                         </div>
@@ -118,5 +118,6 @@
             </div>
         </div>
     </div>
+    
 </div>
 @endsection
