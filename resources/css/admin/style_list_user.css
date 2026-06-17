@@ -1,0 +1,202 @@
+/* ==========================
+   CARD UTILISATEURS
+========================== */
+
+.users-card{
+border:none;
+border-radius:18px;
+overflow:hidden;
+background:#fff;
+box-shadow:
+0 8px 25px rgba(0,0,0,.08);
+}
+/* ==========================
+HEADER
+========================== */
+
+.users-header{
+
+background:
+linear-gradient(
+135deg,
+#0B4DA2,
+#08356f
+);
+padding:20px 25px;
+color:white;
+}
+.users-header h4{
+font-size:22px;
+font-weight:700;
+margin:0;
+}
+/* ==========================
+TABLE
+========================== */
+.table-responsive{
+border-radius:15px;
+overflow:hidden;
+}
+.table{
+margin-bottom:0;
+border-collapse:separate;
+border-spacing:0;
+}
+.table thead{
+background:#f5f7fb;
+}
+.table thead th{
+padding:18px;
+font-size:14px;
+font-weight:700;
+color:#444;
+border:none;
+white-space:nowrap;
+text-transform:uppercase;
+letter-spacing:.5px;
+}
+.table tbody td{
+padding:18px;
+vertical-align:middle;
+border-top:1px solid #eee;
+font-size:14px;
+}
+.table tbody tr{
+transition:.25s;
+}
+.table tbody tr:hover{
+background:#fafcff;
+transform:scale(1.001);
+}
+/* ==========================
+BADGES
+========================== */
+.badge{
+padding:8px 12px;
+border-radius:25px;
+font-size:12px;
+font-weight:600;
+}
+.bg-info{
+background:#0B4DA2 !important;
+color:white;
+}
+.bg-success{
+background:#22aa55 !important;
+}
+.bg-danger{
+background:#dc3545 !important;
+}
+/* ==========================
+BOUTONS
+========================== */
+.btn{
+border-radius:10px;
+font-size:13px;
+font-weight:600;
+padding:8px 14px;
+transition:.25s;
+}
+.btn:hover{
+transform:translateY(-2px);
+}
+.btn-warning{
+background:#F58220;
+border:none;
+color:white;
+}
+.btn-danger{
+border:none;
+}
+.btn-secondary{
+border:none;
+}
+
+.btn-success{
+border:none;
+}
+/* ==========================
+ACTIONS
+========================== */
+.table-actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+align-items:center;
+
+}
+/* ==========================
+PAGINATION
+========================== */
+.pagination{
+justify-content:center;
+margin-top:25px;
+}
+.page-link{
+border-radius:8px;
+margin:0 3px;
+border:none;
+color:#0B4DA2;
+
+}
+.page-item.active .page-link{
+
+background:#F58220;
+
+}
+/* ==========================
+ALERT
+========================== */
+.alert{
+
+border:none;
+
+border-radius:12px;
+
+}
+/* ==========================
+RESPONSIVE
+========================== */
+
+@media(max-width:992px){
+
+.table thead{
+
+display:none;
+
+}
+.table tbody tr{
+
+display:block;
+
+margin-bottom:15px;
+
+border-radius:12px;
+
+box-shadow:
+
+0 3px 12px rgba(0,0,0,.06);
+
+padding:10px;
+
+}
+.table tbody td{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:12px;
+
+border:none;
+
+}
+.table-actions{
+
+width:100%;
+
+justify-content:center;
+
+}
+
+}

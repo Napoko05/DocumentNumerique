@@ -1,0 +1,35 @@
+.book-card {
+    flex: 0 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+
+    img {
+        width: 100%;
+        object-fit: cover;
+        height: 250px;
+    }
+
+    h5 {
+        font-size: 1.2rem;
+        margin-top: 0.5rem;
+    }
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    /* Responsive widths */
+    @media (max-width: 576px) {
+        min-width: 250px;
+    }
+
+    @media (min-width: 577px) and (max-width: 991px) {
+        min-width: 300px;
+    }
+
+    @media (min-width: 992px) {
+        min-width: 350px;
+    }
+}

@@ -1,0 +1,196 @@
+
+:root{
+    --primary:#0b2a4a;
+    --secondary:#143d6b;
+    --accent:#f57c00;
+    --bg:#f4f6f9;
+    --card:#ffffff;
+    --text:#333;
+}
+
+/* ===== GLOBAL ===== */
+body{
+    margin:0;
+    font-family: "Segoe UI", sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+/* ===== WRAPPER ===== */
+.admin-wrapper{
+    display:flex;
+    min-height:100vh;
+}
+
+/* ===== SIDEBAR (style bibliothèque) ===== */
+.sidebar{
+    width:260px;
+    position:fixed;
+    left:0px;
+    top:0px;
+
+    height:calc(100vh - 10px);
+
+    background:linear-gradient(180deg, var(--primary), var(--secondary));
+    border-radius:10px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,0.25);
+    overflow-y:auto;
+}
+
+.sidebar h4{
+    text-align:center;
+    margin-bottom:30px;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.menu-link{
+    display:block;
+    padding:12px 15px;
+    margin-bottom:8px;
+    color:#dfe6ee;
+    text-decoration:none;
+    border-radius:8px;
+    transition:0.3s;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.menu-link:hover,
+.menu-link.active{
+    background:var(--accent);
+    color:#fff;
+    transform:translateX(5px);
+}
+
+/* ===== CONTENT ===== */
+.content{
+    margin-left:150px;
+    padding:30px;
+    width:100%;
+}
+
+/* ===== TITRES ===== */
+h3{
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+/* ===== DASHBOARD CARDS (style livres) ===== */
+.card{
+    background:var(--card);
+    border-radius:15px;
+    padding:20px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.08);
+    transition:0.3s;
+    border-left:5px solid var(--accent);
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.12);
+}
+
+.card h6{
+    color:#777;
+    font-size:14px;
+}
+
+.card h3{
+    font-size:28px;
+    font-weight:bold;
+    color:var(--primary);
+}
+
+/* ===== GRID ===== */
+.row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:20px;
+}
+
+.col-md-3, .col-md-4{
+    flex:1;
+    min-width:220px;
+}
+
+/* ===== BUTTONS ===== */
+.btn{
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:500;
+    transition:0.3s;
+}
+
+.btn-primary{
+    background:var(--primary);
+    color:white;
+}
+
+.btn-primary:hover{
+    background:var(--secondary);
+}
+
+.btn-success{
+    background:var(--accent);
+    color:white;
+}
+
+.btn-success:hover{
+    opacity:0.9;
+}
+
+.btn-danger{
+    background:#d9534f;
+    color:white;
+}
+
+/* ===== SECTION ANIMATION ===== */
+.section{
+    animation:fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* ===== TABLE STYLE (si tu ajoutes liste livres) ===== */
+table{
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+table th{
+    background:var(--primary);
+    color:white;
+    padding:12px;
+}
+
+table td{
+    padding:12px;
+    border-bottom:1px solid #eee;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:768px){
+    .sidebar{
+        width:100%;
+        height:auto;
+        position:relative;
+    }
+
+    .content{
+        margin-left:0;
+    }
+
+    .row{
+        flex-direction:column;
+    }
+}
