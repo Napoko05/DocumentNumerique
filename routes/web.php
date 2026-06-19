@@ -24,13 +24,11 @@ use App\Http\Controllers\Books\EducationController;
 | PAGES PUBLIQUES
 |-------------------------
 */
-
 Route::get('/', fn() => view('index'))->name('home');
 Route::get('/about', fn() => view('about'))->name('about');
 
 Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.form');
 Route::post('/contact', [ContactController::class, 'submitForm'])->name('contact.submit');
-
 /*
 |-------------------------
 | AUTH GUEST
@@ -78,7 +76,7 @@ Route::middleware(['auth:staff', 'role:admin'])->prefix('admin')->name('admin.')
 
     Route::get('/staff', [StaffController::class, 'index'])
         ->name('staff.index');
-        // USERS CRUD
+    // USERS CRUD
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
     Route::post('/users', [UserController::class, 'store'])->name('users.store');
@@ -106,7 +104,7 @@ Route::middleware(['auth:staff', 'role:admin'])->prefix('admin')->name('admin.')
 | JOURNALIST
 |-------------------------
 */
-Route::middleware(['auth', 'role:journalist'])->prefix('journalist')->name('journalist.')->group(function () {
+Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name('journalist.')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\Users\JournalistController::class, 'dashboard'])->name('dashboard');
     Route::prefix('products')->name('products.')->group(function () {

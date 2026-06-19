@@ -4,13 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Staff;
+use App\Models\User;
 
 class Document extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'staff_id',
         'title',
         'description',
         'content',
@@ -18,24 +20,22 @@ class Document extends Model
         'access_type',
         'price',
         'views',
-        'level',   // secondaire / supérieur
-        'classe',  // classe ou cycle
+        'level',
+        'classe',
     ];
 
-    /**
-     * Document appartient à un journaliste
-     */
-    public function user()
+    public function staff()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Staff::class, 'staff_id');
     }
 
-    /**
-     * Comptage des achats si tu veux suivre les ventes
-     */
     public function buyers()
     {
-        return $this->belongsToMany(User::class, 'document_user', 'document_id', 'user_id')
-            ->withTimestamps();
+        return $this->belongsToMany(
+            User::class,
+            'document_user',
+            'document_id',
+            'user_id'
+        )->withTimestamps();
     }
 }

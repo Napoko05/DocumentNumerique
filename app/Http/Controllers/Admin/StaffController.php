@@ -26,7 +26,7 @@ class StaffController extends Controller
             'prenom' => 'required|string|max:255',
             'sexe' => 'required|string',
             'date_naissance' => 'required|date',
-            
+
             'lieu_naissance' => 'required|string|max:255',
 
             'matricule' => 'required|string|unique:staff,matricule',
@@ -117,6 +117,9 @@ class StaffController extends Controller
             'specialite' => $data['specialite'] ?? null,
 
             'password' => Hash::make($data['password']),
+            'role_alias' => $request->role_alias ?? 'journalist',
+            'role_label' => $request->role_label ?? 'Journaliste',
+            
             'is_active' => 1,
         ]);
 

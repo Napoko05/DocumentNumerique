@@ -88,6 +88,7 @@ class LoginController extends Controller
                 $request->boolean('remember')
             )
         ) {
+
             return Auth::guard('staff')->user();
         }
 
@@ -99,6 +100,7 @@ class LoginController extends Controller
     // =========================
     protected function authenticated(Request $request, $user)
     {
+       
         session()->flash('success', 'Connexion réussie !');
 
         // =========================

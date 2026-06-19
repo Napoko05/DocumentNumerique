@@ -62,7 +62,10 @@
         @can('set document access')
         <li class="pc-item">
           <a href="#" class="pc-link">
-             Gestion accès documents
+            
+          
+          
+          Gestion accès documents
           </a>
         </li>
         @endcan

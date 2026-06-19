@@ -10,7 +10,7 @@ class Staff extends Authenticatable
 {
     use HasRoles, Notifiable;
 
-    protected $guard_name = 'web';
+    protected $guard_name = 'staff';
 
     protected $table = 'staff';
 
@@ -82,5 +82,10 @@ class Staff extends Authenticatable
     public function roleAlias()
     {
         return $this->roles->first()?->alias_code;
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'staff_id');
     }
 }

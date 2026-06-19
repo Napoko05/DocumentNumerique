@@ -12,7 +12,7 @@ class JournalistController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:journalist']);
+        $this->middleware(['auth:staff', 'role:journalist']);
     }
 
     /**
