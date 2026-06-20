@@ -130,7 +130,7 @@ class LoginController extends Controller
 
                 'admin' => redirect()->route('admin.dashboard'),
 
-                'journalist' => redirect()->route('journalist.dashboard'),
+                'journalist' => redirect()->route('journaliste.dashboard'),
 
                 default => redirect()->route('home'),
             };

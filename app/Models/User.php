@@ -50,7 +50,7 @@ class User extends Authenticatable
      */
     public function getFullNameAttribute()
     {
-        return $this->nom.' '.$this->prenom;
+        return $this->nom . ' ' . $this->prenom;
     }
 
     /**
@@ -98,5 +98,15 @@ class User extends Authenticatable
     public function sales()
     {
         return $this->hasMany(Sale::class, 'user_id');
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

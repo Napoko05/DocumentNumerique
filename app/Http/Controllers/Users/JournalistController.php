@@ -30,14 +30,25 @@ class JournalistController extends Controller
         $chartData   = $documents->pluck('views');
 
         // Statistiques
-        $totalDocuments = $documents->count();
-        $totalViews     = $documents->sum('views');
-        $totalPremium   = $documents->where('access_type','premium')->count();
-        $totalFree      = $documents->where('access_type','free')->count(); // ✅ ajouté
+        $totalDocuments = Document::where('staff_id', auth('staff')->id())->count();
+        $totalFree = Document::where('staff_id', auth('staff')->id())
+            ->where('access_type', 'free')
+            ->count();
+        $totalPremium = Document::where('staff_id', auth('staff')->id())
+            ->where('access_type', 'premium')
+            ->count();
+        $totalViews = Document::where('staff_id', auth('staff')->id())
+            ->sum('views');
+        $documents = Document::where('staff_id', auth('staff')->id())
+            ->latest()
+            ->get();
 
         return view('dashboard.journaliste_dashboard', compact(
-            'documents', 'chartLabels', 'chartData',
-            'totalDocuments', 'totalViews', 'totalPremium', 'totalFree'
+            'totalDocuments',
+            'totalFree',
+            'totalPremium',
+            'totalViews',
+            'documents'
         ));
     }
 

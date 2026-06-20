@@ -10,9 +10,15 @@ class RolePermissionSeeder extends Seeder
 {
     public function run()
     {
-        $guard = 'web';
+        // =========================
+        // GUARDS
+        // =========================
+        $staffGuard = 'staff';
+        $webGuard = 'web';
 
-        // Permissions Admin
+        // =========================
+        // PERMISSIONS STAFF (BACKOFFICE)
+        // =========================
         $adminPermissions = [
             'users.view',
             'users.create',
@@ -27,14 +33,12 @@ class RolePermissionSeeder extends Seeder
             'reports.documents',
             'reports.revenue',
             'logs.system.view',
-            'mjournalists',
             'manage.documents',
             'manage.payments',
             'approve.publications',
             'view.reports',
         ];
 
-        // Permissions Journaliste
         $journalistPermissions = [
             'documents.create',
             'documents.publish',
@@ -43,45 +47,88 @@ class RolePermissionSeeder extends Seeder
             'documents.schedule',
             'documents.set.premium',
             'documents.stats.view',
-            'documents.stats.view',
             'documents.views.track',
             'documents.engagement.view',
         ];
 
-        // Permissions Utilisateur
+        // =========================
+        // PERMISSIONS WEB (USER NORMAL)
+        // =========================
         $userPermissions = [
             'documents.free',
             'documents.premium',
             'documents.download.purchased',
         ];
 
-        // Création des permissions avec guard
-        foreach (array_merge($adminPermissions, $journalistPermissions, $userPermissions) as $perm) {
+        // =========================
+        // CREATE STAFF PERMISSIONS
+        // =========================
+        foreach (array_merge($adminPermissions, $journalistPermissions) as $perm) {
             Permission::firstOrCreate([
                 'name' => $perm,
-                'guard_name' => $guard
+                'guard_name' => $staffGuard
             ]);
         }
 
-        // Création des rôles avec guard
+        // =========================
+        // CREATE WEB PERMISSIONS
+        // =========================
+        foreach ($userPermissions as $perm) {
+            Permission::firstOrCreate([
+                'name' => $perm,
+                'guard_name' => $webGuard
+            ]);
+        }
+
+        // =========================
+        // ROLES STAFF
+        // =========================
+        $superAdmin = Role::firstOrCreate([
+            'name' => 'super_admin',
+            'guard_name' => $staffGuard
+        ]);
+
         $admin = Role::firstOrCreate([
             'name' => 'admin',
-            'guard_name' => $guard
+            'guard_name' => $staffGuard
         ]);
 
         $journalist = Role::firstOrCreate([
             'name' => 'journalist',
-            'guard_name' => $guard
+            'guard_name' => $staffGuard
         ]);
 
+        // =========================
+        // ROLE WEB (USER PUBLIC)
+        // =========================
         $user = Role::firstOrCreate([
             'name' => 'user',
-            'guard_name' => $guard
+            'guard_name' => $webGuard
         ]);
 
-        // Reset + attribution propre
-        $admin->syncPermissions($adminPermissions);
-        $journalist->syncPermissions($journalistPermissions);
-        $user->syncPermissions($userPermissions);
+        // =========================
+        // ASSIGN PERMISSIONS (SAFE)
+        // =========================
+        $admin->syncPermissions(
+            Permission::where('guard_name', $staffGuard)
+                ->whereIn('name', $adminPermissions)
+                ->get()
+        );
+
+        $journalist->syncPermissions(
+            Permission::where('guard_name', $staffGuard)
+                ->whereIn('name', $journalistPermissions)
+                ->get()
+        );
+
+        $superAdmin->syncPermissions(
+            Permission::where('guard_name', $staffGuard)->get()
+        );
+
+        $user->syncPermissions(
+            Permission::where('guard_name', $webGuard)
+                ->whereIn('name', $userPermissions)
+                ->get()
+        );
     }
 }

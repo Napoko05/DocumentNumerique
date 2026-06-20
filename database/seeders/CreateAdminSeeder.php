@@ -12,7 +12,7 @@ class CreateAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $guard = 'web';
+        $guard = 'staff';
 
         // =====================
         // PERMISSIONS
@@ -26,7 +26,6 @@ class CreateAdminSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-
             Permission::firstOrCreate([
                 'name' => $permission,
                 'guard_name' => $guard,
@@ -41,7 +40,9 @@ class CreateAdminSeeder extends Seeder
             'guard_name' => $guard,
         ]);
 
-        $adminRole->syncPermissions(Permission::all());
+        $adminRole->syncPermissions(
+            Permission::where('guard_name', $guard)->get()
+        );
 
         // =====================
         // STAFF ADMIN
@@ -71,24 +72,25 @@ class CreateAdminSeeder extends Seeder
                 // authentification
                 'password' => Hash::make('Password1!'),
 
-                // système alias
+                // rôles
                 'role_alias' => 'admin',
                 'role_label' => 'Administrateur Système',
 
                 // statut
                 'is_active' => true,
 
-                // documents
+                // fichiers
                 'cnib_file' => null,
                 'attestation_travail_file' => null,
                 'diplome_file' => null,
                 'signature_file' => null,
             ]
         );
+
         // =====================
-        // ATTRIBUTION ROLE
+        // ATTRIBUTION DU ROLE
         // =====================
         $admin->syncRoles([]);
-        $admin->assignRole('admin');
+        $admin->assignRole($adminRole);
     }
 }

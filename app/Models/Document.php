@@ -2,10 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Staff;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Document extends Model
 {
@@ -16,26 +14,29 @@ class Document extends Model
         'title',
         'description',
         'content',
-        'type',
+        'category',
+        'level',
+        'cycle',
+        'file_path',
+        'cover_image',
         'access_type',
         'price',
-        'views',
-        'level',
-        'classe',
+        'status',
+        'views'
     ];
 
     public function staff()
     {
-        return $this->belongsTo(Staff::class, 'staff_id');
+        return $this->belongsTo(Staff::class);
     }
 
-    public function buyers()
+    public function comments()
     {
-        return $this->belongsToMany(
-            User::class,
-            'document_user',
-            'document_id',
-            'user_id'
-        )->withTimestamps();
+        return $this->hasMany(Comment::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

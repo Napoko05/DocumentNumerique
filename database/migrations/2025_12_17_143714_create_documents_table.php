@@ -12,26 +12,41 @@ return new class extends Migration
 
             $table->id();
 
-            //  Auteur
-            $table->foreignId('user_id')
-                ->constrained()
+            $table->foreignId('staff_id')
+                ->constrained('staff')
                 ->cascadeOnDelete();
 
-            //  Infos document
             $table->string('title');
+
             $table->text('description')->nullable();
 
-            $table->string('category'); // secondary / superior
-            $table->string('level');    // 6e, 2nde, licence...
-            $table->string('cycle')->nullable(); // 1er-cycle / 2nd-cycle
+            $table->longText('content')->nullable();
 
-            //  accès
-            $table->string('access_type')->default('free'); // free | premium
+            $table->string('category');
 
-            // stats
-            $table->unsignedBigInteger('views')->default(0);
+            $table->string('level');
 
-            $table->boolean('is_paid')->default(false);
+            $table->string('cycle')->nullable();
+
+            $table->string('file_path');
+
+            $table->string('cover_image')->nullable();
+
+            $table->enum('access_type', [
+                'free',
+                'premium'
+            ])->default('free');
+
+            $table->decimal('price', 10, 2)
+                ->nullable();
+
+            $table->enum('status', [
+                'draft',
+                'published'
+            ])->default('published');
+
+            $table->unsignedBigInteger('views')
+                ->default(0);
 
             $table->timestamps();
         });

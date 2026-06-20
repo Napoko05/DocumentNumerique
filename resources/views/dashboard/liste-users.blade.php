@@ -1,4 +1,4 @@
-@extends('layouts.journlist_app')
+@extends('layouts.journalist_app')
 
 @section('page-title', 'Liste des utilisateurs')
 

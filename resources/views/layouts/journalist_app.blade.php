@@ -54,9 +54,9 @@
             {{-- Nav --}}
             <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
 
-                <a href="{{ route('journalist.dashboard') }}"
+                <a href="{{ route('journaliste.dashboard') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('journalist.dashboard') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+                          {{ request()->routeIs('journaliste.dashboard') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -68,9 +68,9 @@
                     <p class="text-xs font-semibold text-white/30 uppercase tracking-wider">Contenu</p>
                 </div>
 
-                <a href="{{ route('journalist.documents.create') }}"
+                <a href="{{ route('journaliste.documents.create') }}"
                    class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
-                          {{ request()->routeIs('journalist.documents.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+                          {{ request()->routeIs('journaliste.documents.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
                     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                     </svg>

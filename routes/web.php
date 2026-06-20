@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AdminController;
 
 use App\Http\Controllers\Books\EducationController;
+use App\Http\Controllers\DocumentController;
 
 /*
 |-------------------------
@@ -104,7 +105,7 @@ Route::middleware(['auth:staff', 'role:admin'])->prefix('admin')->name('admin.')
 | JOURNALIST
 |-------------------------
 */
-Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name('journalist.')->group(function () {
+Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name('journaliste.')->group(function () {
 
     Route::get('/dashboard', [App\Http\Controllers\Users\JournalistController::class, 'dashboard'])->name('dashboard');
     Route::prefix('products')->name('products.')->group(function () {
@@ -118,6 +119,7 @@ Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name
 
     Route::post('/documents', [App\Http\Controllers\Users\JournalistController::class, 'createDocument'])->name('documents.create');
     Route::get('/users', [App\Http\Controllers\Users\JournalistController::class, 'users'])->name('users.index');
+     Route::resource('documents', DocumentController::class);
 });
 
 /*
@@ -203,3 +205,4 @@ Route::prefix('enseignement')->group(function () {
     Route::get('/superieur-technique/{niveau}', [EducationController::class, 'superieurTechnique'])
         ->name('superieur.technique');
 });
+
