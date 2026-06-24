@@ -19,13 +19,17 @@ use App\Http\Controllers\Admin\AdminController;
 
 use App\Http\Controllers\Books\EducationController;
 use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\Public\PublicDocumentController;
+use App\Http\Controllers\Paiements\PaymentController;
+use App\Http\Controllers\HomeController;
 
 /*
 |-------------------------
 | PAGES PUBLIQUES
 |-------------------------
 */
-Route::get('/', fn() => view('index'))->name('home');
+
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', fn() => view('about'))->name('about');
 
 Route::get('/contact', [ContactController::class, 'showForm'])->name('contact.form');
@@ -63,7 +67,7 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth:staff', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-   Route::get('/staff/create', [StaffController::class, 'create'])
+    Route::get('/staff/create', [StaffController::class, 'create'])
         ->name('staff.create');
 
     Route::post('/staff/step1', [StaffController::class, 'step1'])
@@ -119,7 +123,7 @@ Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name
 
     Route::post('/documents', [App\Http\Controllers\Users\JournalistController::class, 'createDocument'])->name('documents.create');
     Route::get('/users', [App\Http\Controllers\Users\JournalistController::class, 'users'])->name('users.index');
-     Route::resource('documents', DocumentController::class);
+    Route::resource('documents', DocumentController::class);
 });
 
 /*
@@ -206,3 +210,25 @@ Route::prefix('enseignement')->group(function () {
         ->name('superieur.technique');
 });
 
+/*==============
+    Route de documments public
+    =====================*/
+
+Route::get('/documents', [PublicDocumentController::class, 'index'])
+    ->name('documents.index');
+
+Route::get('/documents/{document}', [PublicDocumentController::class, 'show'])
+    ->name('documents.show');
+
+Route::get('/documents/{document}/read', [PublicDocumentController::class, 'read'])
+    ->name('documents.read');
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/payments/{document}',[PaymentController::class, 'create']
+    )->name('payments.create');
+
+    Route::post('/payments/{document}',[PaymentController::class, 'store']
+    )->name('payments.store');
+});

@@ -4,245 +4,199 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50 py-10 px-4">
 
-<div class="card shadow-sm border-0">
-    <div class="card-body">
+    <div class="max-w-4xl mx-auto">
 
-        <h4 class="mb-4">
-            Publication d'un document
-        </h4>
+        <!-- HEADER -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-blue-700 flex justify-center items-center gap-2">
+                📢 Publication d’un document
+            </h1>
+            <p class="text-gray-600 mt-2">
+                Ajoutez un document académique de façon professionnelle
+            </p>
+        </div>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
-
+        <!-- ERRORS -->
         @if($errors->any())
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
+        <div class="mb-4 p-4 rounded-xl bg-red-100 border border-red-300 text-red-700">
+            <ul class="list-disc pl-5">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
         @endif
 
-        <form action="{{ route('journaliste.documents.store') }}"
-              method="POST"
-              enctype="multipart/form-data">
+        <!-- CARD -->
+        <div class="bg-white shadow-2xl rounded-2xl border border-gray-100">
 
-            @csrf
+            <form action="{{ route('journaliste.documents.store') }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="p-8 space-y-6">
 
-            <!-- Titre -->
+                @csrf
 
-            <div class="mb-3">
-                <label class="form-label">
-                    Titre du document
-                </label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                <input type="text"
-                       name="title"
-                       class="form-control"
-                       value="{{ old('title') }}"
-                       required>
-            </div>
+                    <!-- TITRE -->
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            📝 Titre du document
+                        </label>
+                        <input type="text"
+                            name="title"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                    </div>
 
-            <!-- Description -->
+                    <!-- DESCRIPTION -->
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            📄 Description
+                        </label>
+                        <textarea name="description"
+                            rows="4"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"></textarea>
+                    </div>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    Description
-                </label>
+                    <!-- CONTENU -->
+                    <div class="md:col-span-2">
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            📚 Résumé / Contenu
+                        </label>
+                        <textarea name="content"
+                            rows="5"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"></textarea>
+                    </div>
 
-                <textarea name="description"
-                          rows="4"
-                          class="form-control"
-                          required>{{ old('description') }}</textarea>
-            </div>
+                    <!-- CATEGORIE -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            🏷️ Catégorie
+                        </label>
+                        <select name="category"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+                            <option value="">Choisir...</option>
+                            <option value="secondary">Enseignement Secondaire</option>
+                            <option value="superior">Enseignement Supérieur</option>
+                        </select>
+                    </div>
 
-            <!-- Résumé -->
+                    <!-- NIVEAU -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            🎓 Niveau
+                        </label>
+                        <input type="text"
+                            name="level"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+                    </div>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    Résumé / Contenu
-                </label>
+                    <!-- CYCLE -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            🔄 Cycle
+                        </label>
+                        <input type="text"
+                            name="cycle"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+                    </div>
 
-                <textarea name="content"
-                          rows="6"
-                          class="form-control">{{ old('content') }}</textarea>
-            </div>
+                    <!-- ACCESS -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            🔐 Type d’accès
+                        </label>
+                        <select name="access_type"
+                            id="access_type"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                            <option value="free">🟢 Gratuit</option>
+                            <option value="premium">🟠 Premium</option>
+                        </select>
+                    </div>
 
-            <!-- Catégorie -->
+                    <!-- PRICE -->
+                    <div id="priceDiv" class="hidden">
+                        <label class="flex items-center gap-2 text-orange-600 font-semibold">
+                            💰 Prix (FCFA)
+                        </label>
+                        <input type="number"
+                            name="price"
+                            class="mt-2 w-full rounded-xl border-orange-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+                    </div>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    Catégorie
-                </label>
+                    <!-- IMAGE -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            🖼️ Image de couverture
+                        </label>
+                        <input type="file"
+                            name="cover_image"
+                            accept="image/*"
+                            class="mt-2 w-full text-sm file:mr-4 file:py-2 file:px-4
+                                      file:rounded-lg file:border-0
+                                      file:bg-blue-100 file:text-blue-700
+                                      hover:file:bg-blue-200">
+                    </div>
 
-                <select name="category"
-                        class="form-select"
-                        required>
+                    <!-- PDF -->
+                    <div>
+                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
+                            📎 Fichier PDF
+                        </label>
+                        <input type="file"
+                            name="document"
+                            accept=".pdf"
+                            class="mt-2 w-full text-sm file:mr-4 file:py-2 file:px-4
+                                      file:rounded-lg file:border-0
+                                      file:bg-orange-100 file:text-orange-700
+                                      hover:file:bg-orange-200">
+                    </div>
 
-                    <option value="">
-                        Choisir...
-                    </option>
+                </div>
 
-                    <option value="secondary">
-                        Enseignement Secondaire
-                    </option>
+                <!-- BUTTONS -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-6">
 
-                    <option value="superior">
-                        Enseignement Supérieur
-                    </option>
+                    <button type="submit"
+                        class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                        🚀 Publier le document
+                    </button>
 
-                </select>
-            </div>
+                    <a href="{{ route('journaliste.documents.index') }}"
+                        class="w-full sm:w-auto px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl text-center transition">
+                        ← Retour
+                    </a>
 
-            <!-- Niveau -->
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">
-                    Niveau
-                </label>
-
-                <input type="text"
-                       name="level"
-                       class="form-control"
-                       value="{{ old('level') }}"
-                       placeholder="Ex : 6e, 5e, Licence 1, Master 2..."
-                       required>
-            </div>
-
-            <!-- Cycle -->
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Cycle
-                </label>
-
-                <input type="text"
-                       name="cycle"
-                       class="form-control"
-                       value="{{ old('cycle') }}"
-                       placeholder="Ex : 1er cycle, 2nd cycle">
-            </div>
-
-            <!-- Couverture -->
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Image de couverture
-                </label>
-
-                <input type="file"
-                       name="cover_image"
-                       class="form-control"
-                       accept="image/*">
-            </div>
-
-            <!-- PDF -->
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Fichier PDF
-                </label>
-
-                <input type="file"
-                       name="document"
-                       class="form-control"
-                       accept=".pdf"
-                       required>
-            </div>
-
-            <!-- Type accès -->
-
-            <div class="mb-3">
-                <label class="form-label">
-                    Type d'accès
-                </label>
-
-                <select name="access_type"
-                        id="access_type"
-                        class="form-select">
-
-                    <option value="free">
-                        Gratuit
-                    </option>
-
-                    <option value="premium">
-                        Premium
-                    </option>
-
-                </select>
-            </div>
-
-            <!-- Prix -->
-
-            <div class="mb-3"
-                 id="priceDiv"
-                 style="display:none;">
-
-                <label class="form-label">
-                    Prix (FCFA)
-                </label>
-
-                <input type="number"
-                       name="price"
-                       min="0"
-                       class="form-control"
-                       value="{{ old('price') }}">
-            </div>
-
-            <div class="d-flex gap-2">
-
-                <button type="submit"
-                        class="btn btn-primary">
-                    Publier le document
-                </button>
-
-                <a href="{{ route('journaliste.documents.index') }}"
-                   class="btn btn-secondary">
-                    Retour
-                </a>
-
-            </div>
-
-        </form>
+            </form>
+        </div>
 
     </div>
-</div>
 </div>
 
 @endsection
 
 @section('scripts')
-
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-document.addEventListener('DOMContentLoaded', function () {
+        const accessType = document.getElementById('access_type');
+        const priceDiv = document.getElementById('priceDiv');
 
-    const accessType = document.getElementById('access_type');
-    const priceDiv = document.getElementById('priceDiv');
-
-    function togglePrice()
-    {
-        if(accessType.value === 'premium')
-        {
-            priceDiv.style.display = 'block';
+        function togglePrice() {
+            if (accessType.value === 'premium') {
+                priceDiv.classList.remove('hidden');
+            } else {
+                priceDiv.classList.add('hidden');
+            }
         }
-        else
-        {
-            priceDiv.style.display = 'none';
-        }
-    }
 
-    accessType.addEventListener('change', togglePrice);
-
-    togglePrice();
-});
-
+        accessType.addEventListener('change', togglePrice);
+        togglePrice();
+    });
 </script>
-
 @endsection

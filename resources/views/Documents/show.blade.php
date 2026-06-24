@@ -4,81 +4,111 @@
 
 @section('content')
 
-<div class="container py-4">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-10 px-4 sm:px-6 lg:px-8">
 
-    <div class="card shadow-sm">
+    <div class="max-w-4xl mx-auto">
 
-        <div class="card-body">
+        <!-- HEADER -->
+       <!-- HEADER FULL WIDTH -->
+<div class="w-full bg-blue-600 py-6 mb-10 shadow-md">
 
-            <h2>{{ $document->title }}</h2>
+    <h1 class="text-center text-white text-3xl md:text-4xl font-bold">
+        {{ $document->title }}
+    </h1>
 
-            <hr>
+    <p class="text-center text-blue-100 mt-2">
+        Détails complets du document
+    </p>
 
-            <p>
-                <strong>Catégorie :</strong>
-                {{ $document->category }}
-            </p>
+</div>
 
-            <p>
-                <strong>Niveau :</strong>
-                {{ $document->level }}
-            </p>
+        <!-- CARD -->
+        <div class="bg-white shadow-xl rounded-2xl border border-blue-100 overflow-hidden">
 
-            <p>
-                <strong>Cycle :</strong>
-                {{ $document->cycle }}
-            </p>
+            <div class="p-8 space-y-6">
 
-            <p>
-                <strong>Type :</strong>
+                <!-- INFOS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-gray-700">
 
-                @if($document->access_type == 'free')
-                    <span class="badge bg-success">
-                        Gratuit
-                    </span>
-                @else
-                    <span class="badge bg-warning">
-                        Premium
-                    </span>
-                @endif
-            </p>
+                    <p>
+                        <span class="font-semibold text-blue-700">📁 Catégorie :</span>
+                        {{ $document->category }}
+                    </p>
 
-            @if($document->access_type == 'premium')
-                <p>
-                    <strong>Prix :</strong>
-                    {{ number_format($document->price) }} FCFA
-                </p>
-            @endif
+                    <p>
+                        <span class="font-semibold text-blue-700">🎓 Niveau :</span>
+                        {{ $document->level }}
+                    </p>
 
-            <p>
-                <strong>Nombre de vues :</strong>
-                {{ $document->views }}
-            </p>
+                    <p>
+                        <span class="font-semibold text-blue-700">🔄 Cycle :</span>
+                        {{ $document->cycle }}
+                    </p>
 
-            <hr>
+                    <p>
+                        <span class="font-semibold text-blue-700">👁 Vues :</span>
+                        {{ $document->views }}
+                    </p>
 
-            <h5>Description</h5>
+                    <p>
+                        <span class="font-semibold text-blue-700">🔐 Type :</span>
 
-            <p>
-                {{ $document->description }}
-            </p>
+                        @if($document->access_type == 'free')
+                        <span class="ml-2 px-3 py-1 text-xs rounded-full bg-green-100 text-green-700">
+                            Gratuit
+                        </span>
+                        @else
+                        <span class="ml-2 px-3 py-1 text-xs rounded-full bg-orange-100 text-orange-700">
+                            Premium
+                        </span>
+                        @endif
 
-            <hr>
+                    </p>
 
-            <a href="{{ route('journaliste.documents.edit',$document) }}"
-               class="btn btn-warning">
-                Modifier
-            </a>
+                    @if($document->access_type == 'premium')
+                    <p>
+                        <span class="font-semibold text-blue-700">💰 Prix :</span>
+                        {{ number_format($document->price) }} FCFA
+                    </p>
+                    @endif
 
-            <a href="{{ route('journaliste.documents.index') }}"
-               class="btn btn-secondary">
-                Retour
-            </a>
+                </div>
+
+                <hr class="border-blue-100">
+
+                <!-- DESCRIPTION -->
+                <div>
+                    <h2 class="text-xl font-bold text-blue-700 mb-3">
+                        📄 Description
+                    </h2>
+
+                    <p class="text-gray-700 leading-relaxed">
+                        {{ $document->description }}
+                    </p>
+                </div>
+
+                <hr class="border-blue-100">
+
+                <!-- ACTIONS -->
+                <div class="flex flex-col sm:flex-row gap-4 pt-4">
+
+                    <a href="{{ route('journaliste.documents.edit',$document) }}"
+                        class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition text-center">
+                        ✏️ Modifier
+                    </a>
+
+                    <a href="{{ route('journaliste.documents.index') }}"
+                        class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl text-center transition">
+                        ← Retour
+                    </a>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
-
 </div>
 
 @endsection
