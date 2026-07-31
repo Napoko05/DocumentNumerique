@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Document;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 
 class JournalistController extends Controller
 {
@@ -16,39 +15,67 @@ class JournalistController extends Controller
     }
 
     /**
-     * Dashboard journaliste
+     * Tableau de bord du journaliste
      */
     public function dashboard()
     {
-        $user = auth()->user();
+        $staff = Auth::guard('staff')->user();
 
-        // Récupérer les documents du journaliste connecté
-        $documents = $user->documents()->get();
+        $documents = Document::where('staff_id', $staff->id)
+            ->latest()
+            ->take(10)
+            ->get();
 
-        // Données pour les graphiques
-        $chartLabels = $documents->pluck('title');
-        $chartData   = $documents->pluck('views');
+        $totalDocuments = Document::where('staff_id', $staff->id)->count();
 
-        // Statistiques
-        $totalDocuments = Document::where('staff_id', auth('staff')->id())->count();
-        $totalFree = Document::where('staff_id', auth('staff')->id())
+        $publishedDocuments = Document::where('staff_id', $staff->id)
+            ->where('status', 'published')
+            ->count();
+
+        $pendingDocuments = Document::where('staff_id', $staff->id)
+            ->where('status', 'pending')
+            ->count();
+
+        $draftDocuments = Document::where('staff_id', $staff->id)
+            ->where('status', 'draft')
+            ->count();
+
+        $rejectedDocuments = Document::where('staff_id', $staff->id)
+            ->where('status', 'rejected')
+            ->count();
+
+        $freeDocuments = Document::where('staff_id', $staff->id)
             ->where('access_type', 'free')
             ->count();
-        $totalPremium = Document::where('staff_id', auth('staff')->id())
+
+        $premiumDocuments = Document::where('staff_id', $staff->id)
             ->where('access_type', 'premium')
             ->count();
-        $totalViews = Document::where('staff_id', auth('staff')->id())
+
+        $totalViews = Document::where('staff_id', $staff->id)
             ->sum('views');
-        $documents = Document::where('staff_id', auth('staff')->id())
+
+        $totalDownloads = Document::where('staff_id', $staff->id)
+            ->sum('downloads');
+
+        $recentDocuments = Document::where('staff_id', $staff->id)
             ->latest()
+            ->take(5)
             ->get();
 
         return view('dashboard.journaliste_dashboard', compact(
+            'staff',
+            'documents',
+            'recentDocuments',
             'totalDocuments',
-            'totalFree',
-            'totalPremium',
+            'publishedDocuments',
+            'pendingDocuments',
+            'draftDocuments',
+            'rejectedDocuments',
+            'freeDocuments',
+            'premiumDocuments',
             'totalViews',
-            'documents'
+            'totalDownloads'
         ));
     }
 
@@ -57,50 +84,10 @@ class JournalistController extends Controller
      */
     public function users()
     {
-        $users = User::with('roles')->paginate(10);
+        $users = User::with('roles')
+            ->latest()
+            ->paginate(15);
+
         return view('journalist.users.index', compact('users'));
-    }
-
-    /**
-     * Ajouter un document
-     */
-    public function createDocument(Request $request)
-    {
-        $validated = $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'nullable|string|max:1000',
-            'type'        => 'required|in:document,article',
-            'access_type' => 'required|in:free,premium',
-            'price'       => 'nullable|numeric|min:0',
-            'file'        => 'nullable|file|mimes:pdf,docx',
-            'content'     => 'nullable|string',
-        ]);
-
-        $path = null;
-        if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('documents', 'public');
-        }
-
-        $document = auth()->user()->documents()->create([
-            'title'       => $validated['title'],
-            'description' => $validated['description'] ?? null,
-            'type'        => $validated['type'],
-            'access_type' => $validated['access_type'],
-            'price'       => $validated['access_type'] === 'premium' ? $validated['price'] : 0,
-            'content'     => $path ?? $validated['content'] ?? '',
-        ]);
-
-        return redirect()->route('journalist.dashboard')->with('success', 'Document publié avec succès.');
-    }
-
-    /**
-     * Voir un document
-     */
-    public function showDocument(Document $document)
-    {
-        // Augmenter le compteur de vues
-        $document->increment('views');
-
-        return view('journalist.documents.show', compact('document'));
     }
 }

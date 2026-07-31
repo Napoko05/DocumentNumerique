@@ -6,197 +6,565 @@
 
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50 py-10 px-4">
 
-    <div class="max-w-4xl mx-auto">
+    <div class="max-w-5xl mx-auto">
 
         <!-- HEADER -->
+
         <div class="text-center mb-10">
-            <h1 class="text-4xl font-bold text-blue-700 flex justify-center items-center gap-2">
-                📢 Publication d’un document
+
+            <h1 class="text-4xl font-bold text-blue-700">
+                📚 Publier un document
             </h1>
+
             <p class="text-gray-600 mt-2">
-                Ajoutez un document académique de façon professionnelle
+                Publiez un document académique et classez-le correctement afin qu'il soit facilement retrouvé par les utilisateurs.
             </p>
+
         </div>
 
-        <!-- ERRORS -->
-        @if($errors->any())
-        <div class="mb-4 p-4 rounded-xl bg-red-100 border border-red-300 text-red-700">
-            <ul class="list-disc pl-5">
-                @foreach($errors->all() as $error)
+        <!-- ERREURS -->
+
+        @if ($errors->any())
+
+        <div class="mb-6 rounded-xl bg-red-100 border border-red-300 p-4">
+
+            <ul class="list-disc pl-5 text-red-700">
+
+                @foreach ($errors->all() as $error)
+
                 <li>{{ $error }}</li>
+
                 @endforeach
+
             </ul>
+
         </div>
+
         @endif
 
-        <!-- CARD -->
-        <div class="bg-white shadow-2xl rounded-2xl border border-gray-100">
+        <form action="{{ route('journaliste.documents.store') }}"
+            method="POST"
+            enctype="multipart/form-data"
+            class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
 
-            <form action="{{ route('journaliste.documents.store') }}"
-                method="POST"
-                enctype="multipart/form-data"
-                class="p-8 space-y-6">
+            @csrf
 
-                @csrf
+            <!-- ============================= -->
+            <!-- INFORMATIONS GENERALES -->
+            <!-- ============================= -->
+
+            <div class="border-b pb-6 mb-8">
+
+                <h2 class="text-2xl font-bold text-blue-700 mb-6">
+                    📄 Informations générales
+                </h2>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <!-- TITRE -->
+
                     <div class="md:col-span-2">
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            📝 Titre du document
+
+                        <label class="font-semibold text-gray-700">
+                            Titre du document *
                         </label>
-                        <input type="text"
+
+                        <input
+                            type="text"
                             name="title"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+                            value="{{ old('title') }}"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="Ex : Cours complet de Mathématiques"
+                            required>
+
                     </div>
 
                     <!-- DESCRIPTION -->
+
                     <div class="md:col-span-2">
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            📄 Description
+
+                        <label class="font-semibold text-gray-700">
+                            Description
                         </label>
-                        <textarea name="description"
+
+                        <textarea
+                            name="description"
                             rows="4"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"></textarea>
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="Décrivez brièvement ce document...">{{ old('description') }}</textarea>
+
                     </div>
 
-                    <!-- CONTENU -->
+                    <!-- RESUME -->
+
                     <div class="md:col-span-2">
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            📚 Résumé / Contenu
+
+                        <label class="font-semibold text-gray-700">
+                            Résumé / Contenu
                         </label>
-                        <textarea name="content"
+
+                        <textarea
+                            name="content"
                             rows="5"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm"></textarea>
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                            placeholder="Résumé du document...">{{ old('content') }}</textarea>
+
                     </div>
+
+                </div>
+
+            </div>
+
+            <!-- ============================= -->
+            <!-- CLASSIFICATION -->
+            <!-- ============================= -->
+
+            <div class="border-b pb-6 mb-8">
+
+                <h2 class="text-2xl font-bold text-orange-600 mb-6">
+                    🎓 Classification académique
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <!-- CATEGORIE -->
+
                     <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            🏷️ Catégorie
+
+                        <label class="font-semibold text-gray-700">
+                            Catégorie d'enseignement *
                         </label>
-                        <select name="category"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                            <option value="">Choisir...</option>
-                            <option value="secondary">Enseignement Secondaire</option>
-                            <option value="superior">Enseignement Supérieur</option>
+
+                        <select
+                            id="teaching_category"
+                            name="teaching_category_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                            required>
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($categories as $categorie)
+
+                            <option value="{{ $categorie->id }}">
+
+                                {{ $categorie->name }}
+
+                            </option>
+
+                            @endforeach
+
                         </select>
+
+                    </div>
+                    <!-- FORMATION -->
+
+                    <div id="formationDiv" class="hidden">
+
+                        <label class="font-semibold text-gray-700">
+                            Formation
+                        </label>
+
+                        <select
+                            id="formation"
+                            name="formation_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($formations as $formation)
+
+                            <option value="{{ $formation->id }}">
+                                {{ $formation->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    <!-- FILIERE -->
+
+                    <div id="filiereDiv" class="hidden">
+
+                        <label class="font-semibold text-gray-700">
+                            Filière
+                        </label>
+
+                        <select
+                            id="filiere"
+                            name="filiere_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($filieres as $filiere)
+
+                            <option value="{{ $filiere->id }}">
+                                {{ $filiere->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                    <!-- SPECIALITE -->
+
+                    <div id="specialiteDiv" class="hidden">
+
+                        <label class="font-semibold text-gray-700">
+                            Spécialité
+                        </label>
+
+                        <select
+                            id="specialite"
+                            name="specialite_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($specialites as $specialite)
+
+                            <option value="{{ $specialite->id }}">
+                                {{ $specialite->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
                     </div>
 
                     <!-- NIVEAU -->
-                    <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            🎓 Niveau
-                        </label>
-                        <input type="text"
-                            name="level"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                    </div>
 
-                    <!-- CYCLE -->
-                    <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            🔄 Cycle
-                        </label>
-                        <input type="text"
-                            name="cycle"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                    </div>
+                    <div id="levelDiv" class="hidden">
 
-                    <!-- ACCESS -->
-                    <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            🔐 Type d’accès
+                        <label class="font-semibold text-gray-700">
+                            Niveau
                         </label>
-                        <select name="access_type"
-                            id="access_type"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                            <option value="free">🟢 Gratuit</option>
-                            <option value="premium">🟠 Premium</option>
+
+                        <select
+                            id="level"
+                            name="level_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($levels as $level)
+
+                            <option value="{{ $level->id }}">
+                                {{ $level->name }}
+                            </option>
+
+                            @endforeach
+
                         </select>
+
                     </div>
 
-                    <!-- PRICE -->
-                    <div id="priceDiv" class="hidden">
-                        <label class="flex items-center gap-2 text-orange-600 font-semibold">
-                            💰 Prix (FCFA)
+                    <!-- MATIERE -->
+
+                    <div id="subjectDiv" class="hidden">
+
+                        <label class="font-semibold text-gray-700">
+                            Matière
                         </label>
-                        <input type="number"
-                            name="price"
-                            class="mt-2 w-full rounded-xl border-orange-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+
+                        <select
+                            id="subject"
+                            name="subject_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($subjects as $subject)
+
+                            <option value="{{ $subject->id }}">
+                                {{ $subject->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
                     </div>
+
+                    <!-- TYPE DE DOCUMENT -->
+
+                    <div>
+
+                        <label class="font-semibold text-gray-700">
+                            Type de document *
+                        </label>
+
+                        <select
+                            name="document_type_id"
+                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500"
+                            required>
+
+                            <option value="">Sélectionner...</option>
+
+                            @foreach($documentTypes as $type)
+
+                            <option value="{{ $type->id }}">
+                                {{ $type->name }}
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- ========================================= -->
+            <!-- FICHIERS -->
+            <!-- ========================================= -->
+
+            <div class="border-b pb-8 mb-8">
+
+                <h2 class="text-2xl font-bold text-green-700 mb-6">
+                    📂 Fichiers
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                     <!-- IMAGE -->
+
                     <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            🖼️ Image de couverture
+
+                        <label class="font-semibold text-gray-700">
+                            Image de couverture
                         </label>
-                        <input type="file"
+
+                        <input
+                            type="file"
                             name="cover_image"
                             accept="image/*"
-                            class="mt-2 w-full text-sm file:mr-4 file:py-2 file:px-4
-                                      file:rounded-lg file:border-0
-                                      file:bg-blue-100 file:text-blue-700
-                                      hover:file:bg-blue-200">
+                            class="mt-2 w-full rounded-xl border border-gray-300 p-3">
+
                     </div>
 
-                    <!-- PDF -->
+                    <!-- DOCUMENT -->
+
                     <div>
-                        <label class="flex items-center gap-2 text-blue-700 font-semibold">
-                            📎 Fichier PDF
+
+                        <label class="font-semibold text-gray-700">
+                            Document (PDF) *
                         </label>
-                        <input type="file"
-                            name="document"
+
+                        <input
+                            type="file"
+                            name="document_file"
                             accept=".pdf"
-                            class="mt-2 w-full text-sm file:mr-4 file:py-2 file:px-4
-                                      file:rounded-lg file:border-0
-                                      file:bg-orange-100 file:text-orange-700
-                                      hover:file:bg-orange-200">
+                            required
+                            class="mt-2 w-full rounded-xl border border-gray-300 p-3">
+
                     </div>
 
                 </div>
 
-                <!-- BUTTONS -->
-                <div class="flex flex-col sm:flex-row gap-4 pt-6">
+            </div>
 
-                    <button type="submit"
-                        class="w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                        🚀 Publier le document
-                    </button>
+            <!-- ========================================= -->
+            <!-- TAGS -->
+            <!-- ========================================= -->
 
-                    <a href="{{ route('journaliste.documents.index') }}"
-                        class="w-full sm:w-auto px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl text-center transition">
-                        ← Retour
-                    </a>
+            <div class="border-b pb-8 mb-8">
+
+                <h2 class="text-2xl font-bold text-purple-700 mb-6">
+                    🏷️ Mots-clés
+                </h2>
+
+                <label class="font-semibold text-gray-700">
+                    Sélectionnez les tags
+                </label>
+
+                <select
+                    name="tags[]"
+                    multiple
+                    class="mt-2 w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500 h-48">
+
+                    @foreach($tags as $tag)
+
+                    <option value="{{ $tag->id }}">
+
+                        {{ $tag->name }}
+
+                    </option>
+
+                    @endforeach
+
+                </select>
+
+                <p class="text-sm text-gray-500 mt-2">
+                    Maintenez CTRL pour sélectionner plusieurs tags.
+                </p>
+
+            </div>
+
+            <!-- ========================================= -->
+            <!-- ACCES -->
+            <!-- ========================================= -->
+
+            <div class="border-b pb-8 mb-8">
+
+                <h2 class="text-2xl font-bold text-orange-700 mb-6">
+                    💰 Publication
+                </h2>
+
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div>
+
+                        <label class="font-semibold text-gray-700">
+                            Type d'accès
+                        </label>
+
+                        <select
+                            id="access_type"
+                            name="access_type"
+                            class="mt-2 w-full rounded-xl border-gray-300">
+
+                            <option value="free">🟢 Gratuit</option>
+
+                            <option value="premium">🟠 Premium</option>
+
+                        </select>
+
+                    </div>
+
+                    <div id="priceDiv" class="hidden">
+
+                        <label class="font-semibold text-gray-700">
+                            Prix (FCFA)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="price"
+                            class="mt-2 w-full rounded-xl border-gray-300"
+                            placeholder="500">
+
+                    </div>
 
                 </div>
 
-            </form>
-        </div>
+            </div>
+
+            <!-- ========================================= -->
+            <!-- BOUTONS -->
+            <!-- ========================================= -->
+
+            <div class="flex flex-col md:flex-row gap-4 justify-end">
+
+                <a href="{{ route('journaliste.documents.index') }}"
+                    class="px-6 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-center">
+
+                    Retour
+
+                </a>
+
+                <button
+                    type="submit"
+                    class="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold">
+
+                    🚀 Publier le document
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
+
 </div>
 
 @endsection
 
 @section('scripts')
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        const accessType = document.getElementById('access_type');
-        const priceDiv = document.getElementById('priceDiv');
+        const category = document.getElementById('teaching_category');
 
-        function togglePrice() {
-            if (accessType.value === 'premium') {
-                priceDiv.classList.remove('hidden');
-            } else {
-                priceDiv.classList.add('hidden');
-            }
+        const formationDiv = document.getElementById('formationDiv');
+        const filiereDiv = document.getElementById('filiereDiv');
+        const specialiteDiv = document.getElementById('specialiteDiv');
+        const levelDiv = document.getElementById('levelDiv');
+        const subjectDiv = document.getElementById('subjectDiv');
+
+        function hideAll() {
+
+            formationDiv.classList.add('hidden');
+            filiereDiv.classList.add('hidden');
+            specialiteDiv.classList.add('hidden');
+            levelDiv.classList.add('hidden');
+            subjectDiv.classList.add('hidden');
+
         }
 
-        accessType.addEventListener('change', togglePrice);
+        category.addEventListener('change', function() {
+
+            hideAll();
+
+            const text = this.options[this.selectedIndex].text.toLowerCase();
+
+            if (text.includes('secondaire')) {
+
+                levelDiv.classList.remove('hidden');
+                subjectDiv.classList.remove('hidden');
+
+            } else if (text.includes('supérieur général')) {
+
+                filiereDiv.classList.remove('hidden');
+                levelDiv.classList.remove('hidden');
+
+            } else if (text.includes('supérieur technique')) {
+
+                filiereDiv.classList.remove('hidden');
+                levelDiv.classList.remove('hidden');
+
+            } else if (text.includes('professionnel')) {
+
+                formationDiv.classList.remove('hidden');
+                specialiteDiv.classList.remove('hidden');
+                levelDiv.classList.remove('hidden');
+
+            }
+
+        });
+
+        hideAll();
+
+        const access = document.getElementById('access_type');
+        const price = document.getElementById('priceDiv');
+
+        function togglePrice() {
+
+            if (access.value === 'premium') {
+
+                price.classList.remove('hidden');
+
+            } else {
+
+                price.classList.add('hidden');
+
+            }
+
+        }
+
+        access.addEventListener('change', togglePrice);
+
         togglePrice();
+
     });
 </script>
+
 @endsection

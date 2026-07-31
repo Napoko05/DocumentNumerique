@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\Users\ProfileController;
 use App\Http\Controllers\Users\ContactController;
-use App\Http\Controllers\Books\BookController;
 use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Users\ProductController;
 
@@ -17,11 +16,18 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\AdminController;
 
-use App\Http\Controllers\Books\EducationController;
-use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\Documents\DocumentController;
 use App\Http\Controllers\Public\PublicDocumentController;
 use App\Http\Controllers\Paiements\PaymentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Vitrine\VitrineSecondaireController;
+use App\Http\Controllers\Vitrine\VitrineSuperieurController;
+use App\Http\Controllers\Vitrine\VitrineProfessionnelController;
+use App\Http\Controllers\Users\JournalistController;
+use App\Http\Controllers\Vitrine\VitrineTechniqueController;
+
+
+use App\Http\Controllers;
 
 /*
 |-------------------------
@@ -46,7 +52,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'create'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1');
 });
-
 /*
 |-------------------------
 | LOGOUT
@@ -104,28 +109,56 @@ Route::middleware(['auth:staff', 'role:admin'])->prefix('admin')->name('admin.')
     Route::put('/{product}', [ProductController::class, 'update'])->name('update');
     Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
 });
+/**=====================
+ * controller de la creation d'un document important
+ * =====================
+ */
+
+Route::prefix('journaliste')
+    ->middleware(['auth:staff', 'role:journalist'])
+    ->name('journaliste.')
+    ->group(function () {
+
+        Route::get('/documents', [DocumentController::class, 'index'])
+            ->name('documents.index');
+
+        Route::get('/documents/create', [DocumentController::class, 'create'])
+            ->name('documents.create');
+
+        Route::post('/documents', [DocumentController::class, 'store'])
+            ->name('documents.store');
+
+        Route::get('/documents/{document}', [DocumentController::class, 'show'])
+            ->name('documents.show');
+
+        Route::get('/documents/{document}/edit', [DocumentController::class, 'edit'])
+            ->name('documents.edit');
+
+        Route::put('/documents/{document}', [DocumentController::class, 'update'])
+            ->name('documents.update');
+
+        Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])
+            ->name('documents.destroy');
+    });
 /*
 |-------------------------
 | JOURNALIST
 |-------------------------
 */
-Route::middleware(['auth:staff', 'role:journalist'])->prefix('journalist')->name('journaliste.')->group(function () {
 
-    Route::get('/dashboard', [App\Http\Controllers\Users\JournalistController::class, 'dashboard'])->name('dashboard');
-    Route::prefix('products')->name('products.')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('index');
-        Route::get('/create', [ProductController::class, 'create'])->name('create');
-        Route::post('/', [ProductController::class, 'store'])->name('store');
-        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
-        Route::put('/{product}', [ProductController::class, 'update'])->name('update');
-        Route::delete('/{product}', [ProductController::class, 'destroy'])->name('destroy');
+Route::prefix('journaliste')
+    ->middleware(['auth:staff', 'role:journalist'])
+    ->name('journaliste.')
+    ->group(function () {
+
+        // Tableau de bord
+        Route::get('/dashboard', [JournalistController::class, 'dashboard'])
+            ->name('dashboard');
+
+        // Liste des utilisateurs
+        Route::get('/users', [JournalistController::class, 'users'])
+            ->name('users');
     });
-
-    Route::post('/documents', [App\Http\Controllers\Users\JournalistController::class, 'createDocument'])->name('documents.create');
-    Route::get('/users', [App\Http\Controllers\Users\JournalistController::class, 'users'])->name('users.index');
-    Route::resource('documents', DocumentController::class);
-});
-
 /*
 |-------------------------
 | USER CONNECTÉ
@@ -146,69 +179,6 @@ Route::post(
     [UserController::class, 'deactivate']
 )->name('users.deactivate');
 
-/*
-|-------------------------
-| BOOKS
-|-------------------------
-*/
-Route::prefix('books')->name('books.')->group(function () {
-    Route::get('/', [BookController::class, 'index'])->name('index');
-    Route::get('/{book}', [BookController::class, 'show'])->name('show');
-    Route::post('/{book}/buy', [BookController::class, 'buy'])->middleware('auth')->name('buy');
-});
-
-/*
-|-------------------------
-| SECONDARY
-|-------------------------
-*/
-Route::prefix('secondary')->name('secondary.')->group(function () {
-    Route::get('/', [BookController::class, 'secondary'])->name('index');
-    Route::get('/general/{cycle}/{classe}', [BookController::class, 'secondaryGeneral'])->name('general');
-    Route::get('/technique/{level}', [BookController::class, 'secondaryTechnique'])->name('technique');
-});
-
-/*
-|-------------------------
-| SUPERIOR
-|-------------------------
-*/
-Route::prefix('superior')->name('superior.')->group(function () {
-    Route::get('/', [BookController::class, 'superior'])->name('index');
-    Route::get('/general/{level}', [BookController::class, 'superiorGeneral'])->name('general');
-    Route::get('/technique/{level}', [BookController::class, 'superiorTechnique'])->name('technique');
-});
-
-Route::get('/niveau-filiere-superieur', [BookController::class, 'niveauFiliereSuperieur'])->name('niveau_filiere.superieur');
-
-
-Route::prefix('enseignement')->group(function () {
-
-    Route::get('/', [EducationController::class, 'index'])->name('secondary.technique');
-
-    // ===== ENS =====
-    Route::get('/ens/{annee}', [EducationController::class, 'ens'])->name('ens');
-
-    Route::get('/capceg/{matiere}', [EducationController::class, 'capceg'])->name('capceg');
-
-    Route::get('/inspecteur/{type}', [EducationController::class, 'inspecteur'])->name('inspecteur');
-
-    // ===== ENSP =====
-    Route::get('/ensp/{niveau}', [EducationController::class, 'ensp'])->name('ensp');
-
-    // ===== IDS =====
-    Route::get('/ids/{specialite}', [EducationController::class, 'ids'])->name('ids');
-
-    // ===== ENEP =====
-    Route::get('/enep/{niveau}', [EducationController::class, 'enep'])->name('enep');
-
-    // ===== UIT =====
-    Route::get('/uit/{filiere}', [EducationController::class, 'uit'])->name('uit');
-
-    // ===== SUPERIEUR TECHNIQUE =====
-    Route::get('/superieur-technique/{niveau}', [EducationController::class, 'superieurTechnique'])
-        ->name('superieur.technique');
-});
 
 /*==============
     Route de documments public
@@ -226,9 +196,159 @@ Route::get('/documents/{document}/read', [PublicDocumentController::class, 'read
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/payments/{document}',[PaymentController::class, 'create']
+    Route::get(
+        '/payments/{document}',
+        [PaymentController::class, 'create']
     )->name('payments.create');
 
-    Route::post('/payments/{document}',[PaymentController::class, 'store']
+    Route::post(
+        '/payments/{document}',
+        [PaymentController::class, 'store']
     )->name('payments.store');
+});
+/*--------------------------------------------------------------------------
+| VITRINE SECONDAIRE GENERAL
+|--------------------------------------------------------------------------
+*/
+Route::prefix('secondaire/general')
+    ->name('vitrine.secondaire.general.')
+    ->controller(VitrineSecondaireController::class)
+    ->group(function () {
+
+        Route::get('/', 'classes')
+            ->name('classes');
+
+        Route::get('/{classe}', 'matieres')
+            ->name('matieres');
+
+        Route::get('/{classe}/{matiere}', 'typeDocuments')
+            ->name('type_doc');
+
+        Route::get('/{classe}/{matiere}/{type}', 'documents')
+            ->name('documents');
+    });
+/*
+|--------------------------------------------------------------------------
+| SECONDAIRE TECHNIQUE
+|--------------------------------------------------------------------------
+*/
+Route::prefix('secondaire/technique')
+    ->name('vitrine.secondaire.technique.')
+    ->controller(VitrineTechniqueController::class)
+    ->group(function () {
+
+        Route::get('/', 'classes')
+            ->name('classes');
+
+        Route::get('/{classe}', 'matieres')
+            ->name('matieres');
+
+        Route::get('/{classe}/{matiere}', 'typeDocuments')
+            ->name('type_doc');
+
+        Route::get('/{classe}/{matiere}/{type}', 'documents')
+            ->name('documents');
+    });
+/*
+|--------------------------------------------------------------------------
+| VITRINE ENSEIGNEMENT SUPERIEUR
+|--------------------------------------------------------------------------
+-*/
+
+Route::prefix('superieur')
+->name('vitrine.superieur.')
+->controller(VitrineSuperieurController::class)
+->group(function () {
+
+    Route::get('/', 'domaines')
+        ->name('domaines');
+    Route::get('/{domaineSlug}', 'filieres')
+        ->name('filieres');
+    Route::get(
+        '/{domaineSlug}/{filiereSlug}',
+        'niveaux'
+    )->name('niveaux');
+    Route::get(
+        '/{domaineSlug}/{filiereSlug}/{niveauSlug}',
+        'typeDocuments'
+    )->name('type_doc');
+    Route::get(
+        '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{typeSlug}',
+        'documents'
+    )->name('documents');
+
+});
+ /*                                                                         |
+| -------------------------------------------------------------------------- |
+| PROFESSIONNEL - FORMATIONS SIMPLES                                         |
+| -------------------------------------------------------------------------- |
+|                                                                            |
+| ENSP / ENEP / IDS / ATE                                                    |
+|                                                                            |
+| Formation                                                                  |
+| ↓                                                                          |
+| Niveau                                                                     |
+| ↓                                                                          |
+| Type de document                                                           |
+| ↓                                                                          |
+| Document                                                                   
+|                                                                            
+| */
+
+Route::prefix('professionnel')->name('vitrine.professionnel.')->controller(VitrineProfessionnelController::class)->group(function () {
+
+    Route::get(
+        '/',
+        'formations'
+    )->name('formations');
+    
+    Route::get(
+        '/{formationSlug}',
+        'niveaux'
+    )->name('niveaux');
+
+    Route::get(
+        '/{formationSlug}/{niveauSlug}',
+        'typeDocuments'
+    )->name('type_doc');
+
+    Route::get(
+        '/{formationSlug}/{niveauSlug}/{typeSlug}',
+        'documents'
+    )->name('documents');
+
+});
+
+Route::prefix('ens')->name('vitrine.ens.')->controller(VitrineProfessionnelController::class)->group(function () {
+
+    /*
+    |----------------------------------------------------------------------
+    | Liste des programmes ENS
+    |----------------------------------------------------------------------
+    */
+
+    Route::get(
+        '/',
+        'programmes'
+    )->name('programmes');
+
+    Route::get(
+        '/{programmeSlug}',
+        'specialites'
+    )->name('specialites');
+
+    Route::get(
+        '/{programmeSlug}/{specialiteSlug}',
+        'niveauxEns'
+    )->name('niveaux');
+
+    Route::get(
+        '/{programmeSlug}/{specialiteSlug}/{niveauSlug}',
+        'typeDocumentsEns'
+    )->name('type_doc');
+
+    Route::get(
+        '/{programmeSlug}/{specialiteSlug}/{niveauSlug}/{typeSlug}',
+        'documentsEns')->name('documents');
+
 });

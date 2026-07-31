@@ -50,7 +50,6 @@
                     value="{{ old('date_naissance') }}"
                     required>
             </div>
-
             <div class="agent-field">
                 <label>Lieu de naissance</label>
                 <input type="text"

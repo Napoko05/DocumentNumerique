@@ -44,27 +44,49 @@
                         x-transition:enter-end="opacity-100 translate-y-0"
                         class="absolute top-full right-0 mt-2 w-72 bg-white rounded-xl border border-slate-200 shadow-xl py-2 z-50"
                         style="display: none;">
-                        <a href="{{ route('secondary.index') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
-                            <div class="w-10 h-10 rounded-lg bg-brand-100 flex items-center justify-center flex-shrink-0">
-                                <svg class="w-5 h-5 text-brand-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement secondaire</div>
-                                <div class="text-xs text-ink-muted mt-0.5">Général & technique</div>
-                            </div>
-                        </a>
-                        <a href="{{ route('secondary.technique', ['level' => 'bt']) }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
+
+                        <a href="{{ route('vitrine.secondaire.general.classes') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
                             <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center flex-shrink-0">
                                 <svg class="w-5 h-5 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26" />
                                 </svg>
                             </div>
                             <div>
-                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement professionnel</div>
-                                <div class="text-xs text-ink-muted mt-0.5">Technique & métiers</div>
+                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement Secondaire Géneral</div>
+                                <div class="text-xs text-ink-muted mt-0.5">General</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('vitrine.secondaire.technique.classes') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
+                            <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement Secondaire technique</div>
+                                <div class="text-xs text-ink-muted mt-0.5">secondaire</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('vitrine.superieur.domaines') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
+                            <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement superieur General</div>
+                                <div class="text-xs text-ink-muted mt-0.5">superieur</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('vitrine.professionnel.formations') }}" class="flex items-start gap-3 px-4 py-3 hover:bg-brand-50 transition-colors group">
+                            <div class="w-10 h-10 rounded-lg bg-accent-100 flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-accent-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium text-ink group-hover:text-brand-800 transition-colors">Enseignement professionel</div>
+                                <div class="text-xs text-ink-muted mt-0.5">professionnel</div>
                             </div>
                         </a>
                     </div>
@@ -131,9 +153,29 @@
             style="display: none;">
             <div class="px-4 py-3 space-y-1">
                 <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">Accueil</a>
-                <a href="{{ route('secondary.index') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">Enseignement secondaire</a>
-                <a href="{{ route('secondary.technique', ['level' => 'bt']) }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">Enseignement professionnel</a>
-                <a href="#apropos" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">À propos</a>
+                <a href="{{ route('home') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    Accueil
+                </a>
+
+                <a href="{{ route('vitrine.secondaire.general.classes') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    Enseignement secondaire général
+                </a>
+
+                <a href="{{ route('vitrine.secondaire.technique.classes') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    Enseignement secondaire technique
+                </a>
+
+                <a href="{{ route('vitrine.superieur.domaines') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    Enseignement supérieur
+                </a>
+
+                <a href="{{ route('vitrine.professionnel.formations') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    Enseignement professionnel
+                </a>
+
+                <a href="#apropos" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">
+                    À propos
+                </a>
                 @auth
                 <a href="{{ route('profile.edit') }}" class="block px-3 py-2 rounded-lg font-medium text-sm text-ink-soft hover:bg-brand-50 hover:text-brand-800">Profil</a>
                 @endauth
@@ -185,7 +227,7 @@
                         Découvrez, lisez et louez des livres numériques dans une large sélection d'œuvres scientifiques. Conçu pour les étudiants, les chercheurs et les curieux.
                     </p>
                     <div class="flex flex-wrap gap-3 mb-10">
-                        <a href="{{ route('books.index') }}" class="btn-primary">
+                        <a href="#" class="btn-primary">
                             Explorer les livres
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -290,6 +332,276 @@
             </div>
         </div>
     </section>
+
+    {{-- ====================== CAROUSEL CATÉGORIES D'ENSEIGNEMENT ====================== --}}
+    <section class="section bg-white border-y border-slate-200 overflow-hidden">
+        <div class="container-wide">
+
+            {{-- En-tête --}}
+            <div class="flex items-end justify-between mb-10">
+                <div>
+                    <p class="text-brand-700 font-semibold text-sm mb-1">Nos catégories</p>
+                    <h2 class="font-heading text-3xl font-extrabold text-ink">
+                        Niveaux d'enseignement
+                    </h2>
+                </div>
+                {{-- Flèches navigation --}}
+                <div class="flex items-center gap-2">
+                    <button
+                        id="carousel-prev"
+                        aria-label="Précédent"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-ink-soft hover:bg-brand-50 hover:border-brand-300 hover:text-brand-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                        </svg>
+                    </button>
+                    <button
+                        id="carousel-next"
+                        aria-label="Suivant"
+                        class="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-ink-soft hover:bg-brand-50 hover:border-brand-300 hover:text-brand-700 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            {{-- Track --}}
+            <div class="relative">
+                <div
+                    id="carousel-track"
+                    class="flex gap-5 transition-transform duration-400 ease-in-out">
+
+                    {{-- Carte 1 : Secondaire général --}}
+                    <a href="{{ route('vitrine.secondaire.general.classes') }}"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-brand-50 to-brand-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-brand-700 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-brand-800 transition-colors">
+                                        Secondaire général
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">6e → Terminale</p>
+                                </div>
+                            </div>
+                            {{-- Décoratif --}}
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-brand-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                    {{-- Carte 2 : Enseignement technique --}}
+                    <a href="{{ route('vitrine.secondaire.technique.classes', ['level' => 'bt']) }}"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-accent-50 to-accent-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-accent-600 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-accent-700 transition-colors">
+                                        Enseignement technique
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">BT · CAP · BEP</p>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-accent-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                    {{-- Carte 3 : Supérieur --}}
+                    <a href="{{ route('vitrine.superieur.domaines') }}"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-emerald-50 to-emerald-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-emerald-700 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-emerald-700 transition-colors">
+                                        Enseignement supérieur
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">Licence · Master · Doctorat</p>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-emerald-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                    {{-- Carte 4 : ENS / Formation --}}
+                    <a href="{{ route('vitrine.professionnel.formations') }}"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-purple-50 to-purple-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-purple-700 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-purple-700 transition-colors">
+                                        ENS · Formation
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">Enseignants · Inspecteurs</p>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-purple-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                    {{-- Carte 5 : ENSP / Santé --}}
+                    <a href="#"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-rose-50 to-rose-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-rose-600 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-rose-700 transition-colors">
+                                        Sciences de la santé
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">ENSP · IDS · Paramédical</p>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-rose-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                    {{-- Carte 6 : UIT / Informatique --}}
+                    <a href="#"
+                        class="carousel-card flex-none w-[calc(50%-10px)] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] group">
+                        <div class="relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow bg-gradient-to-br from-cyan-50 to-cyan-100 h-56">
+                            <div class="absolute inset-0 flex flex-col justify-between p-6">
+                                <div class="w-12 h-12 rounded-xl bg-cyan-700 flex items-center justify-center shadow">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-heading font-bold text-lg text-ink leading-snug mb-1 group-hover:text-cyan-700 transition-colors">
+                                        Informatique · UIT
+                                    </h3>
+                                    <p class="text-xs text-ink-muted">DUT · Licence Pro</p>
+                                </div>
+                            </div>
+                            <div class="absolute -bottom-4 -right-4 w-24 h-24 rounded-full bg-cyan-200/50 group-hover:scale-110 transition-transform duration-300"></div>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
+            {{-- Dots indicateurs --}}
+            <div id="carousel-dots" class="flex justify-center gap-2 mt-8">
+                {{-- Générés par JS --}}
+            </div>
+
+        </div>
+
+        {{-- Script carousel (pur JS vanilla, pas de dépendance) --}}
+        <script>
+            (function() {
+                const track = document.getElementById('carousel-track');
+                const btnPrev = document.getElementById('carousel-prev');
+                const btnNext = document.getElementById('carousel-next');
+                const dotsWrap = document.getElementById('carousel-dots');
+                const cards = Array.from(track.querySelectorAll('.carousel-card'));
+
+                // Détermine le nb de cartes visibles selon la largeur de l'écran
+                function visibleCount() {
+                    if (window.innerWidth >= 1024) return 4; // lg
+                    if (window.innerWidth >= 640) return 2; // sm/md
+                    return 2; // mobile
+                }
+
+                let current = 0;
+                const total = cards.length;
+
+                function maxIndex() {
+                    return Math.max(0, total - visibleCount());
+                }
+
+                // Largeur d'une carte + gap
+                function stepPx() {
+                    const card = cards[0];
+                    const gap = 20; // gap-5 = 20px
+                    return card.offsetWidth + gap;
+                }
+
+                function goTo(idx) {
+                    current = Math.max(0, Math.min(idx, maxIndex()));
+                    track.style.transform = `translateX(-${current * stepPx()}px)`;
+                    updateDots();
+                }
+
+                // Génère les dots
+                function buildDots() {
+                    dotsWrap.innerHTML = '';
+                    const count = maxIndex() + 1;
+                    for (let i = 0; i < count; i++) {
+                        const dot = document.createElement('button');
+                        dot.className = 'w-2 h-2 rounded-full transition-all duration-200 ' +
+                            (i === current ? 'bg-brand-700 w-6' : 'bg-slate-300 hover:bg-slate-400');
+                        dot.setAttribute('aria-label', `Slide ${i + 1}`);
+                        dot.addEventListener('click', () => goTo(i));
+                        dotsWrap.appendChild(dot);
+                    }
+                }
+
+                function updateDots() {
+                    const dots = dotsWrap.querySelectorAll('button');
+                    dots.forEach((dot, i) => {
+                        dot.className = 'w-2 h-2 rounded-full transition-all duration-200 ' +
+                            (i === current ? 'bg-brand-700 w-6' : 'bg-slate-300 hover:bg-slate-400');
+                    });
+                }
+
+                btnPrev.addEventListener('click', () => goTo(current - 1));
+                btnNext.addEventListener('click', () => goTo(current + 1));
+
+                // Swipe tactile (mobile)
+                let startX = 0;
+                track.addEventListener('touchstart', e => {
+                    startX = e.touches[0].clientX;
+                }, {
+                    passive: true
+                });
+                track.addEventListener('touchend', e => {
+                    const diff = startX - e.changedTouches[0].clientX;
+                    if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+                });
+
+                // Recalcul au resize
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        current = Math.min(current, maxIndex());
+                        buildDots();
+                        goTo(current);
+                    }, 150);
+                });
+
+                // Init
+                buildDots();
+                goTo(0);
+            })();
+        </script>
+    </section>
+
     {{-- DOCUMENTS RECENTS --}}
     <section class="bg-white border-y border-slate-200 py-16">
 
@@ -513,7 +825,7 @@
                     <h4 class="font-heading font-bold text-white mb-4 text-sm uppercase tracking-wider">Navigation</h4>
                     <ul class="space-y-2 text-sm">
                         <li><a href="{{ route('home') }}" class="text-slate-400 hover:text-white transition-colors">Accueil</a></li>
-                        <li><a href="{{ route('books.index') }}" class="text-slate-400 hover:text-white transition-colors">Catalogue</a></li>
+                        <li><a href="#" class="text-slate-400 hover:text-white transition-colors">Catalogue</a></li>
                         <li><a href="#apropos" class="text-slate-400 hover:text-white transition-colors">À propos</a></li>
                         <li><a href="{{ route('contact.form') }}" class="text-slate-400 hover:text-white transition-colors">Contact</a></li>
                     </ul>

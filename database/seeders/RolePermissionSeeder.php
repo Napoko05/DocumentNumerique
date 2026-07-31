@@ -37,6 +37,20 @@ class RolePermissionSeeder extends Seeder
             'manage.payments',
             'approve.publications',
             'view.reports',
+            ' formation.create',
+            'formation.edit',
+            'formation.delete',
+
+            'filiere.create',
+            'filiere.edit',
+            'filiere.delete',
+            'level.create',
+            'level.edit',
+            'level.delete',
+
+            'subject.create',
+            'subject.edit',
+            'subject.delete',
         ];
 
         $journalistPermissions = [
