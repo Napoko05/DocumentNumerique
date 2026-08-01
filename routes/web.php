@@ -25,6 +25,8 @@ use App\Http\Controllers\Vitrine\VitrineSuperieurController;
 use App\Http\Controllers\Vitrine\VitrineProfessionnelController;
 use App\Http\Controllers\Users\JournalistController;
 use App\Http\Controllers\Vitrine\VitrineTechniqueController;
+use App\Http\Controllers\Admin\Secondaire\LevelController;
+use App\Http\Controllers\Admin\Secondaire\SubjectController;
 
 
 use App\Http\Controllers;
@@ -256,29 +258,28 @@ Route::prefix('secondaire/technique')
 -*/
 
 Route::prefix('superieur')
-->name('vitrine.superieur.')
-->controller(VitrineSuperieurController::class)
-->group(function () {
+    ->name('vitrine.superieur.')
+    ->controller(VitrineSuperieurController::class)
+    ->group(function () {
 
-    Route::get('/', 'domaines')
-        ->name('domaines');
-    Route::get('/{domaineSlug}', 'filieres')
-        ->name('filieres');
-    Route::get(
-        '/{domaineSlug}/{filiereSlug}',
-        'niveaux'
-    )->name('niveaux');
-    Route::get(
-        '/{domaineSlug}/{filiereSlug}/{niveauSlug}',
-        'typeDocuments'
-    )->name('type_doc');
-    Route::get(
-        '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{typeSlug}',
-        'documents'
-    )->name('documents');
-
-});
- /*                                                                         |
+        Route::get('/', 'domaines')
+            ->name('domaines');
+        Route::get('/{domaineSlug}', 'filieres')
+            ->name('filieres');
+        Route::get(
+            '/{domaineSlug}/{filiereSlug}',
+            'niveaux'
+        )->name('niveaux');
+        Route::get(
+            '/{domaineSlug}/{filiereSlug}/{niveauSlug}',
+            'typeDocuments'
+        )->name('type_doc');
+        Route::get(
+            '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{typeSlug}',
+            'documents'
+        )->name('documents');
+    });
+/*                                                                         |
 | -------------------------------------------------------------------------- |
 | PROFESSIONNEL - FORMATIONS SIMPLES                                         |
 | -------------------------------------------------------------------------- |
@@ -301,7 +302,7 @@ Route::prefix('professionnel')->name('vitrine.professionnel.')->controller(Vitri
         '/',
         'formations'
     )->name('formations');
-    
+
     Route::get(
         '/{formationSlug}',
         'niveaux'
@@ -316,7 +317,6 @@ Route::prefix('professionnel')->name('vitrine.professionnel.')->controller(Vitri
         '/{formationSlug}/{niveauSlug}/{typeSlug}',
         'documents'
     )->name('documents');
-
 });
 
 Route::prefix('ens')->name('vitrine.ens.')->controller(VitrineProfessionnelController::class)->group(function () {
@@ -349,6 +349,91 @@ Route::prefix('ens')->name('vitrine.ens.')->controller(VitrineProfessionnelContr
 
     Route::get(
         '/{programmeSlug}/{specialiteSlug}/{niveauSlug}/{typeSlug}',
-        'documentsEns')->name('documents');
-
+        'documentsEns'
+    )->name('documents');
 });
+/*========================
+   COntroller Admin pour l'ajout de Classe et matiere
+   ============================
+*/
+
+Route::prefix('admin/secondaire')
+    ->name('admin.')
+    ->middleware([
+        'auth:staff',
+        'role:admin'
+    ])
+    ->group(function () {
+
+        Route::prefix('secondaire')
+            ->name('secondaire.')
+            ->group(function () {
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | GESTION DES CLASSES
+                |--------------------------------------------------------------------------
+                */
+
+                Route::resource(
+                    'classes',
+                    LevelController::class
+                );
+
+
+                Route::patch(
+                    'classes/{level}/toggle',
+                    [
+                        LevelController::class,
+                        'toggle'
+                    ]
+                )
+                    ->name('classes.toggle');
+
+                Route::resource(
+                    'matieres',
+                    SubjectController::class
+                );
+
+
+                Route::patch(
+                    'matieres/{subject}/toggle',
+                    [
+                        SubjectController::class,
+                        'toggle'
+                    ]
+                )
+                    ->name('matieres.toggle');
+            });
+    });
+    
+/*======================
+      Ajout de filiere par admin
+      ============
+      */
+    Route::prefix('admin/superieur')
+    ->name('admin.superieur.')
+    ->middleware([
+        'auth:staff',
+        'role:admin'
+    ])
+    ->group(function(){
+
+
+        Route::resource(
+            'filieres',
+            \App\Http\Controllers\Admin\Superieur\FiliereController::class
+        );
+
+
+        Route::patch(
+            'filieres/{filiere}/toggle',
+            [
+                \App\Http\Controllers\Admin\Superieur\FiliereController::class,
+                'toggle'
+            ]
+        )
+        ->name('filieres.toggle');
+
+    });

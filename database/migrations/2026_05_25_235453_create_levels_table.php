@@ -13,7 +13,6 @@ return new class extends Migration
 
             $table->id();
 
-
             /*
             |--------------------------------------------------------------------------
             | FORMATION
@@ -26,7 +25,6 @@ return new class extends Migration
             | - ENS
             |
             */
-
             $table->foreignId('formation_id')
                 ->nullable()
                 ->constrained('formations')
@@ -45,7 +43,6 @@ return new class extends Migration
             | Niveau
             |
             */
-
             $table->foreignId('filiere_id')
                 ->nullable()
                 ->constrained('filieres')
@@ -66,13 +63,10 @@ return new class extends Migration
             | Level
             |
             */
-
             $table->foreignId('program_id')
                 ->nullable()
                 ->constrained('programs')
                 ->nullOnDelete();
-
-
 
             $table->foreignId('specialite_id')
                 ->nullable()
@@ -83,20 +77,15 @@ return new class extends Migration
             | INFORMATIONS NIVEAU
             |--------------------------------------------------------------------------
             */
-
             $table->string('name');
 
             $table->string('slug');
 
-
             $table->unsignedTinyInteger('order')
                 ->default(1);
 
-
             $table->boolean('is_active')
                 ->default(true);
-
-
 
             $table->timestamps();
 
@@ -128,7 +117,6 @@ return new class extends Migration
             |      premiere-annee
             |
             */
-
             $table->unique(
                 [
                     'formation_id',

@@ -10,16 +10,30 @@ class Subject extends Model
     use HasFactory;
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | CHAMPS AUTORISÉS
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
 
         'level_id',
+
         'name',
+
         'slug',
+
         'is_active',
 
     ];
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | CASTS
+    |--------------------------------------------------------------------------
+    */
 
     protected $casts = [
 
@@ -28,18 +42,18 @@ class Subject extends Model
     ];
 
 
-
     /*
     |--------------------------------------------------------------------------
-    | NIVEAU CONCERNE
+    | CLASSE / NIVEAU
     |--------------------------------------------------------------------------
     */
 
     public function level()
     {
-        return $this->belongsTo(Level::class);
+        return $this->belongsTo(
+            Level::class
+        );
     }
-
 
 
     /*
@@ -50,20 +64,80 @@ class Subject extends Model
 
     public function documents()
     {
-        return $this->hasMany(Document::class);
+        return $this->hasMany(
+            Document::class
+        );
     }
-
 
 
     /*
     |--------------------------------------------------------------------------
-    | SCOPES
+    | SCOPE : MATIÈRES ACTIVES
     |--------------------------------------------------------------------------
     */
 
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->where(
+            'is_active',
+            true
+        );
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPE : MATIÈRES DU SECONDAIRE
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeSecondary($query)
+    {
+        return $query->whereHas(
+            'level',
+            function ($levelQuery) {
+
+                $levelQuery->secondary();
+
+            }
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPE : MATIÈRES DU SUPÉRIEUR
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeHigher($query)
+    {
+        return $query->whereHas(
+            'level',
+            function ($levelQuery) {
+
+                $levelQuery->higher();
+
+            }
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCOPE : MATIÈRES DU PROFESSIONNEL
+    |--------------------------------------------------------------------------
+    */
+
+    public function scopeProfessional($query)
+    {
+        return $query->whereHas(
+            'level',
+            function ($levelQuery) {
+
+                $levelQuery->professional();
+
+            }
+        );
+    }
 }

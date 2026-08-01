@@ -11,6 +11,10 @@ use App\Models\Subject;
 
 class VitrineSecondaireController extends Controller
 {
+
+    /**
+     * Formation secondaire
+     */
     protected function formation(): Formation
     {
         return Formation::where('slug', 'secondaire-general')
@@ -18,49 +22,104 @@ class VitrineSecondaireController extends Controller
             ->firstOrFail();
     }
 
+
+
+    /**
+     * Liste des classes
+     */
     public function classes()
     {
         $formation = $this->formation();
 
+
         $classes = Level::where('formation_id', $formation->id)
+
+            // uniquement secondaire
+            ->whereNull('filiere_id')
+
             ->where('is_active', true)
+
             ->orderBy('order')
+
             ->get();
 
+
+
         foreach ($classes as $classe) {
+
             $classe->documents_count = Document::where('formation_id', $formation->id)
+
                 ->where('level_id', $classe->id)
+
                 ->where('status', 'published')
+
                 ->count();
+
         }
+
+
 
         return view(
             'niveau.secondaire.classes',
-            compact('formation', 'classes')
+            compact(
+                'formation',
+                'classes'
+            )
         );
     }
 
+
+
+
+    /**
+     * Liste des matières d'une classe
+     */
     public function matieres(string $classeSlug)
     {
+
         $formation = $this->formation();
 
+
+
         $classe = Level::where('formation_id', $formation->id)
+
             ->where('slug', $classeSlug)
+
             ->where('is_active', true)
+
             ->firstOrFail();
 
+
+
+
         $matieres = Subject::where('level_id', $classe->id)
+
             ->where('is_active', true)
+
             ->orderBy('name')
+
             ->get();
 
+
+
+
         foreach ($matieres as $matiere) {
+
+
             $matiere->documents_count = Document::where('formation_id', $formation->id)
+
                 ->where('level_id', $classe->id)
+
                 ->where('subject_id', $matiere->id)
+
                 ->where('status', 'published')
+
                 ->count();
+
+
         }
+
+
 
         return view(
             'niveau.secondaire.matieres',
@@ -70,36 +129,96 @@ class VitrineSecondaireController extends Controller
                 'matieres'
             )
         );
+
     }
 
+
+
+
+
+    /**
+     * Types de documents d'une matière
+     */
     public function typeDocuments(
         string $classeSlug,
         string $matiereSlug
-    ) {
+    )
+    {
+
         $formation = $this->formation();
 
+
+
+
         $classe = Level::where('formation_id', $formation->id)
+
             ->where('slug', $classeSlug)
+
             ->where('is_active', true)
+
             ->firstOrFail();
+
+
+
+
 
         $matiere = Subject::where('level_id', $classe->id)
+
             ->where('slug', $matiereSlug)
+
             ->where('is_active', true)
+
             ->firstOrFail();
 
+
+
+
+
         $types = DocumentType::where('is_active', true)
+
+            ->whereHas('documents', function($query) use ($formation,$classe,$matiere){
+
+                $query
+
+                    ->where('formation_id',$formation->id)
+
+                    ->where('level_id',$classe->id)
+
+                    ->where('subject_id',$matiere->id)
+
+                    ->where('status','published');
+
+            })
+
             ->orderBy('name')
+
             ->get();
 
+
+
+
+
+
         foreach ($types as $type) {
-            $type->documents_count = Document::where('formation_id', $formation->id)
-                ->where('level_id', $classe->id)
-                ->where('subject_id', $matiere->id)
-                ->where('document_type_id', $type->id)
-                ->where('status', 'published')
+
+
+            $type->documents_count = Document::where('formation_id',$formation->id)
+
+                ->where('level_id',$classe->id)
+
+                ->where('subject_id',$matiere->id)
+
+                ->where('document_type_id',$type->id)
+
+                ->where('status','published')
+
                 ->count();
+
         }
+
+
+
+
 
         return view(
             'niveau.secondaire.type_doc',
@@ -110,44 +229,92 @@ class VitrineSecondaireController extends Controller
                 'types'
             )
         );
+
     }
 
+
+
+
+
+    /**
+     * Liste des documents
+     */
     public function documents(
         string $classeSlug,
         string $matiereSlug,
         string $typeSlug
-    ) {
+    )
+    {
+
         $formation = $this->formation();
 
-        $classe = Level::where('formation_id', $formation->id)
-            ->where('slug', $classeSlug)
-            ->where('is_active', true)
+
+
+
+        $classe = Level::where('formation_id',$formation->id)
+
+            ->where('slug',$classeSlug)
+
+            ->where('is_active',true)
+
             ->firstOrFail();
 
-        $matiere = Subject::where('level_id', $classe->id)
-            ->where('slug', $matiereSlug)
-            ->where('is_active', true)
+
+
+
+
+        $matiere = Subject::where('level_id',$classe->id)
+
+            ->where('slug',$matiereSlug)
+
+            ->where('is_active',true)
+
             ->firstOrFail();
 
-        $type = DocumentType::where('slug', $typeSlug)
-            ->where('is_active', true)
+
+
+
+
+        $type = DocumentType::where('slug',$typeSlug)
+
+            ->where('is_active',true)
+
             ->firstOrFail();
+
+
+
+
+
 
         $documents = Document::with([
+
                 'staff',
                 'formation',
                 'level',
                 'subject',
                 'documentType',
                 'ratings'
+
             ])
-            ->where('formation_id', $formation->id)
-            ->where('level_id', $classe->id)
-            ->where('subject_id', $matiere->id)
-            ->where('document_type_id', $type->id)
-            ->where('status', 'published')
+
+            ->where('formation_id',$formation->id)
+
+            ->where('level_id',$classe->id)
+
+            ->where('subject_id',$matiere->id)
+
+            ->where('document_type_id',$type->id)
+
+            ->where('status','published')
+
             ->latest()
+
             ->paginate(12);
+
+
+
+
+
 
         return view(
             'niveau.secondaire.documents',
@@ -159,5 +326,7 @@ class VitrineSecondaireController extends Controller
                 'documents'
             )
         );
+
     }
+
 }

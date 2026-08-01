@@ -172,6 +172,175 @@
 
         </div>
 
+        {{-- Enseignement secondaire --}}
+        <div x-data="{ openSecondaire: false }" class="space-y-1">
+
+            {{-- Bouton principal --}}
+            <button @click="openSecondaire = !openSecondaire"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+        {{ request()->routeIs('admin.secondaire.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                <svg class="w-4 h-4 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422A12.083 12.083 0 0118 20.5c-1.657.944-3.666 1.5-6 1.5s-4.343-.556-6-1.5a12.083 12.083 0 01-.16-9.922L12 14z" />
+
+                </svg>
+
+                <span class="flex-1 text-left">
+                    Enseignement secondaire
+                </span>
+
+
+                <svg class="w-4 h-4 transition-transform duration-300"
+                    :class="openSecondaire ? 'rotate-90' : ''"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7" />
+
+                </svg>
+            </button>
+
+            {{-- Sous-menu --}}
+            <div x-show="openSecondaire"
+                x-transition
+                class="mt-1 ml-6 space-y-1">
+                {{-- Classes --}}
+                <a href="{{ route('admin.secondaire.classes.index') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.classes.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>🏫</span>
+
+                    Gestion des classes
+
+                </a>
+                {{-- Ajouter classe --}}
+                <a href="{{ route('admin.secondaire.classes.create') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.classes.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>➕</span>
+
+                    Ajouter une classe
+
+                </a>
+                {{-- Matières --}}
+                <a href="{{ route('admin.secondaire.matieres.index') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.subjects.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>📚</span>
+
+                    Gestion des matières
+
+                </a>
+                {{-- Ajouter matière --}}
+                <a href="{{ route('admin.secondaire.matieres.create') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.subjects.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>➕</span>
+
+                    Ajouter une matière
+                </a>
+            </div>
+        </div>
+
+         {{-- Enseignement superieur --}}
+        <div x-data="{ openSecondaire: false }" class="space-y-1">
+
+            {{-- Bouton principal --}}
+            <button @click="openSecondaire = !openSecondaire"
+                class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors
+        {{ request()->routeIs('admin.secondaire.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                <svg class="w-4 h-4 shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 14l9-5-9-5-9 5 9 5zM12 14l6.16-3.422A12.083 12.083 0 0118 20.5c-1.657.944-3.666 1.5-6 1.5s-4.343-.556-6-1.5a12.083 12.083 0 01-.16-9.922L12 14z" />
+
+                </svg>
+
+                <span class="flex-1 text-left">
+                    Enseignement Superieur
+                </span>
+
+
+                <svg class="w-4 h-4 transition-transform duration-300"
+                    :class="openSecondaire ? 'rotate-90' : ''"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
+
+                    <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7" />
+
+                </svg>
+            </button>
+
+            {{-- Sous-menu --}}
+            <div x-show="openSecondaire"
+                x-transition
+                class="mt-1 ml-6 space-y-1">
+                {{-- Classes --}}
+                <a href="{{ route('admin.superieur.filieres.index') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.classes.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>🏫</span>
+
+                    Gestion des filieres
+
+                </a>
+                {{-- Ajouter classe --}}
+                <a href="{{ route(''admin.superieur.filieres.create') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.classes.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>➕</span>
+
+                    Ajouter une filiere
+
+                </a>
+                {{-- Matières --}}
+                <a href="{{ route('admin.secondaire.matieres.index') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.subjects.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>📚</span>
+
+                    Gestion des modules
+
+                </a>
+                {{-- Ajouter matière --}}
+                <a href="{{ route('admin.secondaire.matieres.create') }}"
+                    class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
+            {{ request()->routeIs('admin.secondaire.subjects.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+
+                    <span>➕</span>
+
+                    Ajouter un module
+                </a>
+            </div>
+        </div>
         {{-- Produits (Documents) --}}
         <a href="{{ route('admin.products.index') }}"
             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors

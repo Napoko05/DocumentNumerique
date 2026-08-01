@@ -17,6 +17,9 @@
     'resources/js/app.js',
     'resources/css/admin/style_list_user.css',
     'resources/css/admin/style_agent.css',
+    'resources/css/admin/style_ajout_matiere.css',
+     'resources/css/admin/create_matieres.css',
+
     ])
     @yield('head')
 </head>
