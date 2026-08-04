@@ -1,570 +1,1100 @@
 @extends('layouts.journalist_app')
 
-@section('page-title', 'Publier un document')
+@section('title', 'Ajouter un document')
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-orange-50 py-10 px-4">
+<div class="container py-4">
 
-    <div class="max-w-5xl mx-auto">
 
-        <!-- HEADER -->
+    {{-- ========================================================= --}}
+    {{-- TITRE --}}
+    {{-- ========================================================= --}}
 
-        <div class="text-center mb-10">
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-            <h1 class="text-4xl font-bold text-blue-700">
-                📚 Publier un document
-            </h1>
+        <div>
 
-            <p class="text-gray-600 mt-2">
-                Publiez un document académique et classez-le correctement afin qu'il soit facilement retrouvé par les utilisateurs.
+            <h2 class="fw-bold mb-1">
+
+                Ajouter un document
+
+            </h2>
+
+            <p class="text-muted mb-0">
+
+                Complétez les informations puis publiez votre document.
+
             </p>
-
         </div>
 
-        <!-- ERREURS -->
+        <a
+            href="{{ route('journaliste.documents.index') }}"
+            class="btn btn-outline-secondary">
 
-        @if ($errors->any())
+            <i class="bi bi-arrow-left"></i>
 
-        <div class="mb-6 rounded-xl bg-red-100 border border-red-300 p-4">
+            Retour
 
-            <ul class="list-disc pl-5 text-red-700">
+        </a>
+    </div>
 
-                @foreach ($errors->all() as $error)
+    {{-- ========================================================= --}}
+    {{-- BARRE DE PROGRESSION --}}
+    {{-- ========================================================= --}}
 
-                <li>{{ $error }}</li>
+    <div class="card shadow-sm border-0 mb-4">
 
-                @endforeach
+        <div class="card-body">
 
-            </ul>
+            <div class="row text-center">
+
+                <div class="col-md-4">
+
+                    <div
+                        class="step-indicator active"
+                        id="indicator-1">
+
+                        <span>
+
+                            1
+
+                        </span>
+
+                    </div>
+
+                    <strong>
+
+                        Parcours
+
+                    </strong>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div
+                        class="step-indicator"
+                        id="indicator-2">
+
+                        <span>
+
+                            2
+
+                        </span>
+
+                    </div>
+
+                    <strong>
+
+                        Document
+
+                    </strong>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <div
+                        class="step-indicator"
+                        id="indicator-3">
+
+                        <span>
+
+                            3
+
+                        </span>
+
+                    </div>
+
+                    <strong>
+
+                        Récapitulatif
+
+                    </strong>
+
+                </div>
+
+            </div>
 
         </div>
-
-        @endif
-
-        <form action="{{ route('journaliste.documents.store') }}"
-            method="POST"
-            enctype="multipart/form-data"
-            class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
-
-            @csrf
-
-            <!-- ============================= -->
-            <!-- INFORMATIONS GENERALES -->
-            <!-- ============================= -->
-
-            <div class="border-b pb-6 mb-8">
-
-                <h2 class="text-2xl font-bold text-blue-700 mb-6">
-                    📄 Informations générales
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <!-- TITRE -->
-
-                    <div class="md:col-span-2">
-
-                        <label class="font-semibold text-gray-700">
-                            Titre du document *
-                        </label>
-
-                        <input
-                            type="text"
-                            name="title"
-                            value="{{ old('title') }}"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Ex : Cours complet de Mathématiques"
-                            required>
-
-                    </div>
-
-                    <!-- DESCRIPTION -->
-
-                    <div class="md:col-span-2">
-
-                        <label class="font-semibold text-gray-700">
-                            Description
-                        </label>
-
-                        <textarea
-                            name="description"
-                            rows="4"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Décrivez brièvement ce document...">{{ old('description') }}</textarea>
-
-                    </div>
-
-                    <!-- RESUME -->
-
-                    <div class="md:col-span-2">
-
-                        <label class="font-semibold text-gray-700">
-                            Résumé / Contenu
-                        </label>
-
-                        <textarea
-                            name="content"
-                            rows="5"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                            placeholder="Résumé du document...">{{ old('content') }}</textarea>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- ============================= -->
-            <!-- CLASSIFICATION -->
-            <!-- ============================= -->
-
-            <div class="border-b pb-6 mb-8">
-
-                <h2 class="text-2xl font-bold text-orange-600 mb-6">
-                    🎓 Classification académique
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <!-- CATEGORIE -->
-
-                    <div>
-
-                        <label class="font-semibold text-gray-700">
-                            Catégorie d'enseignement *
-                        </label>
-
-                        <select
-                            id="teaching_category"
-                            name="teaching_category_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                            required>
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($categories as $categorie)
-
-                            <option value="{{ $categorie->id }}">
-
-                                {{ $categorie->name }}
-
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-                    <!-- FORMATION -->
-
-                    <div id="formationDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Formation
-                        </label>
-
-                        <select
-                            id="formation"
-                            name="formation_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($formations as $formation)
-
-                            <option value="{{ $formation->id }}">
-                                {{ $formation->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <!-- FILIERE -->
-
-                    <div id="filiereDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Filière
-                        </label>
-
-                        <select
-                            id="filiere"
-                            name="filiere_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($filieres as $filiere)
-
-                            <option value="{{ $filiere->id }}">
-                                {{ $filiere->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <!-- SPECIALITE -->
-
-                    <div id="specialiteDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Spécialité
-                        </label>
-
-                        <select
-                            id="specialite"
-                            name="specialite_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($specialites as $specialite)
-
-                            <option value="{{ $specialite->id }}">
-                                {{ $specialite->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <!-- NIVEAU -->
-
-                    <div id="levelDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Niveau
-                        </label>
-
-                        <select
-                            id="level"
-                            name="level_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($levels as $level)
-
-                            <option value="{{ $level->id }}">
-                                {{ $level->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <!-- MATIERE -->
-
-                    <div id="subjectDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Matière
-                        </label>
-
-                        <select
-                            id="subject"
-                            name="subject_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500">
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($subjects as $subject)
-
-                            <option value="{{ $subject->id }}">
-                                {{ $subject->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                    <!-- TYPE DE DOCUMENT -->
-
-                    <div>
-
-                        <label class="font-semibold text-gray-700">
-                            Type de document *
-                        </label>
-
-                        <select
-                            name="document_type_id"
-                            class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-                            required>
-
-                            <option value="">Sélectionner...</option>
-
-                            @foreach($documentTypes as $type)
-
-                            <option value="{{ $type->id }}">
-                                {{ $type->name }}
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
-                </div>
-
-            </div>
-            <!-- ========================================= -->
-            <!-- FICHIERS -->
-            <!-- ========================================= -->
-
-            <div class="border-b pb-8 mb-8">
-
-                <h2 class="text-2xl font-bold text-green-700 mb-6">
-                    📂 Fichiers
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                    <!-- IMAGE -->
-
-                    <div>
-
-                        <label class="font-semibold text-gray-700">
-                            Image de couverture
-                        </label>
-
-                        <input
-                            type="file"
-                            name="cover_image"
-                            accept="image/*"
-                            class="mt-2 w-full rounded-xl border border-gray-300 p-3">
-
-                    </div>
-
-                    <!-- DOCUMENT -->
-
-                    <div>
-
-                        <label class="font-semibold text-gray-700">
-                            Document (PDF) *
-                        </label>
-
-                        <input
-                            type="file"
-                            name="document_file"
-                            accept=".pdf"
-                            required
-                            class="mt-2 w-full rounded-xl border border-gray-300 p-3">
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- ========================================= -->
-            <!-- TAGS -->
-            <!-- ========================================= -->
-
-            <div class="border-b pb-8 mb-8">
-
-                <h2 class="text-2xl font-bold text-purple-700 mb-6">
-                    🏷️ Mots-clés
-                </h2>
-
-                <label class="font-semibold text-gray-700">
-                    Sélectionnez les tags
-                </label>
-
-                <select
-                    name="tags[]"
-                    multiple
-                    class="mt-2 w-full rounded-xl border-gray-300 focus:border-purple-500 focus:ring-purple-500 h-48">
-
-                    @foreach($tags as $tag)
-
-                    <option value="{{ $tag->id }}">
-
-                        {{ $tag->name }}
-
-                    </option>
-
-                    @endforeach
-
-                </select>
-
-                <p class="text-sm text-gray-500 mt-2">
-                    Maintenez CTRL pour sélectionner plusieurs tags.
-                </p>
-
-            </div>
-
-            <!-- ========================================= -->
-            <!-- ACCES -->
-            <!-- ========================================= -->
-
-            <div class="border-b pb-8 mb-8">
-
-                <h2 class="text-2xl font-bold text-orange-700 mb-6">
-                    💰 Publication
-                </h2>
-
-                <div class="grid md:grid-cols-2 gap-6">
-
-                    <div>
-
-                        <label class="font-semibold text-gray-700">
-                            Type d'accès
-                        </label>
-
-                        <select
-                            id="access_type"
-                            name="access_type"
-                            class="mt-2 w-full rounded-xl border-gray-300">
-
-                            <option value="free">🟢 Gratuit</option>
-
-                            <option value="premium">🟠 Premium</option>
-
-                        </select>
-
-                    </div>
-
-                    <div id="priceDiv" class="hidden">
-
-                        <label class="font-semibold text-gray-700">
-                            Prix (FCFA)
-                        </label>
-
-                        <input
-                            type="number"
-                            name="price"
-                            class="mt-2 w-full rounded-xl border-gray-300"
-                            placeholder="500">
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <!-- ========================================= -->
-            <!-- BOUTONS -->
-            <!-- ========================================= -->
-
-            <div class="flex flex-col md:flex-row gap-4 justify-end">
-
-                <a href="{{ route('journaliste.documents.index') }}"
-                    class="px-6 py-3 rounded-xl bg-gray-200 hover:bg-gray-300 text-center">
-
-                    Retour
-
-                </a>
-
-                <button
-                    type="submit"
-                    class="px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold">
-
-                    🚀 Publier le document
-
-                </button>
-
-            </div>
-
-        </form>
 
     </div>
+    {{-- ========================================================= --}}
+    {{-- FORMULAIRE --}}
+    {{-- ========================================================= --}}
+    <form
+        id="documentForm"
+        method="POST"
+        action="{{ route('journaliste.documents.store') }}"
+        enctype="multipart/form-data"
+
+        data-formations-url="{{ url('/journaliste/ajax/formations') }}"
+        data-filieres-url="{{ url('/journaliste/ajax/filieres') }}"
+        data-programs-url="{{ url('/journaliste/ajax/formations') }}"
+        data-specialites-url="{{ url('/journaliste/ajax/programs') }}"
+        data-levels-url="{{ url('/journaliste/ajax/specialites') }}"
+        data-subjects-url="{{ url('/journaliste/ajax/levels') }}">
+        @csrf
+
+        {{-- Le reste du formulaire --}}
+
+
+        {{-- ========================================================= --}}
+        {{-- WIZARD : BARRE DE PROGRESSION --}}
+        {{-- ========================================================= --}}
+
+        <div class="document-wizard">
+
+            <div class="wizard-progress">
+                <div class="wizard-progress-line">
+                    <div class="wizard-progress-fill" id="wizardProgressFill"></div>
+                </div>
+
+                <div class="wizard-step active" data-step="1">
+
+                    <button type="button" class="wizard-step-number">
+                        <span>1</span>
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12l4 4L19 6"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <div class="wizard-step-text">
+                        <strong>Classification</strong>
+                        <small>Organisation académique</small>
+                    </div>
+
+                </div>
+
+                <div class="wizard-step" data-step="2">
+
+                    <button type="button" class="wizard-step-number">
+                        <span>2</span>
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12l4 4L19 6"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <div class="wizard-step-text">
+                        <strong>Informations</strong>
+                        <small>Détails de la publication</small>
+                    </div>
+
+                </div>
+
+                <div class="wizard-step" data-step="3">
+
+                    <button type="button" class="wizard-step-number">
+                        <span>3</span>
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12l4 4L19 6"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+
+                    <div class="wizard-step-text">
+                        <strong>Validation</strong>
+                        <small>Fichier et publication</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        {{-- ===================================================== --}}
+        {{-- ÉTAPE 1 --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="form-step"
+            id="step-1">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        Étape 1 :
+                        Catégorie et parcours pédagogique
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    {{-- ================================================= --}}
+                    {{-- CATÉGORIE --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Catégorie d’enseignement
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <select
+
+                            name="teaching_category_id"
+
+                            id="teaching_category_id"
+
+                            class="form-select"
+
+                            required>
+
+                            <option value="">
+
+                                -- Sélectionner une catégorie --
+
+                            </option>
+
+
+                            @foreach ($categories as $category)
+
+                            <option
+
+                                value="{{ $category->id }}"
+
+                                data-slug="{{ $category->slug }}"
+
+                                @selected(
+                                old( 'teaching_category_id'
+                                )==$category->id
+                                )
+
+                                >
+
+                                {{ $category->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- FORMATION --}}
+                    {{-- ================================================= --}}
+
+                    <div
+                        class="mb-4"
+                        id="formation-container">
+
+                        <label class="form-label fw-bold">
+
+                            Formation
+
+                        </label>
+
+
+                        <select
+
+                            name="formation_id"
+
+                            id="formation_id"
+
+                            class="form-select">
+
+                            <option value="">
+
+                                -- Sélectionner une formation --
+
+                            </option>
+
+
+                            @foreach ($formations as $formation)
+
+                            <option
+
+                                value="{{ $formation->id }}"
+
+                                data-slug="{{ $formation->slug }}"
+
+                                @selected(
+                                old( 'formation_id'
+                                )==$formation->id
+                                )
+
+                                >
+
+                                {{ $formation->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- FILIÈRE --}}
+                    {{-- ================================================= --}}
+
+                    <div
+                        class="mb-4"
+                        id="filiere-container">
+
+                        <label class="form-label fw-bold">
+
+                            Filière
+
+                        </label>
+
+
+                        <select
+
+                            name="filiere_id"
+
+                            id="filiere_id"
+
+                            class="form-select">
+
+                            <option value="">
+
+                                -- Sélectionner une filière --
+
+                            </option>
+
+
+                            @foreach ($filieres as $filiere)
+
+                            <option
+
+                                value="{{ $filiere->id }}"
+
+                                @selected(
+                                old( 'filiere_id'
+                                )==$filiere->id
+                                )
+
+                                >
+
+                                {{ $filiere->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- PROGRAMME --}}
+                    {{-- ================================================= --}}
+
+                    <div
+                        class="mb-4"
+                        id="program-container">
+
+                        <label class="form-label fw-bold">
+
+                            Programme
+
+                        </label>
+
+
+                        <select
+
+                            name="program_id"
+
+                            id="program_id"
+
+                            class="form-select">
+
+                            <option value="">
+
+                                -- Sélectionner un programme --
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- SPÉCIALITÉ --}}
+                    {{-- ================================================= --}}
+
+                    <div
+                        class="mb-4"
+                        id="specialite-container">
+
+                        <label class="form-label fw-bold">
+
+                            Spécialité
+
+                        </label>
+
+
+                        <select
+
+                            name="specialite_id"
+
+                            id="specialite_id"
+
+                            class="form-select">
+
+                            <option value="">
+
+                                -- Sélectionner une spécialité --
+
+                            </option>
+
+
+                            @foreach ($specialites as $specialite)
+
+                            <option
+
+                                value="{{ $specialite->id }}"
+
+                                @selected(
+                                old( 'specialite_id'
+                                )==$specialite->id
+                                )
+
+                                >
+
+                                {{ $specialite->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- NIVEAU --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Niveau / Classe
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <select
+
+                            name="level_id"
+
+                            id="level_id"
+
+                            class="form-select"
+
+                            required>
+
+                            <option value="">
+
+                                -- Sélectionner un niveau --
+
+                            </option>
+
+
+                            @foreach ($levels as $level)
+
+                            <option
+
+                                value="{{ $level->id }}"
+
+                                data-formation="{{ $level->formation_id }}"
+
+                                data-filiere="{{ $level->filiere_id }}"
+
+                                data-specialite="{{ $level->specialite_id }}"
+
+                                @selected(
+                                old( 'level_id'
+                                )==$level->id
+                                )
+
+                                >
+
+                                {{ $level->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- MATIÈRE / MODULE --}}
+                    {{-- ================================================= --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Matière / Module
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <select
+
+                            name="subject_id"
+
+                            id="subject_id"
+
+                            class="form-select"
+
+                            required>
+
+                            <option value="">
+
+                                -- Sélectionner une matière --
+
+                            </option>
+
+
+                            @foreach ($subjects as $subject)
+
+                            <option
+
+                                value="{{ $subject->id }}"
+
+                                data-level="{{ $subject->level_id }}"
+
+                                @selected(
+                                old( 'subject_id'
+                                )==$subject->id
+                                )
+
+                                >
+
+                                {{ $subject->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ================================================= --}}
+                    {{-- BOUTON SUIVANT --}}
+                    {{-- ================================================= --}}
+
+                    <div class="text-end">
+
+                        <button
+
+                            type="button"
+
+                            class="btn btn-primary px-4"
+
+                            onclick="nextStep(2)">
+
+                            Suivant
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- ===================================================== --}}
+        {{-- ÉTAPE 2 --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="form-step d-none"
+            id="step-2">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        Étape 2 :
+                        Informations et fichier
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+
+                    {{-- TITRE --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Titre du document
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <input
+
+                            type="text"
+
+                            name="title"
+
+                            id="title"
+
+                            class="form-control"
+
+                            value="{{ old('title') }}"
+
+                            required>
+
+                    </div>
+
+
+                    {{-- DESCRIPTION --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Description
+
+                        </label>
+
+
+                        <textarea
+
+                            name="description"
+
+                            class="form-control"
+
+                            rows="4">{{ old('description') }}</textarea>
+
+                    </div>
+
+
+                    {{-- CONTENU --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Contenu complémentaire
+
+                        </label>
+
+
+                        <textarea
+
+                            name="content"
+
+                            class="form-control"
+
+                            rows="5">{{ old('content') }}</textarea>
+
+                    </div>
+
+
+                    {{-- TYPE DOCUMENT --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Type de document
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <select
+
+                            name="document_type_id"
+
+                            class="form-select"
+
+                            required>
+
+                            <option value="">
+
+                                -- Sélectionner un type --
+
+                            </option>
+
+
+                            @foreach ($documentTypes as $type)
+
+                            <option
+
+                                value="{{ $type->id }}"
+
+                                @selected(
+                                old( 'document_type_id'
+                                )==$type->id
+                                )
+
+                                >
+
+                                {{ $type->name }}
+
+                            </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- PDF --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Document PDF
+
+                            <span class="text-danger">
+
+                                *
+
+                            </span>
+
+                        </label>
+
+
+                        <input
+
+                            type="file"
+
+                            name="file_path"
+
+                            class="form-control"
+
+                            accept=".pdf"
+
+                            required>
+
+                    </div>
+
+                    {{-- COUVERTURE --}}
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+
+                            Image de couverture
+
+                        </label>
+                        <input
+
+                            type="file"
+
+                            name="cover_image"
+
+                            class="form-control"
+
+                            accept=".jpg,.jpeg,.png,.webp">
+
+                    </div>
+
+                    {{-- ACCÈS --}}
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-bold">
+
+                                Type d’accès
+
+                            </label>
+                            <select
+
+                                name="access_type"
+
+                                id="access_type"
+
+                                class="form-select"
+
+                                required>
+
+                                <option value="free">
+
+                                    Gratuit
+
+                                </option>
+
+                                <option value="premium">
+
+                                    Premium
+
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div
+                            class="col-md-6"
+                            id="price-container">
+
+                            <label class="form-label fw-bold">
+
+                                Prix
+
+                            </label>
+
+
+                            <input
+
+                                type="number"
+
+                                name="price"
+
+                                class="form-control"
+
+                                min="0"
+
+                                step="0.01"
+
+                                value="{{ old('price') }}">
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- NAVIGATION --}}
+
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <button
+
+                            type="button"
+
+                            class="btn btn-outline-secondary"
+
+                            onclick="previousStep(1)">
+
+                            Précédent
+
+                        </button>
+
+
+                        <button
+
+                            type="button"
+
+                            class="btn btn-primary px-4"
+
+                            onclick="nextStep(3)">
+
+                            Voir le récapitulatif
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {{-- ===================================================== --}}
+        {{-- ÉTAPE 3 --}}
+        {{-- ===================================================== --}}
+
+        <div
+            class="form-step d-none"
+            id="step-3">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white">
+
+                    <h5 class="mb-0">
+
+                        Étape 3 :
+                        Vérification et publication
+
+                    </h5>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <div
+                        class="alert alert-info">
+
+                        Vérifiez les informations avant
+                        de publier le document.
+
+                    </div>
+
+
+                    <div
+                        id="document-summary">
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-between mt-4">
+
+                        <button
+
+                            type="button"
+
+                            class="btn btn-outline-secondary"
+
+                            onclick="previousStep(2)">
+
+                            Précédent
+
+                        </button>
+
+
+                        <button
+
+                            type="submit"
+
+                            class="btn btn-success px-4">
+
+                            <i class="bi bi-cloud-upload"></i>
+
+                            Publier le document
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
 
 </div>
 
 @endsection
 
-@section('scripts')
+@push('styles')
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+<style>
+    .step-indicator {
 
-        const category = document.getElementById('teaching_category');
+        width: 42px;
 
-        const formationDiv = document.getElementById('formationDiv');
-        const filiereDiv = document.getElementById('filiereDiv');
-        const specialiteDiv = document.getElementById('specialiteDiv');
-        const levelDiv = document.getElementById('levelDiv');
-        const subjectDiv = document.getElementById('subjectDiv');
+        height: 42px;
 
-        function hideAll() {
+        margin: 0 auto 8px;
 
-            formationDiv.classList.add('hidden');
-            filiereDiv.classList.add('hidden');
-            specialiteDiv.classList.add('hidden');
-            levelDiv.classList.add('hidden');
-            subjectDiv.classList.add('hidden');
+        display: flex;
 
-        }
+        align-items: center;
 
-        category.addEventListener('change', function() {
+        justify-content: center;
 
-            hideAll();
+        border-radius: 50%;
 
-            const text = this.options[this.selectedIndex].text.toLowerCase();
+        background: #e9ecef;
 
-            if (text.includes('secondaire')) {
+        color: #6c757d;
 
-                levelDiv.classList.remove('hidden');
-                subjectDiv.classList.remove('hidden');
+        font-weight: bold;
 
-            } else if (text.includes('supérieur général')) {
+    }
 
-                filiereDiv.classList.remove('hidden');
-                levelDiv.classList.remove('hidden');
+    .step-indicator.active {
 
-            } else if (text.includes('supérieur technique')) {
+        background: #0d6efd;
 
-                filiereDiv.classList.remove('hidden');
-                levelDiv.classList.remove('hidden');
+        color: white;
 
-            } else if (text.includes('professionnel')) {
+    }
+</style>
 
-                formationDiv.classList.remove('hidden');
-                specialiteDiv.classList.remove('hidden');
-                levelDiv.classList.remove('hidden');
+@endpush
 
-            }
-
-        });
-
-        hideAll();
-
-        const access = document.getElementById('access_type');
-        const price = document.getElementById('priceDiv');
-
-        function togglePrice() {
-
-            if (access.value === 'premium') {
-
-                price.classList.remove('hidden');
-
-            } else {
-
-                price.classList.add('hidden');
-
-            }
-
-        }
-
-        access.addEventListener('change', togglePrice);
-
-        togglePrice();
-
-    });
-</script>
-
-@endsection
+@push('scripts')
+@vite('resources/js/admin/document-wizard.js')
+@endpush

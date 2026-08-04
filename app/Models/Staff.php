@@ -8,85 +8,237 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Staff extends Authenticatable
 {
-    use HasRoles, Notifiable;
-    
+    use HasRoles;
+    use Notifiable;
 
-    protected $guard_name = 'staff';
+
+    /*
+    |--------------------------------------------------------------------------
+    | TABLE
+    |--------------------------------------------------------------------------
+    */
 
     protected $table = 'staff';
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | GUARD SPATIE
+    |--------------------------------------------------------------------------
+    */
+
+    protected $guard_name = 'staff';
+
+
+    /**
+     * Retourne le guard utilisé par Spatie Permission.
+     */
+    public function guardName(): string
+    {
+        return 'staff';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHAMPS AUTORISÉS
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
 
-        // identité
+        /*
+        |--------------------------------------------------------------------------
+        | IDENTITÉ
+        |--------------------------------------------------------------------------
+        */
+
         'nom',
         'prenom',
         'sexe',
         'date_naissance',
         'lieu_naissance',
 
-        // contact
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONTACT
+        |--------------------------------------------------------------------------
+        */
+
         'email',
         'tel',
 
-        //  professionnel
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMATIONS PROFESSIONNELLES
+        |--------------------------------------------------------------------------
+        */
+
         'matricule',
         'service',
         'ville',
         'num_cnib',
         'specialite',
 
-        //  auth
+
+        /*
+        |--------------------------------------------------------------------------
+        | AUTHENTIFICATION
+        |--------------------------------------------------------------------------
+        */
+
         'password',
 
-        //  ALIAS SYSTEM (IMPORTANT)
+
+        /*
+        |--------------------------------------------------------------------------
+        | RÔLE SYSTÈME
+        |--------------------------------------------------------------------------
+        */
+
         'role_alias',
         'role_label',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ÉTAT
+        |--------------------------------------------------------------------------
+        */
+
         'is_active',
 
-        // documents
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENTS DU STAFF
+        |--------------------------------------------------------------------------
+        */
+
         'cnib_file',
         'attestation_travail_file',
         'diplome_file',
         'signature_file',
+
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CHAMPS CACHÉS
+    |--------------------------------------------------------------------------
+    */
 
     protected $hidden = [
+
         'password',
+
         'remember_token',
+
     ];
 
-    /*
-    |------------------------------------------------
-    | ROLE CHECK (ALIAS SYSTEM)
-    |------------------------------------------------
-    */
-
-    public function isAdmin()
-    {
-        return $this->role_alias === 'admin';
-    }
-
-    public function isJournalist()
-    {
-        return $this->role_alias === 'journalist';
-    }
 
     /*
-    |------------------------------------------------
-    | FULL NAME
-    |------------------------------------------------
+    |--------------------------------------------------------------------------
+    | CASTS
+    |--------------------------------------------------------------------------
     */
-    public function getFullNameAttribute()
+
+    protected $casts = [
+
+        'password' => 'hashed',
+
+        'date_naissance' => 'date',
+
+        'is_active' => 'boolean',
+
+    ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | NOM COMPLET
+    |--------------------------------------------------------------------------
+    */
+
+    public function getFullNameAttribute(): string
     {
-        return $this->nom . ' ' . $this->prenom;
+        return trim(
+            $this->prenom . ' ' . $this->nom
+        );
     }
-    public function roleAlias()
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | VÉRIFICATION DES RÔLES
+    |--------------------------------------------------------------------------
+    */
+
+    public function isAdmin(): bool
     {
-        return $this->roles->first()?->alias_code;
+        return $this->hasRole(
+            'admin'
+        );
     }
+
+
+    public function isJournalist(): bool
+    {
+        return $this->hasRole(
+            'journalist'
+        );
+    }
+
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasRole(
+            'super_admin'
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ALIAS DU RÔLE
+    |--------------------------------------------------------------------------
+    */
+
+    public function roleAlias(): ?string
+    {
+        /*
+         * Priorité à la colonne role_alias.
+         */
+
+        if (!empty($this->role_alias)) {
+
+            return $this->role_alias;
+
+        }
+
+        /*
+         * Sinon, récupération du rôle Spatie.
+         */
+
+        return $this->getRoleNames()
+            ->first();
+
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOCUMENTS PUBLIÉS
+    |--------------------------------------------------------------------------
+    */
 
     public function documents()
     {
-        return $this->hasMany(Document::class, 'staff_id');
+        return $this->hasMany(
+            Document::class,
+            'staff_id'
+        );
     }
 }

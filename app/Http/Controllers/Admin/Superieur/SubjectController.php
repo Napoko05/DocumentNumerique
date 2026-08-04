@@ -4,38 +4,51 @@ namespace App\Http\Controllers\Admin\Superieur;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicDomain;
-use App\Models\Filiere;
+use App\Models\Level;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-class FiliereController extends Controller
+class SubjectController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | LISTE DES FILIÈRES
+    | LISTE DES MODULES
     |--------------------------------------------------------------------------
+    |
+    | Structure :
+    |
+    | Domaine
+    |    ↓
+    | Filière
+    |    ↓
+    | Niveau
+    |    ↓
+    | Module
+    |
     */
 
     public function index()
     {
         $domaines = AcademicDomain::with([
-            'filieres' => function ($query) {
-                $query
-                    ->orderBy('name');
+            'filieres.levels.subjects' => function ($query) {
+                $query->orderBy('order');
             }
         ])
         ->where(
             'is_active',
             true
         )
-        ->orderBy('name')
+        ->orderBy('position')
         ->get();
 
         return view(
-            'admin.superieur.filieres.index',
+            'admin.superieur.modules.index',
             compact('domaines')
         );
     }
+
+
     /*
     |--------------------------------------------------------------------------
     | FORMULAIRE D'AJOUT
@@ -44,21 +57,37 @@ class FiliereController extends Controller
 
     public function create()
     {
-        $domaines = AcademicDomain::where(
+        $levels = Level::whereHas(
+            'filiere.academicDomain',
+            function ($query) {
+
+                $query->where(
+                    'is_active',
+                    true
+                );
+
+            }
+        )
+        ->where(
             'is_active',
             true
         )
+        ->with([
+            'filiere.academicDomain'
+        ])
         ->orderBy('name')
         ->get();
 
         return view(
-            'admin.superieur.filieres.create',
-            compact('domaines')
+            'admin.superieur.modules.create',
+            compact('levels')
         );
     }
+
+
     /*
     |--------------------------------------------------------------------------
-    | ENREGISTRER UNE FILIÈRE
+    | ENREGISTRER UN MODULE
     |--------------------------------------------------------------------------
     */
 
@@ -66,9 +95,9 @@ class FiliereController extends Controller
     {
         $validated = $request->validate([
 
-            'academic_domain_id' => [
+            'level_id' => [
                 'required',
-                'exists:academic_domains,id',
+                'exists:levels,id',
             ],
 
             'name' => [
@@ -77,12 +106,14 @@ class FiliereController extends Controller
                 'max:150',
             ],
 
-            'description' => [
+            'order' => [
                 'nullable',
-                'string',
+                'integer',
+                'min:0',
             ],
 
         ]);
+
 
         /*
         |--------------------------------------------------------------------------
@@ -98,16 +129,17 @@ class FiliereController extends Controller
 
         $numero = 2;
 
+
         /*
         |--------------------------------------------------------------------------
-        | ÉVITER LES DOUBLONS DANS LE MÊME DOMAINE
+        | ÉVITER LES DOUBLONS DANS LE MÊME NIVEAU
         |--------------------------------------------------------------------------
         */
 
         while (
-            Filiere::where(
-                'academic_domain_id',
-                $validated['academic_domain_id']
+            Subject::where(
+                'level_id',
+                $validated['level_id']
             )
             ->where(
                 'slug',
@@ -121,16 +153,18 @@ class FiliereController extends Controller
 
             $numero++;
         }
+
+
         /*
         |--------------------------------------------------------------------------
         | CRÉATION
         |--------------------------------------------------------------------------
         */
 
-        Filiere::create([
+        Subject::create([
 
-            'academic_domain_id' =>
-                $validated['academic_domain_id'],
+            'level_id' =>
+                $validated['level_id'],
 
             'name' =>
                 $validated['name'],
@@ -138,60 +172,80 @@ class FiliereController extends Controller
             'slug' =>
                 $slug,
 
-            'description' =>
-                $validated['description'] ?? null,
+            'order' =>
+                $validated['order'] ?? 0,
 
             'is_active' =>
                 true,
 
         ]);
+
+
         return redirect()
             ->route(
-                'admin.superieur.filieres.index'
+                'admin.superieur.modules.index'
             )
             ->with(
                 'success',
-                'Filière ajoutée avec succès.'
+                'Module ajouté avec succès.'
             );
     }
+
+
     /*
     |--------------------------------------------------------------------------
     | FORMULAIRE DE MODIFICATION
     |--------------------------------------------------------------------------
     */
 
-    public function edit(Filiere $filiere)
+    public function edit(Subject $subject)
     {
-        $domaines = AcademicDomain::where(
+        $levels = Level::whereHas(
+            'filiere.academicDomain',
+            function ($query) {
+
+                $query->where(
+                    'is_active',
+                    true
+                );
+
+            }
+        )
+        ->where(
             'is_active',
             true
         )
+        ->with([
+            'filiere.academicDomain'
+        ])
         ->orderBy('name')
         ->get();
 
         return view(
-            'admin.superieur.filieres.edit',
+            'admin.superieur.modules.edit',
             compact(
-                'filiere',
-                'domaines'
+                'subject',
+                'levels'
             )
         );
     }
+
+
     /*
     |--------------------------------------------------------------------------
-    | MODIFIER UNE FILIÈRE
+    | MODIFIER UN MODULE
     |--------------------------------------------------------------------------
     */
 
     public function update(
         Request $request,
-        Filiere $filiere
+        Subject $subject
     ) {
         $validated = $request->validate([
 
-            'academic_domain_id' => [
+            'level_id' => [
                 'required',
-                'exists:academic_domains,id',
+                'exists:levels,id',
             ],
 
             'name' => [
@@ -200,9 +254,15 @@ class FiliereController extends Controller
                 'max:150',
             ],
 
-            'description' => [
+            'order' => [
                 'nullable',
-                'string',
+                'integer',
+                'min:0',
+            ],
+
+            'is_active' => [
+                'required',
+                'boolean',
             ],
 
         ]);
@@ -210,9 +270,10 @@ class FiliereController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | GÉNÉRATION DU NOUVEAU SLUG
+        | GÉNÉRATION DU SLUG
         |--------------------------------------------------------------------------
         */
+
         $slug = Str::slug(
             $validated['name']
         );
@@ -221,6 +282,7 @@ class FiliereController extends Controller
 
         $numero = 2;
 
+
         /*
         |--------------------------------------------------------------------------
         | ÉVITER LES DOUBLONS
@@ -228,9 +290,9 @@ class FiliereController extends Controller
         */
 
         while (
-            Filiere::where(
-                'academic_domain_id',
-                $validated['academic_domain_id']
+            Subject::where(
+                'level_id',
+                $validated['level_id']
             )
             ->where(
                 'slug',
@@ -239,7 +301,7 @@ class FiliereController extends Controller
             ->where(
                 'id',
                 '!=',
-                $filiere->id
+                $subject->id
             )
             ->exists()
         ) {
@@ -250,16 +312,17 @@ class FiliereController extends Controller
             $numero++;
         }
 
+
         /*
         |--------------------------------------------------------------------------
         | MISE À JOUR
         |--------------------------------------------------------------------------
         */
 
-        $filiere->update([
+        $subject->update([
 
-            'academic_domain_id' =>
-                $validated['academic_domain_id'],
+            'level_id' =>
+                $validated['level_id'],
 
             'name' =>
                 $validated['name'],
@@ -267,32 +330,38 @@ class FiliereController extends Controller
             'slug' =>
                 $slug,
 
-            'description' =>
-                $validated['description'] ?? null,
+            'order' =>
+                $validated['order'] ?? 0,
+
+            'is_active' =>
+                $validated['is_active'],
 
         ]);
 
+
         return redirect()
             ->route(
-                'admin.superieur.filieres.index'
+                'admin.superieur.modules.index'
             )
             ->with(
                 'success',
-                'Filière modifiée avec succès.'
+                'Module modifié avec succès.'
             );
     }
+
+
     /*
     |--------------------------------------------------------------------------
     | ACTIVER / DÉSACTIVER
     |--------------------------------------------------------------------------
     */
 
-    public function toggle(Filiere $filiere)
+    public function toggle(Subject $subject)
     {
-        $filiere->update([
+        $subject->update([
 
             'is_active' =>
-                ! $filiere->is_active,
+                ! $subject->is_active,
 
         ]);
 
@@ -300,44 +369,44 @@ class FiliereController extends Controller
         return back()
             ->with(
                 'success',
-                $filiere->is_active
-                    ? 'Filière activée.'
-                    : 'Filière désactivée.'
+                $subject->is_active
+                    ? 'Module activé.'
+                    : 'Module désactivé.'
             );
     }
-
     /*
     |--------------------------------------------------------------------------
     | SUPPRIMER
     |--------------------------------------------------------------------------
     */
 
-    public function destroy(Filiere $filiere)
+    public function destroy(Subject $subject)
     {
         /*
         |--------------------------------------------------------------------------
-        | VÉRIFIER LES NIVEAUX
+        | VÉRIFICATION DES DOCUMENTS
         |--------------------------------------------------------------------------
         */
 
         if (
-            $filiere
-                ->levels()
+            $subject
+                ->documents()
                 ->exists()
         ) {
             return back()
                 ->with(
                     'error',
-                    'Impossible de supprimer cette filière : elle possède des niveaux.'
+                    'Impossible de supprimer ce module : il possède des documents.'
                 );
         }
 
-        $filiere->delete();
+        $subject->delete();
+
 
         return back()
             ->with(
                 'success',
-                'Filière supprimée avec succès.'
+                'Module supprimé avec succès.'
             );
     }
 }

@@ -1,6 +1,7 @@
+```blade
 @extends('layouts.journalist_app')
 
-@section('title', 'Modifier document')
+@section('title', 'Modifier le document')
 
 @section('content')
 
@@ -8,128 +9,406 @@
 
     <div class="max-w-3xl mx-auto">
 
-        <!-- HEADER -->
+        {{-- ===================================================== --}}
+        {{-- EN-TÊTE --}}
+        {{-- ===================================================== --}}
+
         <div class="mb-8 text-center">
+
             <h1 class="text-3xl font-bold text-gray-800">
+
                 ✏️ Modifier le document
+
             </h1>
+
             <p class="text-gray-500 mt-2">
-                Met à jour les informations du document
+
+                Mettez à jour les informations du document.
+
             </p>
+
         </div>
 
-        <!-- CARD -->
+
+        {{-- ===================================================== --}}
+        {{-- ERREURS --}}
+        {{-- ===================================================== --}}
+
+        @if ($errors->any())
+
+            <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-5">
+
+                <strong class="text-red-700">
+
+                    Des erreurs ont été détectées.
+
+                </strong>
+
+                <ul class="mt-3 list-disc pl-5 text-sm text-red-600">
+
+                    @foreach ($errors->all() as $error)
+
+                        <li>
+
+                            {{ $error }}
+
+                        </li>
+
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
+
+        {{-- ===================================================== --}}
+        {{-- CARTE --}}
+        {{-- ===================================================== --}}
+
         <div class="bg-white shadow-xl rounded-2xl border border-gray-100">
 
-            <form action="{{ route('journaliste.documents.update',$document) }}"
-                  method="POST"
-                  enctype="multipart/form-data"
-                  class="p-8 space-y-6">
+            <form
+
+                action="{{ route('journaliste.documents.update', $document) }}"
+
+                method="POST"
+
+                enctype="multipart/form-data"
+
+                class="p-8 space-y-6"
+
+            >
 
                 @csrf
+
                 @method('PUT')
 
-                <!-- GRID -->
+
+                {{-- ================================================= --}}
+                {{-- INFORMATIONS --}}
+                {{-- ================================================= --}}
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                    <!-- TITRE -->
+
+                    {{-- TITRE --}}
+
                     <div class="md:col-span-2">
-                        <label class="text-sm font-semibold text-blue-700">
+
+                        <label
+                            for="title"
+                            class="text-sm font-semibold text-blue-700"
+                        >
+
                             Titre
+
+                            <span class="text-red-500">
+
+                                *
+
+                            </span>
+
                         </label>
-                        <input type="text"
-                               name="title"
-                               value="{{ old('title',$document->title) }}"
-                               class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
+
+                        <input
+
+                            type="text"
+
+                            id="title"
+
+                            name="title"
+
+                            value="{{ old('title', $document->title) }}"
+
+                            required
+
+                            class="mt-2 w-full rounded-xl border-gray-300
+                                   focus:border-blue-500
+                                   focus:ring-blue-500
+                                   shadow-sm"
+
+                        >
+
                     </div>
 
-                    <!-- DESCRIPTION -->
+
+                    {{-- DESCRIPTION --}}
+
                     <div class="md:col-span-2">
-                        <label class="text-sm font-semibold text-blue-700">
+
+                        <label
+                            for="description"
+                            class="text-sm font-semibold text-blue-700"
+                        >
+
                             Description
+
                         </label>
-                        <textarea name="description"
-                                  rows="5"
-                                  class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">{{ old('description',$document->description) }}</textarea>
+
+                        <textarea
+
+                            id="description"
+
+                            name="description"
+
+                            rows="5"
+
+                            class="mt-2 w-full rounded-xl border-gray-300
+                                   focus:border-blue-500
+                                   focus:ring-blue-500
+                                   shadow-sm"
+
+                        >{{ old('description', $document->description) }}</textarea>
+
                     </div>
 
-                    <!-- CATEGORIE -->
-                    <div>
-                        <label class="text-sm font-semibold text-blue-700">
-                            Catégorie
-                        </label>
-                        <input type="text"
-                               name="category"
-                               value="{{ old('category',$document->category) }}"
-                               class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                    </div>
 
-                    <!-- NIVEAU -->
-                    <div>
-                        <label class="text-sm font-semibold text-blue-700">
-                            Niveau
-                        </label>
-                        <input type="text"
-                               name="level"
-                               value="{{ old('level',$document->level) }}"
-                               class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                    </div>
+                    {{-- TYPE D'ACCÈS --}}
 
-                    <!-- CYCLE -->
                     <div>
-                        <label class="text-sm font-semibold text-blue-700">
-                            Cycle
-                        </label>
-                        <input type="text"
-                               name="cycle"
-                               value="{{ old('cycle',$document->cycle) }}"
-                               class="mt-2 w-full rounded-xl border-gray-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
-                    </div>
 
-                    <!-- ACCESS TYPE -->
-                    <div>
-                        <label class="text-sm font-semibold text-blue-700">
+                        <label
+                            for="access_type"
+                            class="text-sm font-semibold text-blue-700"
+                        >
+
                             Type d’accès
-                        </label>
-                        <select name="access_type"
-                                id="access_type"
-                                class="mt-2 w-full rounded-xl border-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
 
-                            <option value="free" {{ $document->access_type == 'free' ? 'selected' : '' }}>
+                        </label>
+
+                        <select
+
+                            name="access_type"
+
+                            id="access_type"
+
+                            class="mt-2 w-full rounded-xl border-gray-300
+                                   focus:border-blue-500
+                                   focus:ring-blue-500
+                                   shadow-sm"
+
+                        >
+
+                            <option
+
+                                value="free"
+
+                                @selected(
+                                    old(
+                                        'access_type',
+                                        $document->access_type
+                                    ) === 'free'
+                                )
+
+                            >
+
                                 🟢 Gratuit
+
                             </option>
 
-                            <option value="premium" {{ $document->access_type == 'premium' ? 'selected' : '' }}>
+
+                            <option
+
+                                value="premium"
+
+                                @selected(
+                                    old(
+                                        'access_type',
+                                        $document->access_type
+                                    ) === 'premium'
+                                )
+
+                            >
+
                                 🟠 Premium
+
                             </option>
 
                         </select>
+
                     </div>
 
-                    <!-- PRICE -->
-                    <div id="priceDiv" class="{{ $document->access_type == 'premium' ? '' : 'hidden' }}">
-                        <label class="text-sm font-semibold text-orange-600">
+
+                    {{-- PRIX --}}
+
+                    <div
+
+                        id="priceDiv"
+
+                        class="
+                            {{
+                                old(
+                                    'access_type',
+                                    $document->access_type
+                                ) === 'premium'
+                                    ? ''
+                                    : 'hidden'
+                            }}
+                        "
+
+                    >
+
+                        <label
+                            for="price"
+                            class="text-sm font-semibold text-orange-600"
+                        >
+
                             💰 Prix (FCFA)
+
                         </label>
-                        <input type="number"
-                               name="price"
-                               value="{{ old('price',$document->price) }}"
-                               class="mt-2 w-full rounded-xl border-orange-300 focus:border-orange-500 focus:ring-orange-500 shadow-sm">
+
+                        <input
+
+                            type="number"
+
+                            id="price"
+
+                            name="price"
+
+                            min="0"
+
+                            step="1"
+
+                            value="{{ old('price', $document->price) }}"
+
+                            class="mt-2 w-full rounded-xl
+                                   border-orange-300
+                                   focus:border-orange-500
+                                   focus:ring-orange-500
+                                   shadow-sm"
+
+                        >
+
                     </div>
+
+
+                    {{-- NOUVEAU FICHIER --}}
+
+                    <div class="md:col-span-2">
+
+                        <label
+                            for="file"
+                            class="text-sm font-semibold text-blue-700"
+                        >
+
+                            Remplacer le fichier
+
+                        </label>
+
+                        <input
+
+                            type="file"
+
+                            id="file"
+
+                            name="file"
+
+                            class="mt-2 block w-full rounded-xl
+                                   border border-gray-300
+                                   p-3
+                                   shadow-sm"
+
+                        >
+
+                        <p class="mt-2 text-sm text-gray-500">
+
+                            Laissez ce champ vide pour conserver
+                            le fichier actuel.
+
+                        </p>
+
+                    </div>
+
+
+                    {{-- FICHIER ACTUEL --}}
+
+                    @if ($document->file_path)
+
+                        <div class="md:col-span-2">
+
+                            <div
+                                class="rounded-xl
+                                       border
+                                       border-blue-100
+                                       bg-blue-50
+                                       p-4"
+                            >
+
+                                <p class="font-semibold text-blue-800">
+
+                                    📄 Fichier actuel
+
+                                </p>
+
+                                <p class="mt-1 text-sm text-blue-600">
+
+                                    {{ basename($document->file_path) }}
+
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    @endif
 
                 </div>
 
-                <!-- BUTTONS -->
+
+                {{-- ================================================= --}}
+                {{-- BOUTONS --}}
+                {{-- ================================================= --}}
+
                 <div class="flex flex-col sm:flex-row gap-4 pt-6">
 
-                    <button type="submit"
-                            class="w-full sm:w-auto px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md transition">
-                        💾 Enregistrer
+                    <button
+
+                        type="submit"
+
+                        class="
+                            w-full
+                            sm:w-auto
+                            px-6
+                            py-3
+                            bg-green-600
+                            hover:bg-green-700
+                            text-white
+                            font-semibold
+                            rounded-xl
+                            shadow-md
+                            transition
+                        "
+
+                    >
+
+                        💾 Enregistrer les modifications
+
                     </button>
 
-                    <a href="{{ route('journaliste.documents.index') }}"
-                       class="w-full sm:w-auto px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold rounded-xl text-center transition">
+
+                    <a
+
+                        href="{{ route('journaliste.documents.index') }}"
+
+                        class="
+                            w-full
+                            sm:w-auto
+                            px-6
+                            py-3
+                            bg-gray-200
+                            hover:bg-gray-300
+                            text-gray-800
+                            font-semibold
+                            rounded-xl
+                            text-center
+                            transition
+                        "
+                    >
+
                         ❌ Annuler
+
                     </a>
 
                 </div>
@@ -139,30 +418,88 @@
         </div>
 
     </div>
+
 </div>
 
 @endsection
 
-
-@section('scripts')
+@push('scripts')
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
 
-    const accessType = document.getElementById('access_type');
-    const priceDiv = document.getElementById('priceDiv');
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
-    function togglePrice() {
-        if (accessType.value === 'premium') {
-            priceDiv.classList.remove('hidden');
-        } else {
-            priceDiv.classList.add('hidden');
+        const accessType =
+            document.getElementById(
+                'access_type'
+            );
+
+        const priceDiv =
+            document.getElementById(
+                'priceDiv'
+            );
+
+        const priceInput =
+            document.getElementById(
+                'price'
+            );
+
+
+        if (
+            !accessType
+            ||
+            !priceDiv
+            ||
+            !priceInput
+        ) {
+            return;
         }
-    }
 
-    accessType.addEventListener('change', togglePrice);
-    togglePrice();
-});
+
+        function togglePrice()
+        {
+
+            if (
+                accessType.value
+                ===
+                'premium'
+            ) {
+
+                priceDiv.classList.remove(
+                    'hidden'
+                );
+
+                priceInput.required = true;
+
+            } else {
+
+                priceDiv.classList.add(
+                    'hidden'
+                );
+
+                priceInput.required = false;
+
+                priceInput.value = '';
+
+            }
+
+        }
+
+
+        accessType.addEventListener(
+            'change',
+            togglePrice
+        );
+
+
+        togglePrice();
+
+    }
+);
+
 </script>
 
-@endsection
+@endpush
+

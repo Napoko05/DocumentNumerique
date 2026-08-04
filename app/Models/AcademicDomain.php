@@ -10,53 +10,94 @@ class AcademicDomain extends Model
     use HasFactory;
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | CHAMPS AUTORISÉS
+    |--------------------------------------------------------------------------
+    */
+
     protected $fillable = [
 
         'name',
+
         'slug',
+
         'icon',
+
         'description',
+
         'position',
+
         'is_active',
 
     ];
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | CASTS
+    |--------------------------------------------------------------------------
+    */
+
+    protected $casts = [
+
+        'position' => 'integer',
+
+        'is_active' => 'boolean',
+
+    ];
+
+
     /*
     |--------------------------------------------------------------------------
     | FORMATIONS DU DOMAINE
     |--------------------------------------------------------------------------
     |
+    | Cette relation est conservée uniquement si la table
+    | formations possède encore la colonne academic_domain_id.
+    |
+    | Exemple :
+    |
     | Sciences exactes
     |        ↓
-    | Informatique
+    | Formation
     |
     */
 
     public function formations()
     {
         return $this->hasMany(
-            Formation::class
+            Formation::class,
+            'academic_domain_id'
         );
     }
+
+
     /*
     |--------------------------------------------------------------------------
-    | FILIERES DU DOMAINE
+    | FILIÈRES DU DOMAINE
     |--------------------------------------------------------------------------
     |
-    | Domaine
-    |    ↓
-    | Formation
-    |    ↓
-    | Filière
+    | Structure actuelle du supérieur :
+    |
+    | AcademicDomain
+    |       ↓
+    | Filiere
+    |
+    | La table filieres possède directement :
+    |
+    | academic_domain_id
     |
     */
 
     public function filieres()
     {
-        return $this->hasManyThrough(
+        return $this->hasMany(
             Filiere::class,
-            Formation::class
+            'academic_domain_id'
         );
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -71,5 +112,4 @@ class AcademicDomain extends Model
             true
         );
     }
-
 }

@@ -15,6 +15,7 @@ class Level extends Model
     | CHAMPS AUTORISÉS
     |--------------------------------------------------------------------------
     */
+
     protected $fillable = [
 
         /*
@@ -24,21 +25,44 @@ class Level extends Model
         */
 
         'formation_id',
+
         'filiere_id',
+
         'program_id',
+
         'specialite_id',
+
+        /*
+        |--------------------------------------------------------------------------
+        | CLASSIFICATION
+        |--------------------------------------------------------------------------
+        */
+
         'section',
+
+        /*
+        |--------------------------------------------------------------------------
+        | INFORMATIONS DU NIVEAU
+        |--------------------------------------------------------------------------
+        */
+
         'name',
+
         'slug',
+
         'order',
+
         'is_active',
 
     ];
+
+
     /*
     |--------------------------------------------------------------------------
     | CASTS
     |--------------------------------------------------------------------------
     */
+
     protected $casts = [
 
         'is_active' => 'boolean',
@@ -46,14 +70,17 @@ class Level extends Model
         'order' => 'integer',
 
     ];
+
+
     /*
     |--------------------------------------------------------------------------
     | FORMATION
     |--------------------------------------------------------------------------
     |
-    | Utilisé pour :
+    | Utilisée pour :
     |
-    | - Secondaire
+    | - Secondaire général
+    | - Secondaire technique
     | - Professionnel
     | - ENS
     |
@@ -62,73 +89,87 @@ class Level extends Model
     public function formation()
     {
         return $this->belongsTo(
-            Formation::class
+            Formation::class,
+            'formation_id'
         );
     }
     /*
     |--------------------------------------------------------------------------
-    | FILIERE
+    | FILIÈRE
     |--------------------------------------------------------------------------
     |
-    | Utilisé pour le supérieur
+    | Utilisée pour le supérieur :
     |
-    | Informatique
-    |    ↓
-    | Licence 1
+    | Domaine académique
+    |       ↓
+    | Filière
+    |       ↓
+    | Niveau
     |
     */
 
     public function filiere()
     {
         return $this->belongsTo(
-            Filiere::class
+            Filiere::class,
+            'filiere_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
     | PROGRAMME
     |--------------------------------------------------------------------------
     |
-    | ENS uniquement
+    | Utilisé pour certaines formations professionnelles.
+    |
     */
 
     public function program()
     {
         return $this->belongsTo(
-            Program::class
+            Program::class,
+            'program_id'
         );
     }
     /*
     |--------------------------------------------------------------------------
-    | SPECIALITE
+    | SPÉCIALITÉ
     |--------------------------------------------------------------------------
-    |
-    | ENS uniquement
-    |
     */
 
     public function specialite()
     {
         return $this->belongsTo(
-            Specialite::class
+            Specialite::class,
+            'specialite_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
-    | MATIERES / MODULES
+    | MATIÈRES / MODULES
     |--------------------------------------------------------------------------
     |
     | Secondaire :
-    | Classe → Matière
+    |
+    | Classe
+    |    ↓
+    | Matière
     |
     | Supérieur :
-    | Niveau → Module
+    |
+    | Niveau
+    |    ↓
+    | Module
     |
     */
+
     public function subjects()
     {
         return $this->hasMany(
-            Subject::class
+            Subject::class,
+            'level_id'
         );
     }
     /*
@@ -139,12 +180,14 @@ class Level extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'level_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
-    | SCOPES GENERAUX
+    | SCOPE ACTIF
     |--------------------------------------------------------------------------
     */
     public function scopeActive($query)
@@ -156,31 +199,33 @@ class Level extends Model
     }
     /*
     |--------------------------------------------------------------------------
-    | SECONDAIRE
+    | SCOPE SECONDAIRE
     |--------------------------------------------------------------------------
     |
-    | Exemple :
-    |
-    | Formation :
-    | Secondaire Général
+    | Une classe du secondaire est liée à une formation
+    | et n'est pas liée à une filière.
     |
     */
 
     public function scopeSecondary($query)
     {
-        return $query->whereNotNull(
-            'formation_id'
-        )
-        ->whereNull(
-            'filiere_id'
-        );
+        return $query
+            ->whereNotNull(
+                'formation_id'
+            )
+            ->whereNull(
+                'filiere_id'
+            )
+            ->whereNull(
+                'program_id'
+            );
     }
     /*
     |--------------------------------------------------------------------------
-    | SUPERIEUR
+    | SCOPE SUPÉRIEUR
     |--------------------------------------------------------------------------
     |
-    | Licence / Master
+    | Une formation supérieure est liée à une filière.
     |
     */
     public function scopeHigher($query)
@@ -191,28 +236,23 @@ class Level extends Model
     }
     /*
     |--------------------------------------------------------------------------
-    | PROFESSIONNEL
+    | SCOPE PROFESSIONNEL
     |--------------------------------------------------------------------------
-    |
-    | Formation professionnelle
-    |
     */
 
     public function scopeProfessional($query)
     {
-        return $query->whereNotNull(
-            'formation_id'
-        )
-        ->whereNull(
-            'filiere_id'
-        )
-        ->whereNotNull(
-            'program_id'
-        );
+        return $query
+            ->whereNotNull(
+                'formation_id'
+            )
+            ->whereNotNull(
+                'program_id'
+            );
     }
     /*
     |--------------------------------------------------------------------------
-    | SECTION SECONDAIRE
+    | SECTION DU SECONDAIRE
     |--------------------------------------------------------------------------
     */
     public function scopeGeneral($query)
@@ -233,23 +273,35 @@ class Level extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | VERIFICATIONS
+    | VÉRIFICATIONS
     |--------------------------------------------------------------------------
     */
+
     public function isSecondary(): bool
     {
-        return !is_null($this->formation_id)
-            && is_null($this->filiere_id);
+        return ! is_null(
+            $this->formation_id
+        )
+            && is_null(
+                $this->filiere_id
+            )
+            && is_null(
+                $this->program_id
+            );
     }
 
     public function isHigher(): bool
     {
-        return !is_null($this->filiere_id);
+        return ! is_null(
+            $this->filiere_id
+        );
     }
 
     public function isProfessional(): bool
     {
-        return !is_null($this->program_id);
+        return ! is_null(
+            $this->program_id
+        );
     }
 
     public function isGeneral(): bool

@@ -27,6 +27,7 @@ use App\Http\Controllers\Users\JournalistController;
 use App\Http\Controllers\Vitrine\VitrineTechniqueController;
 use App\Http\Controllers\Admin\Secondaire\LevelController;
 use App\Http\Controllers\Admin\Secondaire\SubjectController;
+use App\Http\Controllers\Admin\Superieur\SubjectController as SuperieurSubjectController;
 
 
 use App\Http\Controllers;
@@ -172,13 +173,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-Route::post(
-    '/users/{user}/activate',
-    [UserController::class, 'activate']
+Route::post('/users/{user}/activate', [UserController::class, 'activate']
 )->name('users.activate');
-Route::post(
-    '/users/{user}/deactivate',
-    [UserController::class, 'deactivate']
+Route::post('/users/{user}/deactivate', [UserController::class, 'deactivate']
 )->name('users.deactivate');
 
 
@@ -198,14 +195,10 @@ Route::get('/documents/{document}/read', [PublicDocumentController::class, 'read
 
 Route::middleware('auth')->group(function () {
 
-    Route::get(
-        '/payments/{document}',
-        [PaymentController::class, 'create']
+    Route::get( '/payments/{document}', [PaymentController::class, 'create']
     )->name('payments.create');
 
-    Route::post(
-        '/payments/{document}',
-        [PaymentController::class, 'store']
+    Route::post(  '/payments/{document}',  [PaymentController::class, 'store']
     )->name('payments.store');
 });
 /*--------------------------------------------------------------------------
@@ -298,25 +291,13 @@ Route::prefix('superieur')
 
 Route::prefix('professionnel')->name('vitrine.professionnel.')->controller(VitrineProfessionnelController::class)->group(function () {
 
-    Route::get(
-        '/',
-        'formations'
-    )->name('formations');
+    Route::get( '/', 'formations' )->name('formations');
 
-    Route::get(
-        '/{formationSlug}',
-        'niveaux'
-    )->name('niveaux');
+    Route::get( '/{formationSlug}', 'niveaux' )->name('niveaux');
 
-    Route::get(
-        '/{formationSlug}/{niveauSlug}',
-        'typeDocuments'
-    )->name('type_doc');
+    Route::get(  '/{formationSlug}/{niveauSlug}',  'typeDocuments' )->name('type_doc');
 
-    Route::get(
-        '/{formationSlug}/{niveauSlug}/{typeSlug}',
-        'documents'
-    )->name('documents');
+    Route::get(  '/{formationSlug}/{niveauSlug}/{typeSlug}', 'documents'  )->name('documents');
 });
 
 Route::prefix('ens')->name('vitrine.ens.')->controller(VitrineProfessionnelController::class)->group(function () {
@@ -327,41 +308,23 @@ Route::prefix('ens')->name('vitrine.ens.')->controller(VitrineProfessionnelContr
     |----------------------------------------------------------------------
     */
 
-    Route::get(
-        '/',
-        'programmes'
-    )->name('programmes');
+    Route::get( '/',  'programmes' )->name('programmes');
 
-    Route::get(
-        '/{programmeSlug}',
-        'specialites'
-    )->name('specialites');
+    Route::get(  '/{programmeSlug}',  'specialites'  )->name('specialites');
 
-    Route::get(
-        '/{programmeSlug}/{specialiteSlug}',
-        'niveauxEns'
-    )->name('niveaux');
+    Route::get(  '/{programmeSlug}/{specialiteSlug}',  'niveauxEns'  )->name('niveaux');
 
-    Route::get(
-        '/{programmeSlug}/{specialiteSlug}/{niveauSlug}',
-        'typeDocumentsEns'
-    )->name('type_doc');
+    Route::get( '/{programmeSlug}/{specialiteSlug}/{niveauSlug}',  'typeDocumentsEns'  )->name('type_doc');
 
-    Route::get(
-        '/{programmeSlug}/{specialiteSlug}/{niveauSlug}/{typeSlug}',
-        'documentsEns'
-    )->name('documents');
+    Route::get(  '/{programmeSlug}/{specialiteSlug}/{niveauSlug}/{typeSlug}', 'documentsEns' )->name('documents');
 });
+
 /*========================
    COntroller Admin pour l'ajout de Classe et matiere
    ============================
 */
 
-Route::prefix('admin/secondaire')
-    ->name('admin.')
-    ->middleware([
-        'auth:staff',
-        'role:admin'
+Route::prefix('admin/secondaire') ->name('admin.') ->middleware([ 'auth:staff', 'role:admin'
     ])
     ->group(function () {
 
@@ -369,19 +332,15 @@ Route::prefix('admin/secondaire')
             ->name('secondaire.')
             ->group(function () {
 
-
                 /*
                 |--------------------------------------------------------------------------
                 | GESTION DES CLASSES
                 |--------------------------------------------------------------------------
                 */
-
                 Route::resource(
                     'classes',
                     LevelController::class
                 );
-
-
                 Route::patch(
                     'classes/{level}/toggle',
                     [
@@ -395,7 +354,6 @@ Route::prefix('admin/secondaire')
                     'matieres',
                     SubjectController::class
                 );
-
 
                 Route::patch(
                     'matieres/{subject}/toggle',
@@ -420,12 +378,10 @@ Route::prefix('admin/secondaire')
     ])
     ->group(function(){
 
-
         Route::resource(
             'filieres',
             \App\Http\Controllers\Admin\Superieur\FiliereController::class
         );
-
 
         Route::patch(
             'filieres/{filiere}/toggle',
@@ -436,4 +392,197 @@ Route::prefix('admin/secondaire')
         )
         ->name('filieres.toggle');
 
+    });
+
+    Route::prefix('admin/superieur')
+    ->name('admin.superieur.')
+    ->middleware([
+        'auth:staff',
+        'role:admin',
+    ])
+    ->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | MODULES DU SUPÉRIEUR
+        |--------------------------------------------------------------------------
+        |
+        | AcademicDomain
+        |       ↓
+        | Filiere
+        |       ↓
+        | Level
+        |       ↓
+        | Subject / Module
+        |
+        */
+
+        Route::get(
+            '/modules',
+            [SuperieurSubjectController::class, 'index']
+        )->name('modules.index');
+
+
+        Route::get(
+            '/modules/create',
+            [SuperieurSubjectController::class, 'create']
+        )->name('modules.create');
+
+        Route::post(  '/modules',  [SuperieurSubjectController::class, 'store']
+        )->name('modules.store');
+
+        Route::get( '/modules/{subject}/edit',  [SuperieurSubjectController::class, 'edit']
+        )->name('modules.edit');
+
+        Route::put(  '/modules/{subject}',  [SuperieurSubjectController::class, 'update']
+        )->name('modules.update');
+
+        Route::patch(  '/modules/{subject}/toggle',  [SuperieurSubjectController::class, 'toggle']
+        )->name('modules.toggle');
+
+        Route::delete(  '/modules/{subject}',  [SuperieurSubjectController::class, 'destroy']
+        )->name('modules.destroy');
+
+    });
+
+    /*
+|--------------------------------------------------------------------------
+| DOCUMENTS - JOURNALISTE
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('journaliste')
+    ->name('journaliste.')
+    ->middleware([
+        'auth:staff',
+        'role:journalist'
+    ])
+    ->group(function () {
+
+        Route::get(
+            '/documents/create',
+            [
+                DocumentController::class,
+                'create'
+            ]
+        )->name(
+            'documents.create'
+        );
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX : SUPÉRIEUR
+        |--------------------------------------------------------------------------
+        */
+
+        /*
+        | Domaine → Filières
+        */
+
+        Route::get(
+            '/ajax/domaines/{academicDomain}/filieres',
+            [
+                DocumentController::class,
+                'getFilieresByDomain'
+            ]
+        )->name(
+            'ajax.domaines.filieres'
+        );
+
+
+        /*
+        | Filière → Niveaux
+        */
+
+        Route::get(
+            '/ajax/filieres/{filiere}/levels',
+            [
+                DocumentController::class,
+                'getLevelsByFiliere'
+            ]
+        )->name(
+            'ajax.filieres.levels'
+        );
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX : SECONDAIRE
+        |--------------------------------------------------------------------------
+        */
+
+        /*
+        | Formation → Classes / Niveaux
+        */
+
+        Route::get(
+            '/ajax/formations/{formation}/levels',
+            [
+                DocumentController::class,
+                'getLevelsByFormation'
+            ]
+        )->name(
+            'ajax.formations.levels'
+        );
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX : PROFESSIONNEL
+        |--------------------------------------------------------------------------
+        */
+
+        /*
+        | Formation → Programmes
+        */
+
+        Route::get(
+            '/ajax/formations/{formation}/programs',
+            [
+                DocumentController::class,
+                'getProgramsByFormation'
+            ]
+        )->name(
+            'ajax.formations.programs'
+        );
+        /*
+        | Programme → Spécialités
+        */
+        Route::get(
+            '/ajax/programs/{program}/specialites',
+            [
+                DocumentController::class,
+                'getSpecialitesByProgram'
+            ]
+        )->name(
+            'ajax.programs.specialites'
+        );
+        /*
+        | Spécialité → Niveaux
+        */
+
+        Route::get(
+            '/ajax/specialites/{specialite}/levels',
+            [
+                DocumentController::class,
+                'getLevelsBySpecialite'
+            ]
+        )->name(
+            'ajax.specialites.levels'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | AJAX : COMMUN
+        |--------------------------------------------------------------------------
+        */
+
+        /*
+        | Niveau → Matières / Modules
+        */
+
+        Route::get(
+            '/ajax/levels/{level}/subjects',
+            [
+                DocumentController::class,
+                'getSubjectsByLevel'
+            ]
+        )->name(
+            'ajax.levels.subjects'
+        );
     });

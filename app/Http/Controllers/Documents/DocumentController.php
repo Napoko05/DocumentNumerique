@@ -1,22 +1,29 @@
 <?php
 
 namespace App\Http\Controllers\Documents;
+
+use App\Http\Controllers\Controller;
 use App\Models\Document;
-use App\Models\Tag;
-use App\Models\Level;
-use App\Models\Filiere;
-use App\Models\Subject;
-use App\Models\Formation;
-use App\Models\Specialite;
 use App\Models\DocumentType;
+use App\Models\Filiere;
+use App\Models\Formation;
+use App\Models\Level;
+use App\Models\Specialite;
+use App\Models\Subject;
+use App\Models\Tag;
 use App\Models\TeachingCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Controller;
 
 class DocumentController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | LISTE DES DOCUMENTS
+    |--------------------------------------------------------------------------
+    */
+
     public function index()
     {
         $documents = Document::with([
@@ -27,300 +34,867 @@ class DocumentController extends Controller
             'specialite',
             'level',
             'subject',
-            'documentType'
+            'documentType',
         ])
             ->latest()
             ->paginate(10);
 
-        return view('Documents.index', compact('documents'));
+        return view(
+            'Documents.index',
+            compact('documents')
+        );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE DE CRÉATION
+    |--------------------------------------------------------------------------
+    */
 
     public function create()
     {
-        $categories = TeachingCategory::where('is_active', true)
+        $categories = TeachingCategory::active()
             ->orderBy('name')
             ->get();
 
-        $formations = Formation::where('is_active', true)
+        /*
+        |--------------------------------------------------------------------------
+        | Formations
+        |--------------------------------------------------------------------------
+        |
+        | Utilisées principalement pour :
+        |
+        | - Secondaire général
+        | - Secondaire technique
+        | - Professionnel
+        |
+        */
+
+        $formations = Formation::active()
             ->orderBy('name')
             ->get();
 
-        $filieres = Filiere::where('is_active', true)
+        /*
+        |--------------------------------------------------------------------------
+        | Filières
+        |--------------------------------------------------------------------------
+        |
+        | Utilisées principalement pour :
+        |
+        | Supérieur :
+        |
+        | Domaine académique
+        |        ↓
+        | Filière
+        |        ↓
+        | Niveau
+        |        ↓
+        | Module
+        |
+        */
+
+        $filieres = Filiere::active()
             ->orderBy('name')
             ->get();
 
-        $specialites = Specialite::where('is_active', true)
+        $specialites = Specialite::active()
             ->orderBy('name')
             ->get();
 
-        $levels = Level::where('is_active', true)
+        $levels = Level::active()
+            ->orderBy('order')
             ->orderBy('name')
             ->get();
 
-        $subjects = Subject::where('is_active', true)
+        $subjects = Subject::active()
+            ->orderBy('order')
             ->orderBy('name')
             ->get();
 
-        $documentTypes = DocumentType::where('is_active', true)
+        $documentTypes = DocumentType::active()
             ->orderBy('name')
             ->get();
 
-        $tags = Tag::orderBy('name')->get();
+        $tags = Tag::orderBy('name')
+            ->get();
 
-        return view('Documents.create', compact(
-            'categories',
-            'formations',
-            'filieres',
-            'specialites',
-            'levels',
-            'subjects',
-            'documentTypes',
-            'tags'
-        ));
+        return view(
+            'Documents.create',
+            compact(
+                'categories',
+                'formations',
+                'filieres',
+                'specialites',
+                'levels',
+                'subjects',
+                'documentTypes',
+                'tags'
+            )
+        );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ENREGISTRER LE DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'content' => 'nullable|string',
 
-            'teaching_category_id' => 'required|exists:teaching_categories,id',
-            'formation_id' => 'nullable|exists:formations,id',
-            'filiere_id' => 'nullable|exists:filieres,id',
-            'specialite_id' => 'nullable|exists:specialites,id',
-            'level_id' => 'nullable|exists:levels,id',
-            'subject_id' => 'nullable|exists:subjects,id',
-            'document_type_id' => 'required|exists:document_types,id',
+            /*
+            |--------------------------------------------------------------------------
+            | Informations générales
+            |--------------------------------------------------------------------------
+            */
 
-            'access_type' => 'required|in:free,premium',
-            'price' => 'nullable|numeric|min:0',
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'description' => [
+                'nullable',
+                'string',
+            ],
 
-            'document_file' => 'required|mimes:pdf|max:20480',
+            'content' => [
+                'nullable',
+                'string',
+            ],
 
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+
+            /*
+            |--------------------------------------------------------------------------
+            | Hiérarchie pédagogique
+            |--------------------------------------------------------------------------
+            */
+
+            'teaching_category_id' => [
+                'required',
+                'exists:teaching_categories,id',
+            ],
+
+            'formation_id' => [
+                'nullable',
+                'exists:formations,id',
+            ],
+
+            'filiere_id' => [
+                'nullable',
+                'exists:filieres,id',
+            ],
+
+            'specialite_id' => [
+                'nullable',
+                'exists:specialites,id',
+            ],
+
+            'level_id' => [
+                'required',
+                'exists:levels,id',
+            ],
+
+            'subject_id' => [
+                'required',
+                'exists:subjects,id',
+            ],
+
+            'document_type_id' => [
+                'required',
+                'exists:document_types,id',
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Accès
+            |--------------------------------------------------------------------------
+            */
+
+            'access_type' => [
+                'required',
+                'in:free,premium',
+            ],
+
+            'price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Fichiers
+            |--------------------------------------------------------------------------
+            */
+
+            'cover_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:4096',
+            ],
+
+            'document_file' => [
+                'required',
+                'file',
+                'mimes:pdf',
+                'max:20480',
+            ],
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Tags
+            |--------------------------------------------------------------------------
+            */
+
+            'tags' => [
+                'nullable',
+                'array',
+            ],
+
+            'tags.*' => [
+                'exists:tags,id',
+            ],
+
         ]);
 
-        // Upload du PDF
-        $pdf = $request->file('document_file');
 
-        $pdfPath = $pdf->store('documents', 'public');
+        /*
+        |--------------------------------------------------------------------------
+        | Validation du prix premium
+        |--------------------------------------------------------------------------
+        */
 
-        // Upload de la couverture
-        $cover = null;
-
-        if ($request->hasFile('cover_image')) {
-
-            $cover = $request->file('cover_image')
-                ->store('covers', 'public');
+        if (
+            $validated['access_type'] === 'premium'
+            &&
+            (
+                ! isset($validated['price'])
+                ||
+                $validated['price'] <= 0
+            )
+        ) {
+            return back()
+                ->withErrors([
+                    'price' =>
+                    'Le prix est obligatoire pour un document premium.',
+                ])
+                ->withInput();
         }
 
-        // Création du document
+
+        /*
+        |--------------------------------------------------------------------------
+        | Upload du PDF
+        |--------------------------------------------------------------------------
+        */
+
+        $pdf = $request->file(
+            'document_file'
+        );
+
+        $pdfPath = $pdf->store(
+            'documents',
+            'public'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Upload de la couverture
+        |--------------------------------------------------------------------------
+        */
+
+        $coverPath = null;
+
+        if (
+            $request->hasFile(
+                'cover_image'
+            )
+        ) {
+            $coverPath = $request
+                ->file('cover_image')
+                ->store(
+                    'covers',
+                    'public'
+                );
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Création du document
+        |--------------------------------------------------------------------------
+        */
+
         $document = Document::create([
 
-            'staff_id' => auth('staff')->id(),
+            'staff_id' =>
+            auth('staff')->id(),
 
-            'teaching_category_id' => $validated['teaching_category_id'],
+            'teaching_category_id' =>
+            $validated['teaching_category_id'],
 
-            'formation_id' => $validated['formation_id'] ?? null,
+            'formation_id' =>
+            $validated['formation_id'] ?? null,
 
-            'filiere_id' => $validated['filiere_id'] ?? null,
+            'filiere_id' =>
+            $validated['filiere_id'] ?? null,
 
-            'specialite_id' => $validated['specialite_id'] ?? null,
+            'specialite_id' =>
+            $validated['specialite_id'] ?? null,
 
-            'level_id' => $validated['level_id'] ?? null,
+            'level_id' =>
+            $validated['level_id'],
 
-            'subject_id' => $validated['subject_id'] ?? null,
+            'subject_id' =>
+            $validated['subject_id'],
 
-            'document_type_id' => $validated['document_type_id'],
+            'document_type_id' =>
+            $validated['document_type_id'],
 
-            'title' => $validated['title'],
+            'title' =>
+            $validated['title'],
 
-            'slug' => Str::slug($validated['title']) . '-' . time(),
+            'slug' =>
+            Str::slug(
+                $validated['title']
+            )
+                . '-'
+                . Str::random(8),
 
-            'description' => $validated['description'] ?? null,
+            'description' =>
+            $validated['description'] ?? null,
 
-            'content' => $validated['content'] ?? null,
+            'content' =>
+            $validated['content'] ?? null,
 
-            'document_file' => $pdfPath,
+            /*
+            |--------------------------------------------------------------------------
+            | Même nom de colonne partout
+            |--------------------------------------------------------------------------
+            */
 
-            'cover_image' => $cover,
+            'file_path' =>
+            $pdfPath,
 
-            'file_size' => $pdf->getSize(),
+            'cover_image' =>
+            $coverPath,
 
-            'file_extension' => $pdf->getClientOriginalExtension(),
+            'file_size' =>
+            $pdf->getSize(),
 
-            'language' => 'Français',
+            'file_extension' =>
+            $pdf
+                ->getClientOriginalExtension(),
 
-            'keywords' => null,
+            'language' =>
+            'Français',
 
-            'access_type' => $validated['access_type'],
+            'keywords' =>
+            null,
 
-            'price' => $validated['access_type'] === 'premium'
+            'access_type' =>
+            $validated['access_type'],
+
+            'price' =>
+            $validated['access_type'] === 'premium'
                 ? $validated['price']
                 : null,
 
-            'status' => 'published',
+            'status' =>
+            'published',
 
-            'views' => 0,
+            'views' =>
+            0,
 
-            'downloads' => 0,
+            'downloads' =>
+            0,
 
-            'published_at' => now(),
+            'published_at' =>
+            now(),
 
-            'is_featured' => false,
+            'is_featured' =>
+            false,
 
         ]);
 
-        // Enregistrer les tags
-        if ($request->filled('tags')) {
 
-            $document->tags()->sync($request->tags);
-        }
+        /*
+        |--------------------------------------------------------------------------
+        | Enregistrement des tags
+        |--------------------------------------------------------------------------
+        */
+
+        $document
+            ->tags()
+            ->sync(
+                $validated['tags'] ?? []
+            );
+
 
         return redirect()
-            ->route('journaliste.documents.index')
-            ->with('success', 'Document publié avec succès.');
+            ->route(
+                'journaliste.documents.index'
+            )
+            ->with(
+                'success',
+                'Document publié avec succès.'
+            );
     }
-    public function show(Document $document)
-    {
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | AFFICHER UN DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function show(
+        Document $document
+    ) {
         $document->load([
+
             'staff',
+
             'teachingCategory',
+
             'formation',
+
             'filiere',
+
             'specialite',
+
             'level',
+
             'subject',
+
             'documentType',
+
             'tags',
-            'comments'
+
+            'comments',
+
         ]);
 
-        return view('Documents.show', compact('document'));
+        return view(
+            'Documents.show',
+            compact('document')
+        );
     }
 
-    public function edit(Document $document)
-    {
-        $categories = TeachingCategory::orderBy('name')->get();
-        $formations = Formation::orderBy('name')->get();
-        $filieres = Filiere::orderBy('name')->get();
-        $specialites = Specialite::orderBy('name')->get();
-        $levels = Level::orderBy('name')->get();
-        $subjects = Subject::orderBy('name')->get();
-        $documentTypes = DocumentType::orderBy('name')->get();
-        $tags = Tag::orderBy('name')->get();
 
-        $document->load('tags');
+    /*
+    |--------------------------------------------------------------------------
+    | FORMULAIRE DE MODIFICATION
+    |--------------------------------------------------------------------------
+    */
 
-        return view('Documents.edit', compact(
-            'document',
-            'categories',
-            'formations',
-            'filieres',
-            'specialites',
-            'levels',
-            'subjects',
-            'documentTypes',
+    public function edit(
+        Document $document
+    ) {
+        $categories = TeachingCategory::active()
+            ->orderBy('name')
+            ->get();
+
+        $formations = Formation::active()
+            ->orderBy('name')
+            ->get();
+
+        $filieres = Filiere::active()
+            ->orderBy('name')
+            ->get();
+
+        $specialites = Specialite::active()
+            ->orderBy('name')
+            ->get();
+
+        $levels = Level::active()
+            ->orderBy('order')
+            ->orderBy('name')
+            ->get();
+
+        $subjects = Subject::active()
+            ->orderBy('order')
+            ->orderBy('name')
+            ->get();
+
+        $documentTypes = DocumentType::active()
+            ->orderBy('name')
+            ->get();
+
+        $tags = Tag::orderBy('name')
+            ->get();
+
+        $document->load(
             'tags'
-        ));
+        );
+
+        return view(
+            'Documents.edit',
+            compact(
+
+                'document',
+
+                'categories',
+
+                'formations',
+
+                'filieres',
+
+                'specialites',
+
+                'levels',
+
+                'subjects',
+
+                'documentTypes',
+
+                'tags'
+
+            )
+        );
     }
 
-    public function update(Request $request, Document $document)
-    {
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODIFIER LE DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function update(
+        Request $request,
+        Document $document
+    ) {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'content' => 'nullable|string',
 
-            'teaching_category_id' => 'required|exists:teaching_categories,id',
-            'formation_id' => 'nullable|exists:formations,id',
-            'filiere_id' => 'nullable|exists:filieres,id',
-            'specialite_id' => 'nullable|exists:specialites,id',
-            'level_id' => 'nullable|exists:levels,id',
-            'subject_id' => 'nullable|exists:subjects,id',
-            'document_type_id' => 'required|exists:document_types,id',
+            'title' => [
+                'required',
+                'string',
+                'max:255',
+            ],
 
-            'access_type' => 'required|in:free,premium',
-            'price' => 'nullable|numeric|min:0',
+            'description' => [
+                'nullable',
+                'string',
+            ],
 
-            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
-            'document_file' => 'nullable|mimes:pdf|max:20480',
+            'content' => [
+                'nullable',
+                'string',
+            ],
 
-            'tags' => 'nullable|array',
-            'tags.*' => 'exists:tags,id',
+            'teaching_category_id' => [
+                'required',
+                'exists:teaching_categories,id',
+            ],
+
+            'formation_id' => [
+                'nullable',
+                'exists:formations,id',
+            ],
+
+            'filiere_id' => [
+                'nullable',
+                'exists:filieres,id',
+            ],
+
+            'specialite_id' => [
+                'nullable',
+                'exists:specialites,id',
+            ],
+
+            'level_id' => [
+                'required',
+                'exists:levels,id',
+            ],
+
+            'subject_id' => [
+                'required',
+                'exists:subjects,id',
+            ],
+
+            'document_type_id' => [
+                'required',
+                'exists:document_types,id',
+            ],
+
+            'access_type' => [
+                'required',
+                'in:free,premium',
+            ],
+
+            'price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+
+            'cover_image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:4096',
+            ],
+
+            'document_file' => [
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:20480',
+            ],
+
+            'tags' => [
+                'nullable',
+                'array',
+            ],
+
+            'tags.*' => [
+                'exists:tags,id',
+            ],
+
         ]);
+        /*
+        |--------------------------------------------------------------------------
+        | Remplacement du PDF
+        |--------------------------------------------------------------------------
+        */
 
-        if ($request->hasFile('document_file')) {
+        if ($request->hasFile('file_path')) {
 
-            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
+            if (
+                $document->file_path &&
+                Storage::disk('public')->exists($document->file_path)
+            ) {
                 Storage::disk('public')->delete($document->file_path);
             }
 
-            $pdf = $request->file('document_file');
+            $pdf = $request->file('file_path');
 
-            $document->file_path = $pdf->store('documents', 'public');
+            $document->file_path = $pdf->store(
+                'documents',
+                'public'
+            );
+
             $document->file_size = $pdf->getSize();
+
             $document->file_extension = $pdf->getClientOriginalExtension();
+
+            $document->save();
         }
 
-        if ($request->hasFile('cover_image')) {
+        /*
+        |--------------------------------------------------------------------------
+        | Remplacement de la couverture
+        |--------------------------------------------------------------------------
+        */
 
-            if ($document->cover_image && Storage::disk('public')->exists($document->cover_image)) {
-                Storage::disk('public')->delete($document->cover_image);
+        if (
+            $request->hasFile(
+                'cover_image'
+            )
+        ) {
+
+            if (
+                $document->cover_image
+                &&
+                Storage::disk(
+                    'public'
+                )->exists(
+                    $document->cover_image
+                )
+            ) {
+                Storage::disk(
+                    'public'
+                )->delete(
+                    $document->cover_image
+                );
             }
 
-            $document->cover_image = $request->file('cover_image')
-                ->store('covers', 'public');
+            $document->cover_image =
+                $request
+                ->file('cover_image')
+                ->store(
+                    'covers',
+                    'public'
+                );
+
+            $document->save();
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Mise à jour des données
+        |--------------------------------------------------------------------------
+        */
 
         $document->update([
-            'teaching_category_id' => $validated['teaching_category_id'],
-            'formation_id' => $validated['formation_id'] ?? null,
-            'filiere_id' => $validated['filiere_id'] ?? null,
-            'specialite_id' => $validated['specialite_id'] ?? null,
-            'level_id' => $validated['level_id'] ?? null,
-            'subject_id' => $validated['subject_id'] ?? null,
-            'document_type_id' => $validated['document_type_id'],
 
-            'title' => $validated['title'],
-            'slug' => Str::slug($validated['title']) . '-' . $document->id,
+            'teaching_category_id' =>
+            $validated['teaching_category_id'],
 
-            'description' => $validated['description'] ?? null,
-            'content' => $validated['content'] ?? null,
+            'formation_id' =>
+            $validated['formation_id'] ?? null,
 
-            'access_type' => $validated['access_type'],
-            'price' => $validated['access_type'] == 'premium'
+            'filiere_id' =>
+            $validated['filiere_id'] ?? null,
+
+            'specialite_id' =>
+            $validated['specialite_id'] ?? null,
+
+            'level_id' =>
+            $validated['level_id'],
+
+            'subject_id' =>
+            $validated['subject_id'],
+
+            'document_type_id' =>
+            $validated['document_type_id'],
+
+            'title' =>
+            $validated['title'],
+
+            'slug' =>
+            Str::slug(
+                $validated['title']
+            )
+                . '-'
+                . $document->id,
+
+            'description' =>
+            $validated['description'] ?? null,
+
+            'content' =>
+            $validated['content'] ?? null,
+
+            'access_type' =>
+            $validated['access_type'],
+
+            'price' =>
+            $validated['access_type'] === 'premium'
                 ? $validated['price']
                 : null,
+
         ]);
 
-        $document->tags()->sync($request->tags ?? []);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Mise à jour des tags
+        |--------------------------------------------------------------------------
+        */
+
+        $document
+            ->tags()
+            ->sync(
+                $validated['tags'] ?? []
+            );
+
 
         return redirect()
-            ->route('journaliste.documents.index')
-            ->with('success', 'Document modifié avec succès.');
+            ->route(
+                'journaliste.documents.index'
+            )
+            ->with(
+                'success',
+                'Document modifié avec succès.'
+            );
     }
 
-    public function destroy(Document $document)
-    {
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUPPRIMER LE DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function destroy(
+        Document $document
+    ) {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Supprimer le PDF
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $document->file_path
+            &&
+            Storage::disk(
+                'public'
+            )->exists(
+                $document->file_path
+            )
+        ) {
+            Storage::disk(
+                'public'
+            )->delete(
+                $document->file_path
+            );
         }
 
-        if ($document->cover_image && Storage::disk('public')->exists($document->cover_image)) {
-            Storage::disk('public')->delete($document->cover_image);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Supprimer la couverture
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $document->cover_image
+            &&
+            Storage::disk(
+                'public'
+            )->exists(
+                $document->cover_image
+            )
+        ) {
+            Storage::disk(
+                'public'
+            )->delete(
+                $document->cover_image
+            );
         }
 
-        $document->tags()->detach();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Supprimer les relations tags
+        |--------------------------------------------------------------------------
+        */
+
+        $document
+            ->tags()
+            ->detach();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Supprimer le document
+        |--------------------------------------------------------------------------
+        */
 
         $document->delete();
 
+
         return redirect()
-            ->route('journaliste.documents.index')
-            ->with('success', 'Document supprimé avec succès.');
+            ->route(
+                'journaliste.documents.index'
+            )
+            ->with(
+                'success',
+                'Document supprimé avec succès.'
+            );
     }
 }

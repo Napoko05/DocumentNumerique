@@ -257,7 +257,7 @@
             </div>
         </div>
 
-         {{-- Enseignement superieur --}}
+        {{-- Enseignement superieur --}}
         <div x-data="{ openSecondaire: false }" class="space-y-1">
 
             {{-- Bouton principal --}}
@@ -311,9 +311,9 @@
 
                 </a>
                 {{-- Ajouter classe --}}
-                <a href="{{ route(''admin.superieur.filieres.create') }}"
+                <a href="{{ route('admin.superieur.filieres.create') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
-            {{ request()->routeIs('admin.secondaire.classes.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+            {{ request()->routeIs('admin.superieur.filieres.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
 
                     <span>➕</span>
 
@@ -321,7 +321,7 @@
 
                 </a>
                 {{-- Matières --}}
-                <a href="{{ route('admin.secondaire.matieres.index') }}"
+                <a href="#"
                     class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
             {{ request()->routeIs('admin.secondaire.subjects.*') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
 
@@ -331,9 +331,9 @@
 
                 </a>
                 {{-- Ajouter matière --}}
-                <a href="{{ route('admin.secondaire.matieres.create') }}"
+                <a href="{{ route('admin.superieur.modules.index') }}"
                     class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors
-            {{ request()->routeIs('admin.secondaire.subjects.create') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
+            {{ request()->routeIs('admin.superieur.modules.index') ? 'bg-sidebar-active text-sidebar-text-active' : 'text-sidebar-text hover:bg-sidebar-hover hover:text-white' }}">
 
                     <span>➕</span>
 

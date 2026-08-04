@@ -3,91 +3,253 @@
 namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Models\Document;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class JournalistController extends Controller
 {
+    /**
+     * Protection des pages journaliste.
+     */
     public function __construct()
     {
-        $this->middleware(['auth:staff', 'role:journalist']);
+        $this->middleware([
+            'auth:staff',
+            'role:journalist',
+        ]);
     }
 
-    /**
-     * Tableau de bord du journaliste
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | TABLEAU DE BORD JOURNALISTE
+    |--------------------------------------------------------------------------
+    */
+
     public function dashboard()
     {
+        /*
+        |--------------------------------------------------------------------------
+        | JOURNALISTE CONNECTÉ
+        |--------------------------------------------------------------------------
+        */
+
         $staff = Auth::guard('staff')->user();
 
-        $documents = Document::where('staff_id', $staff->id)
-            ->latest()
-            ->take(10)
-            ->get();
 
-        $totalDocuments = Document::where('staff_id', $staff->id)->count();
+        /*
+        |--------------------------------------------------------------------------
+        | REQUÊTE DE BASE
+        |--------------------------------------------------------------------------
+        |
+        | Tous les documents appartenant
+        | au journaliste connecté.
+        |
+        */
 
-        $publishedDocuments = Document::where('staff_id', $staff->id)
-            ->where('status', 'published')
-            ->count();
+        $documentsQuery = Document::where(
+            'staff_id',
+            $staff->id
+        );
 
-        $pendingDocuments = Document::where('staff_id', $staff->id)
-            ->where('status', 'pending')
-            ->count();
 
-        $draftDocuments = Document::where('staff_id', $staff->id)
-            ->where('status', 'draft')
-            ->count();
+        /*
+        |--------------------------------------------------------------------------
+        | STATISTIQUES
+        |--------------------------------------------------------------------------
+        */
 
-        $rejectedDocuments = Document::where('staff_id', $staff->id)
-            ->where('status', 'rejected')
-            ->count();
+        $statistics = $documentsQuery
+            ->selectRaw('
+                COUNT(*) AS total_documents,
 
-        $freeDocuments = Document::where('staff_id', $staff->id)
-            ->where('access_type', 'free')
-            ->count();
+                SUM(
+                    CASE
+                        WHEN status = "published"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS published_documents,
 
-        $premiumDocuments = Document::where('staff_id', $staff->id)
-            ->where('access_type', 'premium')
-            ->count();
+                SUM(
+                    CASE
+                        WHEN status = "pending"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS pending_documents,
 
-        $totalViews = Document::where('staff_id', $staff->id)
-            ->sum('views');
+                SUM(
+                    CASE
+                        WHEN status = "draft"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS draft_documents,
 
-        $totalDownloads = Document::where('staff_id', $staff->id)
-            ->sum('downloads');
+                SUM(
+                    CASE
+                        WHEN status = "rejected"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS rejected_documents,
 
-        $recentDocuments = Document::where('staff_id', $staff->id)
-            ->latest()
-            ->take(5)
-            ->get();
+                SUM(
+                    CASE
+                        WHEN access_type = "free"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS free_documents,
 
-        return view('dashboard.journaliste_dashboard', compact(
-            'staff',
-            'documents',
-            'recentDocuments',
-            'totalDocuments',
-            'publishedDocuments',
-            'pendingDocuments',
-            'draftDocuments',
-            'rejectedDocuments',
-            'freeDocuments',
-            'premiumDocuments',
-            'totalViews',
-            'totalDownloads'
-        ));
+                SUM(
+                    CASE
+                        WHEN access_type = "premium"
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS premium_documents,
+
+                COALESCE(
+                    SUM(views),
+                    0
+                ) AS total_views,
+
+                COALESCE(
+                    SUM(downloads),
+                    0
+                ) AS total_downloads
+            ')
+            ->first();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENTS RÉCENTS
+        |--------------------------------------------------------------------------
+        |
+        | Chargement des relations utilisées
+        | dans le tableau du dashboard.
+        |
+        */
+
+        $recentDocuments = Document::with([
+            'formation',
+            'filiere',
+            'level',
+            'subject',
+            'documentType',
+        ])
+        ->where(
+            'staff_id',
+            $staff->id
+        )
+        ->latest()
+        ->take(10)
+        ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RETOUR DE LA VUE
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'dashboard.journaliste_dashboard',
+            [
+                'staff' => $staff,
+
+                /*
+                |--------------------------------------------------------------
+                | DOCUMENTS
+                |--------------------------------------------------------------
+                */
+
+                'documents' => $recentDocuments,
+
+                'recentDocuments' => $recentDocuments,
+
+
+                /*
+                |--------------------------------------------------------------
+                | STATISTIQUES
+                |--------------------------------------------------------------
+                */
+
+                'totalDocuments' =>
+                    (int) (
+                        $statistics->total_documents ?? 0
+                    ),
+
+                'publishedDocuments' =>
+                    (int) (
+                        $statistics->published_documents ?? 0
+                    ),
+
+                'pendingDocuments' =>
+                    (int) (
+                        $statistics->pending_documents ?? 0
+                    ),
+
+                'draftDocuments' =>
+                    (int) (
+                        $statistics->draft_documents ?? 0
+                    ),
+
+                'rejectedDocuments' =>
+                    (int) (
+                        $statistics->rejected_documents ?? 0
+                    ),
+
+                'freeDocuments' =>
+                    (int) (
+                        $statistics->free_documents ?? 0
+                    ),
+
+                'premiumDocuments' =>
+                    (int) (
+                        $statistics->premium_documents ?? 0
+                    ),
+
+                'totalViews' =>
+                    (int) (
+                        $statistics->total_views ?? 0
+                    ),
+
+                'totalDownloads' =>
+                    (int) (
+                        $statistics->total_downloads ?? 0
+                    ),
+
+            ]
+        );
     }
 
-    /**
-     * Liste des utilisateurs (lecture seule)
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | LISTE DES UTILISATEURS
+    |--------------------------------------------------------------------------
+    |
+    | Le journaliste peut uniquement
+    | consulter les utilisateurs.
+    |
+    */
+
     public function users()
     {
-        $users = User::with('roles')
-            ->latest()
-            ->paginate(15);
+        $users = User::with(
+            'roles'
+        )
+        ->latest()
+        ->paginate(15);
 
-        return view('journalist.users.index', compact('users'));
+
+        return view(
+            'users.index',
+            compact('users')
+        );
     }
 }
