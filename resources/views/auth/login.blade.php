@@ -1,99 +1,401 @@
 @extends('layouts.app')
 
+@section('title', 'Connexion | YAA\'Scientia')
+
+@section('head')
+    @vite('resources/css/auth.css')
+@endsection
+
 @section('content')
 
-<div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-surface-soft">
-    <div class="w-full max-w-md">
+<div class="auth-page">
 
-        {{-- Logo --}}
-        <div class="text-center mb-8">
-            <a href="{{ url('/') }}" class="inline-flex flex-col items-center gap-2">
-                <img src="{{ asset('images/logo.png') }}" alt="YAA'Scientia"
-                     class="h-14 w-14 rounded-2xl object-contain shadow-sm">
-                <span class="font-heading font-bold text-xl text-ink">YAA'Scientia</span>
-            </a>
-            <p class="text-sm text-ink-muted mt-2">Connectez-vous à votre espace</p>
-        </div>
+    <div class="auth-container">
 
-        {{-- Carte --}}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
+        {{-- =====================================================
+             PARTIE GAUCHE
+        ====================================================== --}}
 
-            <h1 class="font-heading font-bold text-xl text-ink mb-6">Connexion</h1>
+        <section class="auth-intro">
 
-            {{-- Succès --}}
-            @if(session('success'))
-                <div class="mb-4 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-800">
-                    {{ session('success') }}
+            {{-- Logo --}}
+
+            <div class="auth-brand">
+
+                <img
+                    src="{{ asset('images/logo.png') }}"
+                    alt="Logo YAA'Scientia"
+                >
+
+                <span class="auth-brand-name">
+                    YAA'Scientia
+                </span>
+
+            </div>
+
+
+            {{-- Présentation --}}
+
+            <div class="auth-intro-content">
+
+                <span class="auth-intro-badge">
+                    Bibliothèque numérique
+                </span>
+
+                <h1>
+                    Le savoir à portée de main.
+                </h1>
+
+                <p>
+                    Accédez à votre espace YAA'Scientia et retrouvez
+                    vos ressources pédagogiques, livres numériques
+                    et contenus scientifiques.
+                </p>
+
+
+                {{-- =================================================
+                     AVANTAGES
+                ================================================== --}}
+
+                <div class="auth-features">
+
+                    <div class="auth-feature">
+
+                        <span class="auth-feature-icon">
+                            <i class="bi bi-check-lg"></i>
+                        </span>
+
+                        <span>
+                            Ressources éducatives accessibles facilement
+                        </span>
+
+                    </div>
+
+
+                    <div class="auth-feature">
+
+                        <span class="auth-feature-icon">
+                            <i class="bi bi-shield-lock"></i>
+                        </span>
+
+                        <span>
+                            Un espace sécurisé et personnel
+                        </span>
+
+                    </div>
+
+
+                    <div class="auth-feature">
+
+                        <span class="auth-feature-icon">
+                            <i class="bi bi-book"></i>
+                        </span>
+
+                        <span>
+                            Des contenus adaptés à votre parcours
+                        </span>
+
+                    </div>
+
                 </div>
-            @endif
 
-            {{-- Erreurs --}}
-            @if($errors->any())
-                <div class="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-                    {{ $errors->first() }}
-                </div>
-            @endif
+            </div>
 
-            <form method="POST" action="{{ route('login') }}" class="space-y-5">
-                @csrf
+        </section>
 
-                {{-- Email ou Matricule --}}
-                <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">
-                        Email ou Matricule
-                    </label>
-                    <input type="text"
-                           name="login"
-                           value="{{ old('login') }}"
-                           required
-                           class="input-field"
-                           placeholder="email@exemple.com ou ADM0001">
-                </div>
 
-                {{-- Mot de passe --}}
-                <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">
-                        Mot de passe
-                    </label>
-                    <input type="password"
-                           name="password"
-                           required
-                           class="input-field"
-                           placeholder="••••••••">
-                </div>
+        {{-- =====================================================
+             FORMULAIRE
+        ====================================================== --}}
 
-                {{-- Se souvenir --}}
-                <div class="flex items-center gap-2">
-                    <input type="checkbox"
-                           name="remember"
-                           id="remember"
-                           class="w-4 h-4 rounded border-slate-300 text-brand-700 focus:ring-brand-500">
-                    <label for="remember" class="text-sm text-ink-soft">Se souvenir de moi</label>
-                </div>
+        <section class="auth-form-wrapper">
 
-                {{-- Actions --}}
-                <div class="flex flex-col gap-3 pt-1">
-                    <button type="submit" class="btn-primary w-full justify-center">
-                        Connexion
+            <div class="auth-form">
+
+                {{-- =================================================
+                     TITRE
+                ================================================== --}}
+
+                <h2 class="auth-title">
+                    Bon retour !
+                </h2>
+
+                <p class="auth-subtitle">
+                    Connectez-vous à votre compte YAA'Scientia.
+                </p>
+
+
+                {{-- =================================================
+                     MESSAGE SUCCÈS
+                ================================================== --}}
+
+                @if(session('success'))
+
+                    <div
+                        class="auth-alert auth-alert-success"
+                        role="alert"
+                    >
+                        {{ session('success') }}
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                     ERREURS
+                ================================================== --}}
+
+                @if($errors->any())
+
+                    <div
+                        class="auth-alert auth-alert-error"
+                        role="alert"
+                    >
+                        {{ $errors->first() }}
+                    </div>
+
+                @endif
+
+
+                {{-- =================================================
+                     FORMULAIRE
+                ================================================== --}}
+
+                <form
+                    method="POST"
+                    action="{{ route('login') }}"
+                    novalidate
+                >
+
+                    @csrf
+
+
+                    {{-- =================================================
+                         EMAIL / MATRICULE
+                    ================================================== --}}
+
+                    <div class="auth-field">
+
+                        <label
+                            for="login"
+                            class="auth-label"
+                        >
+                            Email ou matricule
+                        </label>
+
+                        <input
+                            id="login"
+                            type="text"
+                            name="login"
+                            value="{{ old('login') }}"
+                            required
+                            autofocus
+                            autocomplete="username"
+                            class="auth-input @error('login') is-invalid @enderror"
+                            placeholder="email@exemple.com"
+                        >
+
+                        @error('login')
+
+                            <div class="auth-error">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- =================================================
+                         MOT DE PASSE
+                    ================================================== --}}
+
+                    <div class="auth-field">
+
+                        <label
+                            for="password"
+                            class="auth-label"
+                        >
+                            Mot de passe
+                        </label>
+
+                        <div class="auth-input-wrapper">
+
+                            <input
+                                id="password"
+                                type="password"
+                                name="password"
+                                required
+                                autocomplete="current-password"
+                                class="auth-input auth-password-input @error('password') is-invalid @enderror"
+                                placeholder="Votre mot de passe"
+                            >
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="auth-password-toggle"
+                                aria-label="Afficher le mot de passe"
+                                aria-pressed="false"
+                            >
+                                <i
+                                    id="passwordIcon"
+                                    class="bi bi-eye"
+                                    aria-hidden="true"
+                                ></i>
+                            </button>
+
+                        </div>
+
+                        @error('password')
+
+                            <div class="auth-error">
+                                {{ $message }}
+                            </div>
+
+                        @enderror
+
+                    </div>
+
+
+                    {{-- =================================================
+                         OPTIONS
+                    ================================================== --}}
+
+                    <div class="auth-options">
+
+                        <label class="auth-checkbox">
+
+                            <input
+                                type="checkbox"
+                                name="remember"
+                                value="1"
+                                {{ old('remember') ? 'checked' : '' }}
+                            >
+
+                            <span>
+                                Se souvenir de moi
+                            </span>
+
+                        </label>
+
+
+                        @if(Route::has('password.request'))
+
+                            <a
+                                href="{{ route('password.request') }}"
+                                class="auth-link"
+                            >
+                                Mot de passe oublié ?
+                            </a>
+
+                        @endif
+
+                    </div>
+
+
+                    {{-- =================================================
+                         BOUTON CONNEXION
+                    ================================================== --}}
+
+                    <button
+                        type="submit"
+                        class="auth-submit"
+                    >
+                        Se connecter
                     </button>
-                    <a href="{{ route('home') }}"
-                       class="text-center text-sm font-medium text-ink-muted hover:text-ink transition-colors">
-                        Annuler
+
+                </form>
+
+
+                {{-- =================================================
+                     INSCRIPTION
+                ================================================== --}}
+
+                <div class="auth-register">
+
+                    Vous n'avez pas encore de compte ?
+
+                    <a href="{{ route('register') }}">
+                        Créer un compte
                     </a>
+
                 </div>
 
-            </form>
-        </div>
 
-        {{-- Lien inscription --}}
-        <p class="text-center text-sm text-ink-muted mt-6">
-            Pas encore de compte ?
-            <a href="{{ route('register') }}" class="font-semibold text-brand-800 hover:text-brand-700 transition-colors">
-                S'inscrire
-            </a>
-        </p>
+                {{-- =================================================
+                     RETOUR ACCUEIL
+                ================================================== --}}
+
+                <a
+                    href="{{ url('/') }}"
+                    class="auth-back"
+                >
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Retour à l'accueil
+                </a>
+
+            </div>
+
+        </section>
 
     </div>
+
 </div>
 
 @endsection
+
+
+{{-- =============================================================
+     JAVASCRIPT
+============================================================= --}}
+
+@push('scripts')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordIcon = document.getElementById('passwordIcon');
+
+    if (!passwordInput || !togglePassword || !passwordIcon) {
+        return;
+    }
+
+    togglePassword.addEventListener('click', function () {
+
+        const isPassword = passwordInput.type === 'password';
+
+        passwordInput.type = isPassword
+            ? 'text'
+            : 'password';
+
+        passwordIcon.classList.toggle(
+            'bi-eye',
+            !isPassword
+        );
+
+        passwordIcon.classList.toggle(
+            'bi-eye-slash',
+            isPassword
+        );
+
+        togglePassword.setAttribute(
+            'aria-label',
+            isPassword
+                ? 'Masquer le mot de passe'
+                : 'Afficher le mot de passe'
+        );
+
+        togglePassword.setAttribute(
+            'aria-pressed',
+            isPassword ? 'true' : 'false'
+        );
+
+    });
+
+});
+</script>
+
+@endpush

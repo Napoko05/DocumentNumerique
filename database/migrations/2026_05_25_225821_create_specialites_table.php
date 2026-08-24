@@ -12,14 +12,41 @@ return new class extends Migration
 
             $table->id();
 
-            // Programme ENS
-            // Ex : CAPES, CAPCEG...
+            /*
+            |--------------------------------------------------------------------------
+            | FORMATION DIRECTE
+            |--------------------------------------------------------------------------
+            |
+            | Utilisée pour :
+            |
+            | IDS
+            | UIT
+            |
+            */
+
+            $table->foreignId('formation_id')
+                ->nullable()
+                ->constrained('formations')
+                ->cascadeOnDelete();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PROGRAMME
+            |--------------------------------------------------------------------------
+            |
+            | Utilisé pour :
+            |
+            | ENS
+            |
+            */
+
             $table->foreignId('program_id')
+                ->nullable()
                 ->constrained('programs')
                 ->cascadeOnDelete();
 
-            // Ex : Mathématiques, Physique-Chimie,
-            // Français, Anglais...
+
             $table->string('name');
 
             $table->string('slug');
@@ -38,12 +65,29 @@ return new class extends Migration
 
             $table->timestamps();
 
+
+            $table->index('formation_id');
+
             $table->index('program_id');
+
+            $table->index('is_active');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | UNICITÉ
+            |--------------------------------------------------------------------------
+            */
+
+            $table->unique([
+                'formation_id',
+                'slug'
+            ], 'specialites_formation_slug_unique');
 
             $table->unique([
                 'program_id',
                 'slug'
-            ]);
+            ], 'specialites_program_slug_unique');
         });
     }
 

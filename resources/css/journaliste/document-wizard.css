@@ -1,0 +1,1714 @@
+/* =========================================================
+   YAA'SCIENTIA — DOCUMENT WIZARD
+   resources/css/journaliste/wizare.css
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+
+    --wizard-primary: #2563eb;
+    --wizard-primary-dark: #1d4ed8;
+    --wizard-primary-light: #eff6ff;
+
+    --wizard-success: #059669;
+    --wizard-success-dark: #047857;
+    --wizard-success-light: #ecfdf5;
+
+    --wizard-danger: #dc2626;
+    --wizard-danger-light: #fff8f8;
+
+    --wizard-text: #172033;
+    --wizard-text-light: #334155;
+
+    --wizard-muted: #64748b;
+
+    --wizard-border: #e2e8f0;
+    --wizard-border-light: #edf1f7;
+
+    --wizard-background: #f6f8fc;
+
+    --wizard-white: #ffffff;
+
+    --wizard-shadow:
+        0 15px 40px rgba(15, 23, 42, 0.06);
+
+    --wizard-radius: 20px;
+
+}
+
+
+/* =========================================================
+   DOCUMENT WIZARD — CONTENEUR PRINCIPAL
+========================================================= */
+
+.document-wizard {
+
+    position: relative;
+
+    display: block !important;
+
+    width: 100%;
+
+    margin: 0 0 32px 0;
+
+    padding: 30px;
+
+    background: var(--wizard-white);
+
+    border: 1px solid var(--wizard-border);
+
+    border-radius: 24px;
+
+    box-shadow:
+        0 10px 35px rgba(15, 23, 42, 0.06);
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   PROGRESSION
+========================================================= */
+
+.wizard-progress {
+
+    position: relative;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    align-items: start;
+
+    width: 100%;
+
+    gap: 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   LIGNE DE PROGRESSION
+========================================================= */
+
+.wizard-progress-line {
+
+    position: absolute;
+
+    top: 23px;
+
+    left: 16.5%;
+
+    right: 16.5%;
+
+    height: 4px;
+
+    overflow: hidden;
+
+    background: #e5e7eb;
+
+    border-radius: 100px;
+
+    z-index: 0;
+
+}
+
+
+/* =========================================================
+   REMPLISSAGE DE LA PROGRESSION
+========================================================= */
+
+.wizard-progress-fill {
+
+    display: block;
+
+    width: 0%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--wizard-primary),
+            #60a5fa
+        );
+
+    border-radius: inherit;
+
+    transition:
+        width 0.45s ease;
+
+}
+
+
+/* =========================================================
+   ÉTAPE
+========================================================= */
+
+.wizard-step {
+
+    position: relative;
+
+    z-index: 2;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    min-width: 0;
+
+    text-align: center;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================================
+   NUMÉRO DE L'ÉTAPE
+========================================================= */
+
+.wizard-step-number {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 48px;
+
+    height: 48px;
+
+    padding: 0;
+
+    margin: 0;
+
+    border: 3px solid #e5e7eb;
+
+    border-radius: 50%;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #94a3b8;
+
+    font-family: inherit;
+
+    font-size: 16px;
+
+    font-weight: 800;
+
+    line-height: 1;
+
+    cursor: default;
+
+    box-sizing: border-box;
+
+    transition:
+        all 0.35s ease;
+
+}
+
+
+/* =========================================================
+   SVG DE VALIDATION
+========================================================= */
+
+.wizard-step-number svg {
+
+    display: none;
+
+    width: 22px;
+
+    height: 22px;
+
+}
+
+
+/* =========================================================
+   ÉTAPE ACTIVE
+========================================================= */
+
+.wizard-step.active
+.wizard-step-number {
+
+    border-color:
+        var(--wizard-primary);
+
+    background:
+        var(--wizard-primary);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 7px
+        rgba(37, 99, 235, 0.12);
+
+}
+
+
+/* =========================================================
+   ÉTAPE TERMINÉE
+========================================================= */
+
+.wizard-step.completed
+.wizard-step-number {
+
+    border-color:
+        var(--wizard-success);
+
+    background:
+        var(--wizard-success);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 0 0 5px
+        rgba(5, 150, 105, 0.08);
+
+}
+ .btn-primary {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+/* =========================================================
+   CACHER LE NUMÉRO SI TERMINÉ
+========================================================= */
+
+.wizard-step.completed
+.wizard-step-number
+span {
+
+    display: none;
+
+}
+
+
+/* =========================================================
+   AFFICHER LE CHECK
+========================================================= */
+
+.wizard-step.completed
+.wizard-step-number
+svg {
+
+    display: block;
+
+}
+
+
+/* =========================================================
+   TEXTE DE L'ÉTAPE
+========================================================= */
+
+.wizard-step-text {
+
+    margin-top: 12px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   TITRE ÉTAPE
+========================================================= */
+
+.wizard-step-text strong {
+
+    display: block;
+
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    font-weight: 750;
+
+    line-height: 1.3;
+
+}
+
+
+/* =========================================================
+   DESCRIPTION ÉTAPE
+========================================================= */
+
+.wizard-step-text small {
+
+    display: block;
+
+    margin-top: 4px;
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 400;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+   TEXTE ÉTAPE ACTIVE
+========================================================= */
+
+.wizard-step.active
+.wizard-step-text
+strong {
+
+    color:
+        var(--wizard-primary);
+
+}
+
+
+/* =========================================================
+   TEXTE ÉTAPE TERMINÉE
+========================================================= */
+
+.wizard-step.completed
+.wizard-step-text
+strong {
+
+    color:
+        var(--wizard-success);
+
+}
+
+
+/* =========================================================
+   FORM STEPS
+   IMPORTANT :
+   Une seule logique de visibilité.
+========================================================= */
+
+.form-step {
+
+    position: relative;
+
+    display: none !important;
+
+    width: 100%;
+
+    margin: 0 0 30px 0;
+
+    padding: 34px;
+
+    background:
+        var(--wizard-white);
+
+    border:
+        1px solid var(--wizard-border);
+
+    border-radius:
+        24px;
+
+    box-shadow:
+        var(--wizard-shadow);
+
+    box-sizing: border-box;
+
+    animation:
+        wizardFade
+        0.35s ease;
+
+}
+
+
+/* =========================================================
+   ÉTAPE ACTIVE = VISIBLE
+========================================================= */
+
+.form-step.active {
+
+    display: block !important;
+
+    visibility: visible !important;
+
+    opacity: 1 !important;
+
+}
+
+
+/* =========================================================
+   ÉTAPE CACHÉE
+========================================================= */
+
+.form-step:not(.active) {
+
+    display: none !important;
+
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes wizardFade {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(14px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   CONTENEURS CONDITIONNELS
+========================================================= */
+
+.wizard-hidden {
+
+    display: none !important;
+
+}
+
+
+/* =========================================================
+   CARTE BOOTSTRAP DANS LE WIZARD
+========================================================= */
+
+.form-step .card {
+
+    width: 100%;
+
+    margin: 0;
+
+    background:
+        #ffffff;
+
+    border:
+        1px solid var(--wizard-border);
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        none;
+
+}
+
+
+/* =========================================================
+   CARD HEADER
+========================================================= */
+
+.form-step .card-header {
+
+    padding: 18px 22px;
+
+    background:
+        #ffffff;
+
+    border-bottom:
+        1px solid var(--wizard-border-light);
+
+    border-radius:
+        16px 16px 0 0;
+
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.form-step .card-body {
+
+    padding: 24px;
+
+}
+
+
+/* =========================================================
+   TITRE CARD
+========================================================= */
+
+.form-step .card-header h5 {
+
+    margin: 0;
+
+    color:
+        var(--wizard-text);
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+}
+
+
+/* =========================================================
+   LABELS
+========================================================= */
+
+.form-step label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    color:
+        var(--wizard-text-light);
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+   INPUTS / SELECTS / TEXTAREA
+========================================================= */
+
+.form-step input,
+.form-step select,
+.form-step textarea {
+
+    display: block;
+
+    width: 100%;
+
+    max-width: 100%;
+
+    padding:
+        13px 15px;
+
+    margin: 0;
+
+    color:
+        var(--wizard-text);
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    font-weight: 400;
+
+    line-height: 1.5;
+
+    background:
+        #ffffff;
+
+    border:
+        1.5px solid #dbe2ea;
+
+    border-radius:
+        12px;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.form-step input:hover,
+.form-step select:hover,
+.form-step textarea:hover {
+
+    border-color:
+        #b9c5d5;
+
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.form-step input:focus,
+.form-step select:focus,
+.form-step textarea:focus {
+
+    border-color:
+        var(--wizard-primary);
+
+    background:
+        #ffffff;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(37, 99, 235, 0.10);
+
+}
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.form-step select {
+
+    min-height: 48px;
+
+    cursor: pointer;
+
+    appearance: auto;
+
+}
+
+/* =========================================================
+   SELECT DISABLED
+========================================================= */
+
+.form-step select:disabled {
+
+    color:
+        #94a3b8;
+
+    background:
+        #f8fafc;
+
+    border-color:
+        #e2e8f0;
+
+    cursor:
+        not-allowed;
+
+}
+
+
+/* =========================================================
+   TEXTAREA
+========================================================= */
+
+.form-step textarea {
+
+    min-height:
+        130px;
+
+    resize:
+        vertical;
+
+    line-height:
+        1.6;
+
+}
+
+
+/* =========================================================
+   INPUT FILE
+========================================================= */
+
+.form-step input[type="file"] {
+
+    padding:
+        10px 12px;
+
+    cursor:
+        pointer;
+
+}
+
+
+/* =========================================================
+   INPUT NUMBER
+========================================================= */
+
+.form-step input[type="number"] {
+
+    appearance:
+        textfield;
+
+}
+
+
+/* =========================================================
+   INPUT INVALID
+========================================================= */
+
+.form-step
+input.is-invalid,
+.form-step
+select.is-invalid,
+.form-step
+textarea.is-invalid {
+
+    border-color:
+        var(--wizard-danger)
+        !important;
+
+    background:
+        var(--wizard-danger-light)
+        !important;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(220, 38, 38, 0.08)
+        !important;
+
+}
+
+
+/* =========================================================
+   ANCIENNE CLASSE D'ERREUR
+========================================================= */
+
+.form-step
+.field-invalid {
+
+    border-color:
+        #ef4444
+        !important;
+
+    background:
+        #fff8f8
+        !important;
+
+    box-shadow:
+        0 0 0 4px
+        rgba(239, 68, 68, 0.08)
+        !important;
+
+}
+
+
+/* =========================================================
+   MESSAGE ERREUR
+========================================================= */
+
+.field-error {
+
+    display: block;
+
+    margin-top: 6px;
+
+    color:
+        var(--wizard-danger);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+.document-upload {
+
+    position: relative;
+
+    width: 100%;
+
+    padding:
+        40px 25px;
+
+    text-align:
+        center;
+
+    background:
+        #f8fbff;
+
+    border:
+        2px dashed #bfdbfe;
+
+    border-radius:
+        20px;
+
+    box-sizing:
+        border-box;
+
+    transition:
+        all 0.25s ease;
+
+}
+
+
+/* =========================================================
+   UPLOAD HOVER
+========================================================= */
+
+.document-upload:hover {
+
+    background:
+        #eff6ff;
+
+    border-color:
+        var(--wizard-primary);
+
+}
+
+
+/* =========================================================
+   ICÔNE UPLOAD
+========================================================= */
+
+.document-upload-icon {
+
+    display: block;
+
+    margin-bottom:
+        13px;
+
+    font-size:
+        42px;
+
+}
+
+
+/* =========================================================
+   TEXTE UPLOAD
+========================================================= */
+
+.document-upload strong {
+
+    display: block;
+
+    color:
+        #1e3a5f;
+
+    font-size:
+        16px;
+
+}
+
+
+/* =========================================================
+   DESCRIPTION UPLOAD
+========================================================= */
+
+.document-upload small {
+
+    display: block;
+
+    margin-top:
+        8px;
+
+    color:
+        #64748b;
+
+    font-size:
+        12px;
+
+}
+
+
+/* =========================================================
+   FICHIER SÉLECTIONNÉ
+========================================================= */
+
+.file-selected {
+
+    margin-top:
+        15px;
+
+    padding:
+        12px 15px;
+
+    color:
+        #047857;
+
+    background:
+        #ecfdf5;
+
+    border:
+        1px solid #a7f3d0;
+
+    border-radius:
+        12px;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+
+}
+
+
+/* =========================================================
+   ACTIONS WIZARD
+========================================================= */
+
+.wizard-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 18px;
+
+    width: 100%;
+
+    margin-top:
+        28px;
+
+    padding:
+        18px 22px;
+
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    border:
+        1px solid var(--wizard-border);
+
+    border-radius:
+        18px;
+
+    box-shadow:
+        0 10px 30px
+        rgba(15, 23, 42, 0.06);
+
+    box-sizing:
+        border-box;
+
+}
+
+
+/* =========================================================
+   BOUTONS
+========================================================= */
+
+.wizard-btn {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    min-width:
+        145px;
+
+    padding:
+        13px 20px;
+
+    border:
+        none;
+
+    border-radius:
+        12px;
+
+    font-family:
+        inherit;
+
+    font-size:
+        14px;
+
+    font-weight:
+        750;
+
+    line-height:
+        1.4;
+
+    cursor:
+        pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+/* =========================================================
+   HOVER BOUTON
+========================================================= */
+
+.wizard-btn:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =========================================================
+   BOUTON PRINCIPAL
+========================================================= */
+
+.wizard-btn-primary {
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, 0.25);
+
+}
+
+
+/* =========================================================
+   HOVER PRINCIPAL
+========================================================= */
+
+.wizard-btn-primary:hover {
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1d4ed8,
+            #1e40af
+        );
+
+    box-shadow:
+        0 11px 25px
+        rgba(37, 99, 235, 0.35);
+
+}
+
+
+/* =========================================================
+   BOUTON SECONDAIRE
+========================================================= */
+
+.wizard-btn-secondary {
+
+    color:
+        #475569;
+
+    background:
+        #f1f5f9;
+
+    border:
+        1px solid #dbe2ea;
+
+}
+
+
+/* =========================================================
+   HOVER SECONDAIRE
+========================================================= */
+
+.wizard-btn-secondary:hover {
+
+    color:
+        #1e293b;
+
+    background:
+        #e2e8f0;
+
+}
+
+
+/* =========================================================
+   BOUTON SUCCESS
+========================================================= */
+
+.wizard-btn-success {
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #059669,
+            #047857
+        );
+
+    box-shadow:
+        0 8px 20px
+        rgba(5, 150, 105, 0.25);
+
+}
+
+
+/* =========================================================
+   HOVER SUCCESS
+========================================================= */
+
+.wizard-btn-success:hover {
+
+    color:
+        #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #047857,
+            #065f46
+        );
+
+}
+
+
+/* =========================================================
+   COMPTEUR
+========================================================= */
+
+.wizard-step-counter {
+
+    color:
+        #64748b;
+
+    font-size:
+        13px;
+
+}
+
+
+/* =========================================================
+   COMPTEUR FORT
+========================================================= */
+
+.wizard-step-counter strong {
+
+    color:
+        var(--wizard-primary);
+
+    font-size:
+        16px;
+
+}
+
+
+/* =========================================================
+   RÉCAPITULATIF
+========================================================= */
+
+#document-summary {
+
+    width: 100%;
+
+}
+
+
+/* =========================================================
+   CARTES DU RÉCAPITULATIF
+========================================================= */
+
+#document-summary .card {
+
+    background:
+        #ffffff;
+
+    border:
+        1px solid var(--wizard-border);
+
+    border-radius:
+        16px;
+
+}
+
+
+/* =========================================================
+   TITRES RÉCAPITULATIF
+========================================================= */
+
+#document-summary h6 {
+
+    color:
+        var(--wizard-text);
+
+    font-size:
+        15px;
+
+    font-weight:
+        800;
+
+}
+
+
+/* =========================================================
+   TEXTES RÉCAPITULATIF
+========================================================= */
+
+#document-summary .text-muted {
+
+    color:
+        #64748b !important;
+
+    font-size:
+        12px;
+
+}
+
+
+/* =========================================================
+   ALERT INFO
+========================================================= */
+
+.form-step .alert {
+
+    border-radius:
+        12px;
+
+}
+
+
+/* =========================================================
+   BOUTONS BOOTSTRAP UTILISÉS DANS LA VUE
+========================================================= */
+
+.form-step .btn {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    gap:
+        6px;
+
+    border-radius:
+        10px;
+
+}
+
+
+/* =========================================================
+   ESPACEMENT DES BLOCS
+========================================================= */
+
+.form-step .mb-4 {
+
+    margin-bottom:
+        1.5rem !important;
+
+}
+
+
+/* =========================================================
+   ASTÉRISQUE OBLIGATOIRE
+========================================================= */
+
+.form-step .text-danger {
+
+    color:
+        #dc2626 !important;
+
+}
+
+
+/* =========================================================
+   CONTENEUR PRIX
+========================================================= */
+
+#price-container {
+
+    transition:
+        opacity 0.2s ease;
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .document-wizard {
+
+        padding:
+            22px 12px;
+
+        margin-bottom:
+            22px;
+
+        border-radius:
+            18px;
+
+    }
+
+
+    .wizard-progress {
+
+        gap:
+            5px;
+
+    }
+
+
+    .wizard-progress-line {
+
+        top:
+            20px;
+
+        left:
+            18%;
+
+        right:
+            18%;
+
+        height:
+            3px;
+
+    }
+
+
+    .wizard-step-number {
+
+        width:
+            42px;
+
+        height:
+            42px;
+
+        border-width:
+            2px;
+
+        font-size:
+            14px;
+
+    }
+
+
+    .wizard-step-text {
+
+        margin-top:
+            9px;
+
+    }
+
+
+    .wizard-step-text strong {
+
+        font-size:
+            11px;
+
+    }
+
+
+    .wizard-step-text small {
+
+        display:
+            none;
+
+    }
+
+
+    .form-step {
+
+        padding:
+            18px 14px;
+
+        margin-bottom:
+            20px;
+
+        border-radius:
+            18px;
+
+    }
+
+
+    .form-step .card {
+
+        border-radius:
+            14px;
+
+    }
+
+
+    .form-step .card-header {
+
+        padding:
+            15px 16px;
+
+    }
+
+
+    .form-step .card-body {
+
+        padding:
+            18px 16px;
+
+    }
+
+
+    .form-step .card-header h5 {
+
+        font-size:
+            16px;
+
+    }
+
+
+    .form-step input,
+    .form-step select,
+    .form-step textarea {
+
+        padding:
+            12px 13px;
+
+        font-size:
+            14px;
+
+    }
+
+
+    .wizard-actions {
+
+        flex-wrap:
+            wrap;
+
+        padding:
+            13px;
+
+    }
+
+
+    .wizard-step-counter {
+
+        order:
+            -1;
+
+        width:
+            100%;
+
+        text-align:
+            center;
+
+    }
+
+
+    .wizard-btn {
+
+        flex:
+            1;
+
+        min-width:
+            0;
+
+    }
+
+}
+
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .document-wizard {
+
+        padding:
+            16px 8px;
+
+    }
+
+
+    .wizard-progress {
+
+        gap:
+            2px;
+
+    }
+
+
+    .wizard-progress-line {
+
+        left:
+            15%;
+
+        right:
+            15%;
+
+    }
+
+
+    .wizard-step-number {
+
+        width:
+            36px;
+
+        height:
+            36px;
+
+        font-size:
+            12px;
+
+    }
+
+
+    .wizard-step-number svg {
+
+        width:
+            17px;
+
+        height:
+            17px;
+
+    }
+
+
+    .wizard-step-text strong {
+
+        font-size:
+            10px;
+
+    }
+
+
+    .form-step {
+
+        padding:
+            14px 10px;
+
+    }
+
+
+    .form-step .card-body {
+
+        padding:
+            15px 12px;
+
+    }
+
+
+    .wizard-actions {
+
+        gap:
+            8px;
+
+    }
+
+
+    .wizard-btn {
+
+        width:
+            100%;
+
+        flex:
+            none;
+
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+.wizard-step-number:focus-visible,
+.wizard-btn:focus-visible,
+.form-step input:focus-visible,
+.form-step select:focus-visible,
+.form-step textarea:focus-visible {
+
+    outline:
+        3px solid
+        rgba(37, 99, 235, 0.25);
+
+    outline-offset:
+        2px;
+
+}
+
+
+/* =========================================================
+   IMPRESSION
+========================================================= */
+
+@media print {
+
+    .document-wizard {
+
+        padding:
+            0;
+
+        border:
+            none;
+
+        box-shadow:
+            none;
+
+    }
+
+
+    .wizard-progress {
+
+        display:
+            none;
+
+    }
+
+
+    .form-step {
+
+        display:
+            block !important;
+
+        margin-bottom:
+            20px;
+
+        border:
+            none;
+
+        box-shadow:
+            none;
+
+    }
+
+
+    .wizard-actions {
+
+        display:
+            none;
+
+    }
+
+}

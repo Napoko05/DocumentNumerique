@@ -1,489 +1,385 @@
-@extends('layouts.journalist_app')
+@extends('layouts.journaliste_app')
 
 @section('title', $document->title)
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 py-10 px-4 sm:px-6 lg:px-8">
+<div class="document-detail-page">
 
-<div class="max-w-5xl mx-auto">
+    <div class="document-detail-container">
 
-    <!-- HEADER -->
-    <div class="bg-blue-600 rounded-2xl py-8 px-6 mb-8 shadow-lg">
+        {{-- =========================
+             HEADER
+        ========================== --}}
+        <div class="document-detail-header">
 
-        <h1 class="text-center text-white text-3xl md:text-4xl font-bold">
-
-            {{ $document->title }}
-
-        </h1>
-
-        <p class="text-center text-blue-100 mt-3">
-
-            Détails complets du document
-
-        </p>
-
-    </div>
-
-
-    <!-- CARD -->
-    <div class="bg-white shadow-xl rounded-2xl border border-blue-100 overflow-hidden">
-
-        <div class="p-6 md:p-8 space-y-8">
-
-
-            <!-- INFORMATIONS -->
-            <div>
-
-                <h2 class="text-xl font-bold text-blue-700 mb-5">
-
-                    📚 Informations académiques
-
-                </h2>
-
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-
-                    <!-- FORMATION -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            🎓 Formation
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->formation?->name ?? 'Non renseignée' }}
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- FILIERE -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            🏛️ Filière
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->filiere?->name ?? 'Non renseignée' }}
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- NIVEAU -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            🎓 Niveau / Classe
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->level?->name ?? 'Non renseigné' }}
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- MATIERE / MODULE -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            📖 Matière / Module
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->subject?->name ?? 'Non renseigné' }}
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- TYPE DOCUMENT -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            📄 Type de document
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->documentType?->name ?? 'Non renseigné' }}
-
-                        </p>
-
-                    </div>
-
-
-                    <!-- VUES -->
-                    <div class="bg-blue-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            👁️ Nombre de vues
-
-                        </p>
-
-                        <p class="text-gray-700 mt-1">
-
-                            {{ $document->views ?? 0 }}
-
-                        </p>
-
-                    </div>
-
-                </div>
-
+            <div class="document-header-icon">
+                📄
             </div>
 
+            <div class="document-header-content">
+                <h1>{{ $document->title }}</h1>
 
-            <hr class="border-blue-100">
+                <p>
+                    Détails complets du document
+                </p>
+            </div>
 
-
-            <!-- ACCES -->
-            <div>
-
-                <h2 class="text-xl font-bold text-blue-700 mb-5">
-
-                    🔐 Accès au document
-
-                </h2>
+        </div>
 
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {{-- =========================
+             CONTENU PRINCIPAL
+        ========================== --}}
+        <div class="document-detail-card">
+
+            <div class="document-detail-body">
+
+                {{-- =========================
+                     INFORMATIONS
+                ========================== --}}
+                <section class="document-section">
+
+                    <div class="document-section-title">
+                        <span class="section-icon">📚</span>
+                        <h2>Informations académiques</h2>
+                    </div>
+
+                    <div class="document-info-grid">
+
+                        {{-- Formation --}}
+                        <div class="document-info-item">
+
+                            <div class="info-item-label">
+                                🎓 Formation
+                            </div>
+
+                            <div class="info-item-value">
+                                {{ $document->formation?->name ?? 'Non renseignée' }}
+                            </div>
+
+                        </div>
 
 
-                    <!-- TYPE ACCES -->
-                    <div class="bg-gray-50 rounded-xl p-4">
+                        {{-- Filière --}}
+                        <div class="document-info-item">
 
-                        <p class="text-sm font-semibold text-blue-700 mb-2">
+                            <div class="info-item-label">
+                                🏛️ Filière
+                            </div>
 
-                            Type d'accès
+                            <div class="info-item-value">
+                                {{ $document->filiere?->name ?? 'Non renseignée' }}
+                            </div>
 
-                        </p>
+                        </div>
 
 
-                        @if($document->access_type === 'free')
+                        {{-- Niveau --}}
+                        <div class="document-info-item">
 
-                            <span class="inline-flex px-4 py-2
-                                         text-sm font-semibold
-                                         rounded-full
-                                         bg-green-100
-                                         text-green-700">
+                            <div class="info-item-label">
+                                🎓 Niveau / Classe
+                            </div>
 
-                                🟢 Gratuit
+                            <div class="info-item-value">
+                                {{ $document->level?->name ?? 'Non renseigné' }}
+                            </div>
 
-                            </span>
+                        </div>
 
-                        @else
 
-                            <span class="inline-flex px-4 py-2
-                                         text-sm font-semibold
-                                         rounded-full
-                                         bg-orange-100
-                                         text-orange-700">
+                        {{-- Matière --}}
+                        <div class="document-info-item">
 
-                                🟠 Premium
+                            <div class="info-item-label">
+                                📖 Matière / Module
+                            </div>
 
-                            </span>
+                            <div class="info-item-value">
+                                {{ $document->subject?->name ?? 'Non renseigné' }}
+                            </div>
 
-                        @endif
+                        </div>
+
+
+                        {{-- Type --}}
+                        <div class="document-info-item">
+
+                            <div class="info-item-label">
+                                📄 Type de document
+                            </div>
+
+                            <div class="info-item-value">
+                                {{ $document->documentType?->name ?? 'Non renseigné' }}
+                            </div>
+
+                        </div>
+
+
+                        {{-- Vues --}}
+                        <div class="document-info-item">
+
+                            <div class="info-item-label">
+                                👁️ Nombre de vues
+                            </div>
+
+                            <div class="info-item-value">
+                                {{ $document->views ?? 0 }}
+                            </div>
+
+                        </div>
 
                     </div>
 
-
-                    <!-- PRIX -->
-                    <div class="bg-gray-50 rounded-xl p-4">
-
-                        <p class="text-sm font-semibold text-blue-700">
-
-                            💰 Prix
-
-                        </p>
+                </section>
 
 
-                        @if(
-                            $document->access_type === 'premium'
-                            && $document->price
-                        )
+                <div class="document-divider"></div>
 
-                            <p class="text-lg font-bold
-                                      text-orange-600 mt-2">
 
-                                {{ number_format(
-                                    (float) $document->price,
-                                    0,
-                                    ',',
-                                    ' '
-                                ) }}
+                {{-- =========================
+                     ACCÈS
+                ========================== --}}
+                <section class="document-section">
 
-                                FCFA
-
-                            </p>
-
-                        @else
-
-                            <p class="text-gray-500 mt-2">
-
-                                Gratuit
-
-                            </p>
-
-                        @endif
-
+                    <div class="document-section-title">
+                        <span class="section-icon">🔐</span>
+                        <h2>Accès au document</h2>
                     </div>
 
-                </div>
+                    <div class="document-access-grid">
 
-            </div>
+                        {{-- Type accès --}}
+                        <div class="document-access-item">
 
+                            <div class="info-item-label">
+                                Type d'accès
+                            </div>
 
-            <hr class="border-blue-100">
+                            @if($document->access_type === 'free')
 
+                                <span class="document-badge badge-free">
+                                    <span>●</span>
+                                    Gratuit
+                                </span>
 
-            <!-- STATUT -->
-            <div>
+                            @else
 
-                <h2 class="text-xl font-bold text-blue-700 mb-4">
-
-                    📌 Statut
-
-                </h2>
-
-
-                @if($document->status === 'published')
-
-                    <span class="inline-flex px-4 py-2
-                                 rounded-full
-                                 bg-green-100
-                                 text-green-700
-                                 font-semibold">
-
-                        ✓ Publié
-
-                    </span>
-
-                @elseif($document->status === 'pending')
-
-                    <span class="inline-flex px-4 py-2
-                                 rounded-full
-                                 bg-yellow-100
-                                 text-yellow-700
-                                 font-semibold">
-
-                        ⏳ En attente de validation
-
-                    </span>
-
-                @elseif($document->status === 'rejected')
-
-                    <span class="inline-flex px-4 py-2
-                                 rounded-full
-                                 bg-red-100
-                                 text-red-700
-                                 font-semibold">
-
-                        ✕ Rejeté
-
-                    </span>
-
-                @else
-
-                    <span class="inline-flex px-4 py-2
-                                 rounded-full
-                                 bg-gray-100
-                                 text-gray-600
-                                 font-semibold">
-
-                        📝 Brouillon
-
-                    </span>
-
-                @endif
-
-            </div>
-
-
-            <hr class="border-blue-100">
-
-
-            <!-- DESCRIPTION -->
-            <div>
-
-                <h2 class="text-xl font-bold text-blue-700 mb-4">
-
-                    📄 Description
-
-                </h2>
-
-
-                @if($document->description)
-
-                    <div class="bg-gray-50
-                                rounded-xl
-                                p-5
-                                text-gray-700
-                                leading-relaxed
-                                whitespace-pre-line">
-
-                        {{ $document->description }}
-
-                    </div>
-
-                @else
-
-                    <p class="text-gray-400 italic">
-
-                        Aucune description n'a été ajoutée.
-
-                    </p>
-
-                @endif
-
-            </div>
-
-
-            <!-- FICHIER -->
-            @if($document->file_path)
-
-                <hr class="border-blue-100">
-
-
-                <div>
-
-                    <h2 class="text-xl font-bold text-blue-700 mb-4">
-
-                        📎 Fichier
-
-                    </h2>
-
-
-                    <div class="flex flex-col sm:flex-row
-                                sm:items-center
-                                sm:justify-between
-                                gap-4
-                                bg-blue-50
-                                rounded-xl
-                                p-5">
-
-                        <div>
-
-                            <p class="font-semibold text-gray-700">
-
-                                Document joint
-
-                            </p>
-
-
-                            @if($document->file_extension)
-
-                                <p class="text-sm text-gray-500 mt-1">
-
-                                    Format :
-
-                                    {{ strtoupper(
-                                        $document->file_extension
-                                    ) }}
-
-                                </p>
+                                <span class="document-badge badge-premium">
+                                    <span>●</span>
+                                    Premium
+                                </span>
 
                             @endif
 
                         </div>
 
 
-                        <a href="{{ asset(
-                            'storage/' . $document->file_path
-                        ) }}"
+                        {{-- Prix --}}
+                        <div class="document-access-item">
 
-                           target="_blank"
+                            <div class="info-item-label">
+                                💰 Prix
+                            </div>
 
-                           class="inline-flex
-                                  justify-center
-                                  px-5 py-3
-                                  bg-blue-600
-                                  hover:bg-blue-700
-                                  text-white
-                                  font-semibold
-                                  rounded-xl
-                                  transition">
+                            @if(
+                                $document->access_type === 'premium'
+                                && $document->price
+                            )
 
-                            👁️ Ouvrir le fichier
+                                <div class="document-price">
 
-                        </a>
+                                    {{ number_format(
+                                        (float) $document->price,
+                                        0,
+                                        ',',
+                                        ' '
+                                    ) }}
+
+                                    <span>FCFA</span>
+
+                                </div>
+
+                            @else
+
+                                <div class="document-free-price">
+                                    Gratuit
+                                </div>
+
+                            @endif
+
+                        </div>
 
                     </div>
 
+                </section>
+
+
+                <div class="document-divider"></div>
+
+
+                {{-- =========================
+                     STATUT
+                ========================== --}}
+                <section class="document-section">
+
+                    <div class="document-section-title">
+                        <span class="section-icon">📌</span>
+                        <h2>Statut</h2>
+                    </div>
+
+
+                    @if($document->status === 'published')
+
+                        <span class="document-status status-published">
+                            <span>✓</span>
+                            Publié
+                        </span>
+
+                    @elseif($document->status === 'pending')
+
+                        <span class="document-status status-pending">
+                            <span>⏳</span>
+                            En attente de validation
+                        </span>
+
+                    @elseif($document->status === 'rejected')
+
+                        <span class="document-status status-rejected">
+                            <span>✕</span>
+                            Rejeté
+                        </span>
+
+                    @else
+
+                        <span class="document-status status-draft">
+                            <span>📝</span>
+                            Brouillon
+                        </span>
+
+                    @endif
+
+                </section>
+
+
+                <div class="document-divider"></div>
+
+
+                {{-- =========================
+                     DESCRIPTION
+                ========================== --}}
+                <section class="document-section">
+
+                    <div class="document-section-title">
+                        <span class="section-icon">📄</span>
+                        <h2>Description</h2>
+                    </div>
+
+
+                    @if($document->description)
+
+                        <div class="document-description">
+                            {{ $document->description }}
+                        </div>
+
+                    @else
+
+                        <p class="document-empty">
+                            Aucune description n'a été ajoutée.
+                        </p>
+
+                    @endif
+
+                </section>
+
+
+                {{-- =========================
+                     FICHIER
+                ========================== --}}
+                @if($document->file_path)
+
+                    <div class="document-divider"></div>
+
+                    <section class="document-section">
+
+                        <div class="document-section-title">
+                            <span class="section-icon">📎</span>
+                            <h2>Fichier</h2>
+                        </div>
+
+
+                        <div class="document-file-box">
+
+                            <div class="document-file-info">
+
+                                <div class="document-file-icon">
+                                    📄
+                                </div>
+
+                                <div>
+
+                                    <div class="document-file-title">
+                                        Document joint
+                                    </div>
+
+                                    @if($document->file_extension)
+
+                                        <div class="document-file-format">
+                                            Format :
+                                            <strong>
+                                                {{ strtoupper($document->file_extension) }}
+                                            </strong>
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+
+                            <a
+                                href="{{ asset('storage/' . $document->file_path) }}"
+                                target="_blank"
+                                class="document-file-button"
+                            >
+                                👁️ Ouvrir le fichier
+                            </a>
+
+                        </div>
+
+                    </section>
+
+                @endif
+
+
+                <div class="document-divider"></div>
+
+
+                {{-- =========================
+                     ACTIONS
+                ========================== --}}
+                <div class="document-actions">
+
+                    <a
+                        href="{{ route('journaliste.documents.edit', $document) }}"
+                        class="document-action document-action-primary"
+                    >
+                        ✏️
+                        <span>Modifier</span>
+                    </a>
+
+
+                    <a
+                        href="{{ route('journaliste.documents.index') }}"
+                        class="document-action document-action-secondary"
+                    >
+                        ←
+                        <span>Retour à mes documents</span>
+                    </a>
+
                 </div>
-
-            @endif
-
-
-            <hr class="border-blue-100">
-
-
-            <!-- ACTIONS -->
-            <div class="flex flex-col sm:flex-row gap-4 pt-2">
-
-
-                <!-- MODIFIER -->
-                <a href="{{ route(
-                    'journaliste.documents.edit',
-                    $document
-                ) }}"
-
-                   class="px-6 py-3
-                          bg-blue-600
-                          hover:bg-blue-700
-                          text-white
-                          font-semibold
-                          rounded-xl
-                          shadow-md
-                          transition
-                          text-center">
-
-                    ✏️ Modifier
-
-                </a>
-
-
-                <!-- RETOUR -->
-                <a href="{{ route(
-                    'journaliste.documents.index'
-                ) }}"
-
-                   class="px-6 py-3
-                          bg-gray-200
-                          hover:bg-gray-300
-                          text-gray-800
-                          font-semibold
-                          rounded-xl
-                          text-center
-                          transition">
-
-                    ← Retour à mes documents
-
-                </a>
 
             </div>
 
@@ -491,7 +387,6 @@
 
     </div>
 
-</div>
 </div>
 
 @endsection

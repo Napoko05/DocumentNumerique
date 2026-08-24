@@ -9,43 +9,30 @@ class Filiere extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
         'academic_domain_id',
         'name',
         'slug',
         'description',
         'icon',
         'is_active',
-
     ];
 
-
-
     protected $casts = [
-
         'is_active' => 'boolean',
-
     ];
 
     /*
     |--------------------------------------------------------------------------
     | DOMAINE ACADÉMIQUE
     |--------------------------------------------------------------------------
-    |
-    | Exemple :
-    |
-    | Sciences exactes
-    |        ↓
-    | Informatique
-    |
     */
 
     public function academicDomain()
     {
         return $this->belongsTo(
-            AcademicDomain::class
+            AcademicDomain::class,
+            'academic_domain_id'
         );
     }
 
@@ -54,55 +41,44 @@ class Filiere extends Model
     | NIVEAUX
     |--------------------------------------------------------------------------
     |
-    | Exemple :
+    | Supérieur :
     |
-    | Informatique
-    |        ↓
-    | Licence 1
-    | Licence 2
-    | Licence 3
+    | Filière
+    |    ↓
+    | Niveau
     |
     */
 
     public function levels()
     {
         return $this->hasMany(
-            Level::class
+            Level::class,
+            'filiere_id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
     | DOCUMENTS
     |--------------------------------------------------------------------------
-    |
-    | Documents directement liés à la filière
-    |
     */
 
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'filiere_id'
         );
     }
 
-
-
     /*
     |--------------------------------------------------------------------------
-    | SCOPE ACTIVE
+    | SCOPE ACTIF
     |--------------------------------------------------------------------------
     */
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
-
 }

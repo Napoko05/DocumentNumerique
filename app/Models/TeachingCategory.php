@@ -14,6 +14,7 @@ class TeachingCategory extends Model
         'name',
         'slug',
         'description',
+        'position',
         'icon',
         'is_active',
     ];

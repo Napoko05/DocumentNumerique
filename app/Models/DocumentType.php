@@ -9,26 +9,17 @@ class DocumentType extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
         'name',
         'slug',
         'icon',
         'description',
         'is_active',
-
     ];
-
-
 
     protected $casts = [
-
         'is_active' => 'boolean',
-
     ];
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -39,11 +30,10 @@ class DocumentType extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'document_type_id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -53,10 +43,6 @@ class DocumentType extends Model
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
-
 }

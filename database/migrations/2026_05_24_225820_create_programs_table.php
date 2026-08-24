@@ -12,12 +12,10 @@ return new class extends Migration
 
             $table->id();
 
-            // Formation ENS
             $table->foreignId('formation_id')
                 ->constrained('formations')
                 ->cascadeOnDelete();
 
-            // Ex : CAPES, CAPCEG, EPS, Inspectorat...
             $table->string('name');
 
             $table->string('slug');
@@ -37,6 +35,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index('formation_id');
+            $table->index('is_active');
 
             $table->unique([
                 'formation_id',

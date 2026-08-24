@@ -1,66 +1,508 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap');
+/* =========================================================
+   BOOTSTRAP
+========================================================= */
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+@import './admin/admin_dashboard.css';
+@import './auth.css';
+@import './login/style_register.css';
+@import './journaliste/show.css';
 
-@layer base {
-    body {
-        @apply font-sans text-ink bg-surface-soft antialiased;
+
+/* =========================================================
+   POLICES
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+
+
+/* =========================================================
+   VARIABLES GLOBALES YAA'SCIENTIA
+========================================================= */
+
+:root {
+
+    /* -----------------------------------------------------
+       COULEURS PRINCIPALES
+    ----------------------------------------------------- */
+
+    --sc-primary: #2563eb;
+    --sc-primary-dark: #1d4ed8;
+    --sc-primary-soft: #eff6ff;
+
+
+    /* -----------------------------------------------------
+       COULEURS SÉMANTIQUES
+    ----------------------------------------------------- */
+
+    --sc-success: #059669;
+    --sc-success-soft: #ecfdf5;
+
+    --sc-warning: #d97706;
+    --sc-warning-soft: #fffbeb;
+
+    --sc-danger: #dc2626;
+    --sc-danger-soft: #fef2f2;
+
+    --sc-purple: #7c3aed;
+    --sc-purple-soft: #f5f3ff;
+
+
+    /* -----------------------------------------------------
+       COULEURS SOMBRES
+    ----------------------------------------------------- */
+
+    --sc-dark: #0f172a;
+    --sc-dark-2: #172033;
+
+
+    /* -----------------------------------------------------
+       GRIS
+    ----------------------------------------------------- */
+
+    --sc-gray-50: #f8fafc;
+    --sc-gray-100: #f1f5f9;
+    --sc-gray-200: #e2e8f0;
+    --sc-gray-300: #cbd5e1;
+    --sc-gray-400: #94a3b8;
+    --sc-gray-500: #64748b;
+    --sc-gray-600: #475569;
+    --sc-gray-700: #334155;
+
+
+    /* -----------------------------------------------------
+       BLANC
+    ----------------------------------------------------- */
+
+    --sc-white: #ffffff;
+
+
+    /* -----------------------------------------------------
+       SIDEBAR
+    ----------------------------------------------------- */
+
+    --sc-sidebar-bg: #0f172a;
+    --sc-sidebar-hover: #1e293b;
+    --sc-sidebar-active: #1e40af;
+    --sc-sidebar-text: #cbd5e1;
+    --sc-sidebar-text-active: #ffffff;
+
+    --sc-sidebar-width: 270px;
+
+
+    /* -----------------------------------------------------
+       TYPOGRAPHIE
+    ----------------------------------------------------- */
+
+    --sc-font-body: 'Inter', sans-serif;
+    --sc-font-heading: 'Plus Jakarta Sans', sans-serif;
+
+
+    /* -----------------------------------------------------
+       BORDURES / ARRONDIS
+    ----------------------------------------------------- */
+
+    --sc-radius-xs: 6px;
+    --sc-radius-sm: 10px;
+    --sc-radius: 14px;
+    --sc-radius-lg: 18px;
+
+
+    /* -----------------------------------------------------
+       OMBRES
+    ----------------------------------------------------- */
+
+    --sc-shadow:
+        0 4px 20px rgba(15, 23, 42, 0.05);
+
+    --sc-shadow-hover:
+        0 10px 30px rgba(15, 23, 42, 0.09);
+}
+
+
+/* =========================================================
+   RESET GLOBAL
+========================================================= */
+
+html {
+    min-height: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+
+    font-family: var(--sc-font-body);
+
+    background-color: var(--sc-gray-50);
+    color: var(--sc-dark-2);
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    text-rendering: optimizeLegibility;
+}
+
+
+/* =========================================================
+   TYPOGRAPHIE
+========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin-top: 0;
+
+    font-family: var(--sc-font-heading);
+
+    color: var(--sc-dark);
+}
+
+p {
+    margin-top: 0;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   FORMULAIRES
+========================================================= */
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.form-control,
+.form-select {
+    border-color: var(--sc-gray-300);
+    border-radius: var(--sc-radius-sm);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--sc-primary);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================================
+   BOUTONS BOOTSTRAP
+========================================================= */
+
+.btn {
+    border-radius: var(--sc-radius-sm);
+
+    font-weight: 600;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--sc-primary);
+    border-color: var(--sc-primary);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--sc-primary-dark);
+    border-color: var(--sc-primary-dark);
+}
+
+.btn-primary:active {
+    background-color: var(--sc-primary-dark);
+    border-color: var(--sc-primary-dark);
+}
+
+
+/* =========================================================
+   CARTES
+========================================================= */
+
+.card {
+    border: 1px solid var(--sc-gray-200);
+    border-radius: var(--sc-radius);
+
+    box-shadow: var(--sc-shadow);
+
+    background-color: var(--sc-white);
+}
+
+.card:hover {
+    box-shadow: var(--sc-shadow-hover);
+}
+
+
+/* =========================================================
+   ALERTES PERSONNALISÉES
+========================================================= */
+
+.sc-alert {
+    padding: 13px 16px;
+
+    border: 1px solid transparent;
+    border-radius: 12px;
+
+    margin-bottom: 20px;
+
+    font-size: 14px;
+}
+
+.sc-alert-success {
+    background-color: var(--sc-success-soft);
+    border-color: #a7f3d0;
+    color: #047857;
+}
+
+.sc-alert-danger {
+    background-color: var(--sc-danger-soft);
+    border-color: #fecaca;
+    color: #b91c1c;
+}
+
+.sc-alert-warning {
+    background-color: var(--sc-warning-soft);
+    border-color: #fde68a;
+    color: #b45309;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.sc-badge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    line-height: 1.2;
+}
+
+.sc-badge-primary {
+    background-color: var(--sc-primary-soft);
+    color: var(--sc-primary-dark);
+}
+
+.sc-badge-success {
+    background-color: var(--sc-success-soft);
+    color: #047857;
+}
+
+.sc-badge-warning {
+    background-color: var(--sc-warning-soft);
+    color: #b45309;
+}
+
+.sc-badge-danger {
+    background-color: var(--sc-danger-soft);
+    color: #b91c1c;
+}
+
+
+/* =========================================================
+   LAYOUT JOURNALISTE
+========================================================= */
+
+.journalist-layout {
+    display: flex;
+
+    width: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+}
+
+.journalist-main {
+    min-width: 0;
+
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+.journalist-content {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 28px;
+}
+
+
+/* =========================================================
+   TOPBAR JOURNALISTE
+========================================================= */
+
+.journalist-topbar {
+    min-height: 68px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 28px;
+
+    background-color: var(--sc-white);
+
+    border-bottom: 1px solid var(--sc-gray-200);
+
+    flex-shrink: 0;
+}
+
+.topbar-title {
+    margin: 0;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    color: var(--sc-dark);
+}
+
+.topbar-site-link {
+    color: var(--sc-gray-500);
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: color 0.2s ease;
+}
+
+.topbar-site-link:hover {
+    color: var(--sc-primary);
+}
+
+
+/* =========================================================
+   BOUTON SIDEBAR
+========================================================= */
+
+.sidebar-toggle {
+    display: none;
+
+    width: 40px;
+    height: 40px;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 1px solid var(--sc-gray-200);
+    border-radius: var(--sc-radius-sm);
+
+    background-color: var(--sc-white);
+
+    color: var(--sc-gray-600);
+}
+
+.sidebar-toggle:hover {
+    background-color: var(--sc-gray-100);
+    color: var(--sc-dark);
+}
+
+
+/* =========================================================
+   UTILITAIRES PERSONNALISÉS
+========================================================= */
+
+.sc-text-muted {
+    color: var(--sc-gray-500);
+}
+
+.sc-text-primary {
+    color: var(--sc-primary);
+}
+
+.sc-text-success {
+    color: var(--sc-success);
+}
+
+.sc-text-danger {
+    color: var(--sc-danger);
+}
+
+.sc-bg-soft {
+    background-color: var(--sc-gray-50);
+}
+
+.sc-bg-white {
+    background-color: var(--sc-white);
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .journalist-content {
+        padding: 22px;
     }
-    h1, h2, h3, h4, h5, h6 {
-        @apply font-heading text-ink;
+
+    .journalist-topbar {
+        padding: 0 22px;
+    }
+
+    .sidebar-toggle {
+        display: inline-flex;
     }
 }
 
-@layer components {
-    .btn {
-        @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-medium text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
-    }
-    .btn-primary {
-        @apply btn bg-brand-800 text-white hover:bg-brand-900 focus:ring-brand-500;
-    }
-    .btn-secondary {
-        @apply btn bg-white text-brand-800 border border-brand-800 hover:bg-brand-50 focus:ring-brand-500;
-    }
-    .btn-accent {
-        @apply btn bg-accent-500 text-accent-900 hover:bg-accent-600 focus:ring-accent-500;
-    }
-    .btn-ghost {
-        @apply btn text-brand-800 hover:bg-brand-50 focus:ring-brand-500;
-    }
-    .btn-danger {
-        @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+
+@media (max-width: 575.98px) {
+
+    .journalist-content {
+        padding: 16px;
     }
 
-    .card {
-        @apply bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden;
-    }
-    .card-hover {
-        @apply card transition-all duration-200 hover:shadow-md hover:-translate-y-0.5;
-    }
-    .card-body {
-        @apply p-5;
+    .journalist-topbar {
+        min-height: 62px;
+        padding: 0 16px;
     }
 
-    .badge {
-        @apply inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium;
-    }
-    .badge-success { @apply badge bg-emerald-50 text-emerald-700; }
-    .badge-warning { @apply badge bg-amber-50 text-amber-700; }
-    .badge-danger  { @apply badge bg-red-50 text-red-700; }
-    .badge-info    { @apply badge bg-brand-50 text-brand-700; }
-
-    .input-field {
-        @apply w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white text-ink placeholder-ink-faint focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors;
-    }
-    .form-label {
-        @apply block text-sm font-medium text-ink-soft mb-1.5;
+    .topbar-title {
+        font-size: 15px;
     }
 
-    .section {
-        @apply py-12 px-4 sm:py-16 sm:px-6 lg:px-8;
+    .topbar-site-link {
+        display: none;
     }
-    .container-narrow { @apply mx-auto max-w-5xl; }
-    .container-wide   { @apply mx-auto max-w-7xl; }
 }

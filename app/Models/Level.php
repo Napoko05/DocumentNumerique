@@ -9,7 +9,6 @@ class Level extends Model
 {
     use HasFactory;
 
-
     /*
     |--------------------------------------------------------------------------
     | CHAMPS AUTORISÉS
@@ -17,45 +16,14 @@ class Level extends Model
     */
 
     protected $fillable = [
-
-        /*
-        |--------------------------------------------------------------------------
-        | CONTEXTE
-        |--------------------------------------------------------------------------
-        */
-
         'formation_id',
-
         'filiere_id',
-
-        'program_id',
-
         'specialite_id',
-
-        /*
-        |--------------------------------------------------------------------------
-        | CLASSIFICATION
-        |--------------------------------------------------------------------------
-        */
-
-        'section',
-
-        /*
-        |--------------------------------------------------------------------------
-        | INFORMATIONS DU NIVEAU
-        |--------------------------------------------------------------------------
-        */
-
         'name',
-
         'slug',
-
         'order',
-
         'is_active',
-
     ];
-
 
     /*
     |--------------------------------------------------------------------------
@@ -64,26 +32,17 @@ class Level extends Model
     */
 
     protected $casts = [
-
-        'is_active' => 'boolean',
-
-        'order' => 'integer',
-
+        'formation_id'  => 'integer',
+        'filiere_id'    => 'integer',
+        'specialite_id' => 'integer',
+        'order'         => 'integer',
+        'is_active'     => 'boolean',
     ];
-
 
     /*
     |--------------------------------------------------------------------------
     | FORMATION
     |--------------------------------------------------------------------------
-    |
-    | Utilisée pour :
-    |
-    | - Secondaire général
-    | - Secondaire technique
-    | - Professionnel
-    | - ENS
-    |
     */
 
     public function formation()
@@ -93,19 +52,11 @@ class Level extends Model
             'formation_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
     | FILIÈRE
     |--------------------------------------------------------------------------
-    |
-    | Utilisée pour le supérieur :
-    |
-    | Domaine académique
-    |       ↓
-    | Filière
-    |       ↓
-    | Niveau
-    |
     */
 
     public function filiere()
@@ -116,22 +67,6 @@ class Level extends Model
         );
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROGRAMME
-    |--------------------------------------------------------------------------
-    |
-    | Utilisé pour certaines formations professionnelles.
-    |
-    */
-
-    public function program()
-    {
-        return $this->belongsTo(
-            Program::class,
-            'program_id'
-        );
-    }
     /*
     |--------------------------------------------------------------------------
     | SPÉCIALITÉ
@@ -150,19 +85,6 @@ class Level extends Model
     |--------------------------------------------------------------------------
     | MATIÈRES / MODULES
     |--------------------------------------------------------------------------
-    |
-    | Secondaire :
-    |
-    | Classe
-    |    ↓
-    | Matière
-    |
-    | Supérieur :
-    |
-    | Niveau
-    |    ↓
-    | Module
-    |
     */
 
     public function subjects()
@@ -172,11 +94,13 @@ class Level extends Model
             'level_id'
         );
     }
+
     /*
     |--------------------------------------------------------------------------
     | DOCUMENTS
     |--------------------------------------------------------------------------
     */
+
     public function documents()
     {
         return $this->hasMany(
@@ -190,127 +114,182 @@ class Level extends Model
     | SCOPE ACTIF
     |--------------------------------------------------------------------------
     */
+
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
+
     /*
     |--------------------------------------------------------------------------
-    | SCOPE SECONDAIRE
+    | SECONDAIRE
     |--------------------------------------------------------------------------
     |
-    | Une classe du secondaire est liée à une formation
-    | et n'est pas liée à une filière.
+    | Formation → TeachingCategory
     |
     */
 
     public function scopeSecondary($query)
     {
-        return $query
-            ->whereNotNull(
-                'formation_id'
-            )
-            ->whereNull(
-                'filiere_id'
-            )
-            ->whereNull(
-                'program_id'
-            );
-    }
-    /*
-    |--------------------------------------------------------------------------
-    | SCOPE SUPÉRIEUR
-    |--------------------------------------------------------------------------
-    |
-    | Une formation supérieure est liée à une filière.
-    |
-    */
-    public function scopeHigher($query)
-    {
-        return $query->whereNotNull(
-            'filiere_id'
+        return $query->whereHas(
+            'formation.teachingCategory',
+            function ($q) {
+                $q->where('slug', 'secondaire');
+            }
         );
     }
+
     /*
     |--------------------------------------------------------------------------
-    | SCOPE PROFESSIONNEL
+    | SUPÉRIEUR
     |--------------------------------------------------------------------------
+    |
+    | Filière → AcademicDomain
+    |
+    | La catégorie "supérieur" n'est pas directement portée
+    | par la filière dans la structure actuelle.
+    |
+    | Ce scope reste donc basé sur la structure du niveau.
+    |
+    */
+
+    public function scopeHigher($query)
+    {
+        return $query
+            ->whereNotNull('filiere_id')
+            ->whereNull('formation_id')
+            ->whereNull('specialite_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFESSIONNEL
+    |--------------------------------------------------------------------------
+    |
+    | Cas 1 :
+    |
+    | Formation → Level
+    |
+    | Exemple :
+    | ENSP / ENEP / ATE
+    |
+    |
+    | Cas 2 :
+    |
+    | Formation → Specialite → Level
+    |
+    | Exemple :
+    | IDS / UIT
+    |
+    |
+    | Cas 3 :
+    |
+    | Formation → Program → Specialite → Level
+    |
+    | Exemple :
+    | ENS
+    |
     */
 
     public function scopeProfessional($query)
     {
-        return $query
-            ->whereNotNull(
-                'formation_id'
-            )
-            ->whereNotNull(
-                'program_id'
+        return $query->where(function ($q) {
+
+            /*
+            |------------------------------------------------------------------
+            | Formation → Level
+            |------------------------------------------------------------------
+            */
+
+            $q->whereHas(
+                'formation.teachingCategory',
+                function ($category) {
+                    $category->where('slug', 'professionnel');
+                }
             );
-    }
-    /*
-    |--------------------------------------------------------------------------
-    | SECTION DU SECONDAIRE
-    |--------------------------------------------------------------------------
-    */
-    public function scopeGeneral($query)
-    {
-        return $query->where(
-            'section',
-            'general'
-        );
+
+            /*
+            |------------------------------------------------------------------
+            | Formation → Specialite → Level
+            |------------------------------------------------------------------
+            */
+
+            $q->orWhereHas(
+                'specialite.formation.teachingCategory',
+                function ($category) {
+                    $category->where('slug', 'professionnel');
+                }
+            );
+
+            /*
+            |------------------------------------------------------------------
+            | Formation → Program → Specialite → Level
+            |------------------------------------------------------------------
+            */
+
+            $q->orWhereHas(
+                'specialite.program.formation.teachingCategory',
+                function ($category) {
+                    $category->where('slug', 'professionnel');
+                }
+            );
+        });
     }
 
-    public function scopeTechnical($query)
-    {
-        return $query->where(
-            'section',
-            'technique'
-        );
-    }
-
     /*
     |--------------------------------------------------------------------------
-    | VÉRIFICATIONS
+    | VÉRIFICATION : SECONDAIRE
     |--------------------------------------------------------------------------
     */
 
     public function isSecondary(): bool
     {
-        return ! is_null(
-            $this->formation_id
-        )
-            && is_null(
-                $this->filiere_id
-            )
-            && is_null(
-                $this->program_id
-            );
+        return $this->formation_id !== null
+            && $this->filiere_id === null
+            && $this->specialite_id === null
+            && $this->formation?->teachingCategory?->slug === 'secondaire';
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VÉRIFICATION : SUPÉRIEUR
+    |--------------------------------------------------------------------------
+    */
 
     public function isHigher(): bool
     {
-        return ! is_null(
-            $this->filiere_id
-        );
+        return $this->filiere_id !== null
+            && $this->formation_id === null
+            && $this->specialite_id === null;
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | VÉRIFICATION : PROFESSIONNEL
+    |--------------------------------------------------------------------------
+    */
 
     public function isProfessional(): bool
     {
-        return ! is_null(
-            $this->program_id
-        );
-    }
+        if (
+            $this->formation_id !== null &&
+            $this->formation?->teachingCategory?->slug === 'professionnel'
+        ) {
+            return true;
+        }
 
-    public function isGeneral(): bool
-    {
-        return $this->section === 'general';
-    }
+        if (
+            $this->specialite?->formation?->teachingCategory?->slug === 'professionnel'
+        ) {
+            return true;
+        }
 
-    public function isTechnical(): bool
-    {
-        return $this->section === 'technique';
+        if (
+            $this->specialite?->program?->formation?->teachingCategory?->slug === 'professionnel'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }

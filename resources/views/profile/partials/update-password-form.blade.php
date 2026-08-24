@@ -1,38 +1,138 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-        <ul class="navbar-nav ms-auto">
-            <!-- Lien Accueil -->
-            <li class="nav-item">
-                <a href="{{ route('dashboard') }}" class="nav-link">Accueil</a>
-            </li>
+{{-- ============================================================= --}}
+{{-- CHANGEMENT DU MOT DE PASSE --}}
+{{-- ============================================================= --}}
 
-            <!-- Dropdown Profil -->
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" 
-                   data-bs-toggle="dropdown" aria-expanded="false">
-                    Profil
-                </a>
-                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                    <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                             Modifier le profil
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ route('profile.edit') }}#password">
-                             Changer le mot de passe
-                        </a>
-                    </li>
-                    <li>
-                        <form method="POST" action="{{ route('logout') }}">
-                            @csrf
-                            <button type="submit" class="dropdown-item text-danger">
-                                Se déconnecter
-                            </button>
-                        </form>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+<div class="profile-form-header">
+
+    <div>
+
+        <span class="profile-section-label">
+            SÉCURITÉ
+        </span>
+
+        <h3>
+            Modifier mon mot de passe
+        </h3>
+
+        <p>
+            Utilisez un mot de passe suffisamment long et difficile à deviner.
+        </p>
+
     </div>
-</nav>
+
+</div>
+
+
+<form
+    method="POST"
+    action="{{ route('journaliste.password.update') }}"
+    class="profile-form"
+>
+
+    @csrf
+    @method('PUT')
+
+
+    <div class="profile-form-grid profile-form-grid-single">
+
+
+        {{-- MOT DE PASSE ACTUEL --}}
+        <div class="profile-field">
+
+            <label for="current_password">
+                Mot de passe actuel
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="current_password"
+                name="current_password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="@error('current_password', 'updatePassword') is-invalid @enderror"
+            >
+
+            @error('current_password', 'updatePassword')
+                <span class="field-error">
+                    {{ $message }}
+                </span>
+            @enderror
+
+        </div>
+
+
+        {{-- NOUVEAU MOT DE PASSE --}}
+        <div class="profile-field">
+
+            <label for="password">
+                Nouveau mot de passe
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="new-password"
+                required
+                class="@error('password', 'updatePassword') is-invalid @enderror"
+            >
+
+            @error('password', 'updatePassword')
+                <span class="field-error">
+                    {{ $message }}
+                </span>
+            @enderror
+
+            <small class="profile-help">
+                Minimum 8 caractères.
+            </small>
+
+        </div>
+
+
+        {{-- CONFIRMATION --}}
+        <div class="profile-field">
+
+            <label for="password_confirmation">
+                Confirmer le nouveau mot de passe
+                <span class="required">*</span>
+            </label>
+
+            <input
+                id="password_confirmation"
+                name="password_confirmation"
+                type="password"
+                autocomplete="new-password"
+                required
+                class="@error('password_confirmation', 'updatePassword') is-invalid @enderror"
+            >
+
+            @error('password_confirmation', 'updatePassword')
+                <span class="field-error">
+                    {{ $message }}
+                </span>
+            @enderror
+
+        </div>
+
+    </div>
+
+
+    {{-- ========================================================= --}}
+    {{-- ACTION --}}
+    {{-- ========================================================= --}}
+
+    <div class="profile-form-actions">
+
+        <button
+            type="submit"
+            class="profile-btn profile-btn-primary"
+        >
+            Modifier le mot de passe
+        </button>
+
+    </div>
+
+</form>

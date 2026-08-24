@@ -1,29 +1,68 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.app')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+@section('title', 'Mon profil | YAA\'Scientia')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+@section('page-title', 'Mon profil')
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.delete-user-form')
-                </div>
-            </div>
+@section('content')
+
+<div class="profile-page">
+
+    <div class="profile-header">
+
+        <div>
+            <span class="profile-label">
+                MON COMPTE
+            </span>
+
+            <h2>
+                Paramètres du profil
+            </h2>
+
+            <p>
+                Gérez vos informations personnelles et la sécurité de votre compte.
+            </p>
         </div>
+
     </div>
-</x-app-layout>
+
+
+    <div class="profile-sections">
+
+        <section class="profile-card">
+
+            <div class="profile-card-content">
+
+                @include('partials.update_profile')
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-card">
+
+            <div class="profile-card-content">
+
+                @include('profile.partials.update-password-form')
+
+            </div>
+
+        </section>
+
+
+        <section class="profile-card profile-danger">
+
+            <div class="profile-card-content">
+
+                @include('profile.partials.delete-user-form')
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+@endsection

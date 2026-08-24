@@ -9,76 +9,83 @@ class Specialite extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
+        'formation_id',
         'program_id',
-
+        'position',
         'name',
-
         'slug',
-
         'description',
-
         'is_active',
-
     ];
-
-
 
     protected $casts = [
-
         'is_active' => 'boolean',
-
     ];
+    
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMATION DIRECTE
+    |--------------------------------------------------------------------------
+    |
+    | IDS :
+    | Formation → Spécialité
+    |
+    | UIT :
+    | Formation → Spécialité
+    |
+    */
 
+    public function formation()
+    {
+        return $this->belongsTo(
+            Formation::class,
+            'formation_id'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
     | PROGRAMME
     |--------------------------------------------------------------------------
     |
-    | Exemple :
+    | ENS :
     |
-    | CAPES
+    | Formation
     |    ↓
-    | Mathématiques
+    | Programme
+    |    ↓
+    | Spécialité
     |
     */
 
     public function program()
     {
         return $this->belongsTo(
-            Program::class
+            Program::class,
+            'program_id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
     | NIVEAUX
     |--------------------------------------------------------------------------
     |
-    | Exemple :
-    |
-    | CAPES
-    |    ↓
-    | Mathématiques
-    |    ↓
-    | 1ère année
+    | Spécialité
+    |      ↓
+    | Niveau
     |
     */
 
     public function levels()
     {
         return $this->hasMany(
-            Level::class
+            Level::class,
+            'specialite_id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -89,15 +96,8 @@ class Specialite extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
-        );
-    }
-
-    public function scopePublished($query)
-    {
-        return $query->where(
-            'status',
-            'published'
+            Document::class,
+            'specialite_id'
         );
     }
 
@@ -109,9 +109,6 @@ class Specialite extends Model
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
 }

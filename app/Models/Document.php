@@ -16,30 +16,10 @@ class Document extends Model
 
     protected $fillable = [
 
-        /*
-        |--------------------------------------------------------------------------
-        | AUTEUR
-        |--------------------------------------------------------------------------
-        */
 
         'staff_id',
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | FORMATION
-        |--------------------------------------------------------------------------
-        |
-        | Secondaire :
-        | Formation → Niveau → Matière
-        |
-        | Supérieur :
-        | Domaine → Filière → Niveau → Module
-        |
-        | Professionnel :
-        | Formation → Programme → Spécialité → Niveau → Module
-        |
-        */
+        'teaching_category_id',
+        'academic_domain_id',
 
         'formation_id',
 
@@ -49,25 +29,11 @@ class Document extends Model
 
         'specialite_id',
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | NIVEAU ET MODULE
-        |--------------------------------------------------------------------------
-        */
-
         'level_id',
 
         'subject_id',
 
         'document_type_id',
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | INFORMATIONS DU DOCUMENT
-        |--------------------------------------------------------------------------
-        */
 
         'title',
 
@@ -77,12 +43,6 @@ class Document extends Model
 
         'content',
 
-        /*
-        |--------------------------------------------------------------------------
-        | FICHIERS
-        |--------------------------------------------------------------------------
-        */
-
         'file_path',
 
         'cover_image',
@@ -91,34 +51,13 @@ class Document extends Model
 
         'file_extension',
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | PUBLICATION
-        |--------------------------------------------------------------------------
-        */
-
         'published_at',
 
         'status',
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | ACCÈS
-        |--------------------------------------------------------------------------
-        */
-
         'access_type',
 
         'price',
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIQUES
-        |--------------------------------------------------------------------------
-        */
 
         'views',
 
@@ -152,6 +91,19 @@ class Document extends Model
     {
         return $this->belongsTo(
             Staff::class
+        );
+    }
+
+    public function teachingCategory()
+    {
+        return $this->belongsTo(
+            TeachingCategory::class
+        );
+    }
+    public function academicDomain()
+    {
+        return $this->belongsTo(
+            AcademicDomain::class
         );
     }
     /*

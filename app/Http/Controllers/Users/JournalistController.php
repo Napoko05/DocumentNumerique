@@ -4,13 +4,23 @@ namespace App\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use App\Models\Document;
+use App\Models\Payment;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class JournalistController extends Controller
 {
     /**
-     * Protection des pages journaliste.
+     * --------------------------------------------------------------------------
+     * CONSTRUCTEUR
+     * --------------------------------------------------------------------------
+     *
+     * Protection supplémentaire des actions du journaliste.
+     *
+     * Les routes possèdent déjà ces middlewares, mais les conserver ici
+     * permet de protéger le contrôleur même si une route est modifiée
+     * ultérieurement.
      */
     public function __construct()
     {
@@ -21,38 +31,193 @@ class JournalistController extends Controller
     }
 
 
+    /**
+     * --------------------------------------------------------------------------
+     * JOURNALISTE CONNECTÉ
+     * --------------------------------------------------------------------------
+     */
+    private function staff()
+    {
+        return Auth::guard('staff')->user();
+    }
+
+
+    /**
+     * --------------------------------------------------------------------------
+     * DOCUMENTS DU JOURNALISTE
+     * --------------------------------------------------------------------------
+     *
+     * IMPORTANT :
+     * Toutes les statistiques utilisent cette requête.
+     *
+     * Un journaliste ne peut donc pas récupérer les documents
+     * d'un autre journaliste.
+     */
+    private function myDocuments()
+    {
+        $staff = $this->staff();
+
+        return Document::query()
+            ->where('staff_id', $staff->id);
+    }
+
+
+    /**
+     * --------------------------------------------------------------------------
+     * PAIEMENTS DU JOURNALISTE
+     * --------------------------------------------------------------------------
+     *
+     * Un paiement est considéré ici uniquement s'il est payé.
+     *
+     * Le paiement doit obligatoirement être lié à un document appartenant
+     * au journaliste connecté.
+     */
+    private function myPayments()
+    {
+        $staff = $this->staff();
+
+        return Payment::query()
+            ->where('status', 'paid')
+            ->whereHas('document', function ($query) use ($staff) {
+                $query->where('staff_id', $staff->id);
+            });
+    }
+
+
     /*
     |--------------------------------------------------------------------------
-    | TABLEAU DE BORD JOURNALISTE
+    | TABLEAU DE BORD
     |--------------------------------------------------------------------------
     */
 
     public function dashboard()
     {
-        /*
-        |--------------------------------------------------------------------------
-        | JOURNALISTE CONNECTÉ
-        |--------------------------------------------------------------------------
-        */
+        $staff = $this->staff();
 
-        $staff = Auth::guard('staff')->user();
-
+        $documents = $this->myDocuments();
 
         /*
         |--------------------------------------------------------------------------
-        | REQUÊTE DE BASE
+        | STATISTIQUES DOCUMENTS
+        |--------------------------------------------------------------------------
+        */
+
+        $totalDocuments = (clone $documents)->count();
+
+        $publishedDocuments = (clone $documents)
+            ->where('status', 'published')
+            ->count();
+
+        $pendingDocuments = (clone $documents)
+            ->where('status', 'pending')
+            ->count();
+
+        $draftDocuments = (clone $documents)
+            ->where('status', 'draft')
+            ->count();
+
+        $rejectedDocuments = (clone $documents)
+            ->where('status', 'rejected')
+            ->count();
+
+        $freeDocuments = (clone $documents)
+            ->where('access_type', 'free')
+            ->count();
+
+        $premiumDocuments = (clone $documents)
+            ->where('access_type', 'premium')
+            ->count();
+
+        $totalViews = (clone $documents)
+            ->sum('views');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENTS RÉCENTS
+        |--------------------------------------------------------------------------
+        */
+
+        $recentDocuments = (clone $documents)
+            ->with([
+                'formation',
+                'filiere',
+                'level',
+                'subject',
+                'documentType',
+            ])
+            ->latest()
+            ->limit(10)
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | REVENUS
+        |--------------------------------------------------------------------------
+        */
+
+        $payments = $this->myPayments();
+
+        $revenue = (clone $payments)
+            ->sum('amount');
+
+        $totalPayments = (clone $payments)
+            ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TÉLÉCHARGEMENTS
         |--------------------------------------------------------------------------
         |
-        | Tous les documents appartenant
-        | au journaliste connecté.
+        | Pour le moment aucune colonne downloads n'est utilisée.
         |
         */
 
-        $documentsQuery = Document::where(
-            'staff_id',
-            $staff->id
+        $totalDownloads = 0;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VUE
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'dashboard.journaliste_dashboard',
+            compact(
+                'staff',
+                'recentDocuments',
+
+                'totalDocuments',
+                'publishedDocuments',
+                'pendingDocuments',
+                'draftDocuments',
+                'rejectedDocuments',
+
+                'freeDocuments',
+                'premiumDocuments',
+
+                'totalViews',
+                'totalDownloads',
+
+                'revenue',
+                'totalPayments'
+            )
         );
+    }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATISTIQUES
+    |--------------------------------------------------------------------------
+    */
+
+    public function statistics()
+    {
+        $documents = $this->myDocuments();
 
         /*
         |--------------------------------------------------------------------------
@@ -60,195 +225,217 @@ class JournalistController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $statistics = $documentsQuery
-            ->selectRaw('
-                COUNT(*) AS total_documents,
+        $totalDocuments = (clone $documents)
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN status = "published"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS published_documents,
+        $publishedDocuments = (clone $documents)
+            ->where('status', 'published')
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN status = "pending"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS pending_documents,
+        $pendingDocuments = (clone $documents)
+            ->where('status', 'pending')
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN status = "draft"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS draft_documents,
+        $draftDocuments = (clone $documents)
+            ->where('status', 'draft')
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN status = "rejected"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS rejected_documents,
+        $rejectedDocuments = (clone $documents)
+            ->where('status', 'rejected')
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN access_type = "free"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS free_documents,
+        $freeDocuments = (clone $documents)
+            ->where('access_type', 'free')
+            ->count();
 
-                SUM(
-                    CASE
-                        WHEN access_type = "premium"
-                        THEN 1
-                        ELSE 0
-                    END
-                ) AS premium_documents,
+        $premiumDocuments = (clone $documents)
+            ->where('access_type', 'premium')
+            ->count();
 
-                COALESCE(
-                    SUM(views),
-                    0
-                ) AS total_views,
-
-                COALESCE(
-                    SUM(downloads),
-                    0
-                ) AS total_downloads
-            ')
-            ->first();
+        $totalViews = (clone $documents)
+            ->sum('views');
 
 
         /*
         |--------------------------------------------------------------------------
-        | DOCUMENTS RÉCENTS
+        | VUES PAR DOCUMENT
         |--------------------------------------------------------------------------
-        |
-        | Chargement des relations utilisées
-        | dans le tableau du dashboard.
-        |
         */
 
-        $recentDocuments = Document::with([
-            'formation',
-            'filiere',
-            'level',
-            'subject',
-            'documentType',
-        ])
-        ->where(
-            'staff_id',
-            $staff->id
-        )
-        ->latest()
-        ->take(10)
-        ->get();
+        $viewsByDocument = (clone $documents)
+            ->select([
+                'id',
+                'title',
+                'views',
+            ])
+            ->orderByDesc('views')
+            ->get();
 
 
         /*
         |--------------------------------------------------------------------------
-        | RETOUR DE LA VUE
+        | VUE
         |--------------------------------------------------------------------------
         */
 
         return view(
-            'dashboard.journaliste_dashboard',
-            [
-                'staff' => $staff,
+            'dashboard.journaliste_statistics',
+            compact(
+                'totalDocuments',
 
-                /*
-                |--------------------------------------------------------------
-                | DOCUMENTS
-                |--------------------------------------------------------------
-                */
+                'publishedDocuments',
+                'pendingDocuments',
+                'draftDocuments',
+                'rejectedDocuments',
 
-                'documents' => $recentDocuments,
+                'freeDocuments',
+                'premiumDocuments',
 
-                'recentDocuments' => $recentDocuments,
-
-
-                /*
-                |--------------------------------------------------------------
-                | STATISTIQUES
-                |--------------------------------------------------------------
-                */
-
-                'totalDocuments' =>
-                    (int) (
-                        $statistics->total_documents ?? 0
-                    ),
-
-                'publishedDocuments' =>
-                    (int) (
-                        $statistics->published_documents ?? 0
-                    ),
-
-                'pendingDocuments' =>
-                    (int) (
-                        $statistics->pending_documents ?? 0
-                    ),
-
-                'draftDocuments' =>
-                    (int) (
-                        $statistics->draft_documents ?? 0
-                    ),
-
-                'rejectedDocuments' =>
-                    (int) (
-                        $statistics->rejected_documents ?? 0
-                    ),
-
-                'freeDocuments' =>
-                    (int) (
-                        $statistics->free_documents ?? 0
-                    ),
-
-                'premiumDocuments' =>
-                    (int) (
-                        $statistics->premium_documents ?? 0
-                    ),
-
-                'totalViews' =>
-                    (int) (
-                        $statistics->total_views ?? 0
-                    ),
-
-                'totalDownloads' =>
-                    (int) (
-                        $statistics->total_downloads ?? 0
-                    ),
-
-            ]
+                'totalViews',
+                'viewsByDocument'
+            )
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | LISTE DES UTILISATEURS
+    | REVENUS
     |--------------------------------------------------------------------------
-    |
-    | Le journaliste peut uniquement
-    | consulter les utilisateurs.
-    |
+    */
+
+    public function revenues()
+    {
+        $paymentsQuery = $this->myPayments();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAIEMENTS
+        |--------------------------------------------------------------------------
+        */
+
+        $payments = (clone $paymentsQuery)
+            ->with('document')
+            ->latest()
+            ->paginate(15);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOTAL REVENUS
+        |--------------------------------------------------------------------------
+        */
+
+        $totalRevenue = (clone $paymentsQuery)
+            ->sum('amount');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | NOMBRE DE PAIEMENTS
+        |--------------------------------------------------------------------------
+        */
+
+        $totalPayments = (clone $paymentsQuery)
+            ->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | VUE
+        |--------------------------------------------------------------------------
+        */
+
+        return view(
+            'dashboard.journaliste_revenues',
+            compact(
+                'payments',
+                'totalRevenue',
+                'totalPayments'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PAIEMENTS
+    |--------------------------------------------------------------------------
+    */
+
+    public function payments()
+    {
+        $paymentsQuery = $this->myPayments();
+
+        $payments = (clone $paymentsQuery)
+            ->with('document')
+            ->latest()
+            ->paginate(15);
+
+        $totalRevenue = (clone $paymentsQuery)
+            ->sum('amount');
+
+        $totalPayments = (clone $paymentsQuery)
+            ->count();
+
+        return view(
+            'dashboard.journaliste_payments',
+            compact(
+                'payments',
+                'totalRevenue',
+                'totalPayments'
+            )
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL
+    |--------------------------------------------------------------------------
+    */
+
+    public function profile()
+    {
+        $staff = $this->staff();
+          
+
+
+        return view(
+            'profile.index',
+            compact('staff')
+        );
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UTILISATEURS
+    |--------------------------------------------------------------------------
     */
 
     public function users()
     {
-        $users = User::with(
-            'roles'
-        )
-        ->latest()
-        ->paginate(15);
+        /*
+        |--------------------------------------------------------------------------
+        | IMPORTANT
+        |--------------------------------------------------------------------------
+        |
+        | Cette méthode correspond à ta route :
+        |
+        | GET /journaliste/users
+        |
+        | Si un journaliste ne doit PAS voir tous les utilisateurs,
+        | il faudra ajouter une règle métier spécifique ici.
+        |
+        */
 
+        $users = User::query()
+            ->latest()
+            ->paginate(15);
 
         return view(
-            'users.index',
+            'dashboard.journaliste_users',
             compact('users')
         );
     }

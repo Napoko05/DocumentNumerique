@@ -9,52 +9,31 @@ class Subject extends Model
 {
     use HasFactory;
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | CHAMPS AUTORISÉS
-    |--------------------------------------------------------------------------
-    */
-
     protected $fillable = [
-
         'level_id',
-
+        'position',
         'name',
-
         'slug',
-
         'is_active',
-
     ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CASTS
-    |--------------------------------------------------------------------------
-    */
 
     protected $casts = [
-
         'is_active' => 'boolean',
-
     ];
-
 
     /*
     |--------------------------------------------------------------------------
-    | CLASSE / NIVEAU
+    | NIVEAU
     |--------------------------------------------------------------------------
     */
 
     public function level()
     {
         return $this->belongsTo(
-            Level::class
+            Level::class,
+            'level_id'
         );
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -65,29 +44,25 @@ class Subject extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'subject_id'
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | SCOPE : MATIÈRES ACTIVES
+    | SCOPE ACTIF
     |--------------------------------------------------------------------------
     */
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
-
 
     /*
     |--------------------------------------------------------------------------
-    | SCOPE : MATIÈRES DU SECONDAIRE
+    | SECONDAIRE
     |--------------------------------------------------------------------------
     */
 
@@ -95,18 +70,13 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            function ($levelQuery) {
-
-                $levelQuery->secondary();
-
-            }
+            fn ($q) => $q->secondary()
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | SCOPE : MATIÈRES DU SUPÉRIEUR
+    | SUPÉRIEUR
     |--------------------------------------------------------------------------
     */
 
@@ -114,18 +84,13 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            function ($levelQuery) {
-
-                $levelQuery->higher();
-
-            }
+            fn ($q) => $q->higher()
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | SCOPE : MATIÈRES DU PROFESSIONNEL
+    | PROFESSIONNEL
     |--------------------------------------------------------------------------
     */
 
@@ -133,11 +98,7 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            function ($levelQuery) {
-
-                $levelQuery->professional();
-
-            }
+            fn ($q) => $q->professional()
         );
     }
 }

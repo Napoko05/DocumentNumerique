@@ -1,765 +1,806 @@
-@extends('layouts.journalist_app')
+@extends('layouts.journaliste_app')
 
 @section('page-title', 'Tableau de bord Journaliste')
 
 @section('content')
 
-<div class="space-y-6">
+<div class="journalist-dashboard">
 
-{{-- ============================================================
-    STATISTIQUES PRINCIPALES
-============================================================= --}}
+    {{-- =========================================================
+         EN-TÊTE
+    ========================================================== --}}
 
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+    <div class="jd-header">
 
-    {{-- TOTAL DOCUMENTS --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="jd-header-content">
 
-        <div class="flex items-center justify-between">
-
-            <div>
-
-                <p class="text-sm text-slate-500">
-                    Documents
-                </p>
-
-                <h3 class="text-3xl font-bold text-slate-800">
-
-                    {{ $totalDocuments }}
-
-                </h3>
-
+            <div class="jd-eyebrow">
+                ESPACE JOURNALISTE
             </div>
 
-            <div class="w-12 h-12 rounded-xl bg-blue-100
-                        flex items-center justify-center text-2xl">
-
-                📚
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- DOCUMENTS GRATUITS --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-
-                <p class="text-sm text-slate-500">
-                    Documents gratuits
-                </p>
-
-                <h3 class="text-3xl font-bold text-emerald-600">
-
-                    {{ $freeDocuments }}
-
-                </h3>
-
-            </div>
-
-            <div class="w-12 h-12 rounded-xl bg-emerald-100
-                        flex items-center justify-center text-2xl">
-
-                🆓
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- DOCUMENTS PREMIUM --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-
-                <p class="text-sm text-slate-500">
-                    Documents premium
-                </p>
-
-                <h3 class="text-3xl font-bold text-orange-600">
-
-                    {{ $premiumDocuments }}
-
-                </h3>
-
-            </div>
-
-            <div class="w-12 h-12 rounded-xl bg-orange-100
-                        flex items-center justify-center text-2xl">
-
-                💎
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    {{-- TOTAL VUES --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-
-        <div class="flex items-center justify-between">
-
-            <div>
-
-                <p class="text-sm text-slate-500">
-                    Total des vues
-                </p>
-
-                <h3 class="text-3xl font-bold text-violet-600">
-
-                    {{ number_format($totalViews, 0, ',', ' ') }}
-
-                </h3>
-
-            </div>
-
-            <div class="w-12 h-12 rounded-xl bg-violet-100
-                        flex items-center justify-center text-2xl">
-
-                👁️
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-{{-- ============================================================
-    STATUTS DES DOCUMENTS
-============================================================= --}}
-
-<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-
-    {{-- PUBLIÉS --}}
-    <div class="bg-green-50 border border-green-200
-                rounded-2xl p-5">
-
-        <p class="text-sm font-medium text-green-700">
-
-            ✓ Publiés
-
-        </p>
-
-        <p class="text-2xl font-bold text-green-800 mt-2">
-
-            {{ $publishedDocuments }}
-
-        </p>
-
-    </div>
-
-
-    {{-- EN ATTENTE --}}
-    <div class="bg-yellow-50 border border-yellow-200
-                rounded-2xl p-5">
-
-        <p class="text-sm font-medium text-yellow-700">
-
-            ⏳ En attente
-
-        </p>
-
-        <p class="text-2xl font-bold text-yellow-800 mt-2">
-
-            {{ $pendingDocuments }}
-
-        </p>
-
-    </div>
-
-
-    {{-- BROUILLONS --}}
-    <div class="bg-slate-50 border border-slate-200
-                rounded-2xl p-5">
-
-        <p class="text-sm font-medium text-slate-600">
-
-            📝 Brouillons
-
-        </p>
-
-        <p class="text-2xl font-bold text-slate-800 mt-2">
-
-            {{ $draftDocuments }}
-
-        </p>
-
-    </div>
-
-
-    {{-- REJETÉS --}}
-    <div class="bg-red-50 border border-red-200
-                rounded-2xl p-5">
-
-        <p class="text-sm font-medium text-red-700">
-
-            ✕ Rejetés
-
-        </p>
-
-        <p class="text-2xl font-bold text-red-800 mt-2">
-
-            {{ $rejectedDocuments }}
-
-        </p>
-
-    </div>
-
-</div>
-
-
-{{-- ============================================================
-    ACTIONS RAPIDES
-============================================================= --}}
-
-<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
-
-    {{-- AJOUTER --}}
-    <a href="{{ route('journaliste.documents.create') }}"
-       class="bg-white border border-slate-200 rounded-2xl
-              p-5 hover:shadow-md hover:border-blue-300
-              transition">
-
-        <div class="text-3xl mb-3">
-
-            ➕
-
-        </div>
-
-        <h3 class="font-semibold text-slate-800">
-
-            Nouveau document
-
-        </h3>
-
-        <p class="text-sm text-slate-500 mt-1">
-
-            Ajouter un nouveau document
-
-        </p>
-
-    </a>
-
-
-    {{-- MES DOCUMENTS --}}
-    <a href="{{ route('journaliste.documents.index') }}"
-       class="bg-white border border-slate-200 rounded-2xl
-              p-5 hover:shadow-md hover:border-blue-300
-              transition">
-
-        <div class="text-3xl mb-3">
-
-            📄
-
-        </div>
-
-        <h3 class="font-semibold text-slate-800">
-
-            Mes documents
-
-        </h3>
-
-        <p class="text-sm text-slate-500 mt-1">
-
-            Gérer mes publications
-
-        </p>
-
-    </a>
-
-
-    {{-- UTILISATEURS --}}
-    <a href="{{ route('journaliste.users') }}"
-       class="bg-white border border-slate-200 rounded-2xl
-              p-5 hover:shadow-md hover:border-blue-300
-              transition">
-
-        <div class="text-3xl mb-3">
-
-            👥
-
-        </div>
-
-        <h3 class="font-semibold text-slate-800">
-
-            Utilisateurs
-
-        </h3>
-
-        <p class="text-sm text-slate-500 mt-1">
-
-            Consulter les utilisateurs
-
-        </p>
-
-    </a>
-
-
-    {{-- TÉLÉCHARGEMENTS --}}
-    <div class="bg-white border border-slate-200
-                rounded-2xl p-5">
-
-        <div class="text-3xl mb-3">
-
-            ⬇️
-
-        </div>
-
-        <h3 class="font-semibold text-slate-800">
-
-            Téléchargements
-
-        </h3>
-
-        <p class="text-2xl font-bold text-blue-600 mt-2">
-
-            {{ number_format(
-                $totalDownloads,
-                0,
-                ',',
-                ' '
-            ) }}
-
-        </p>
-
-    </div>
-
-</div>
-
-
-{{-- ============================================================
-    DOCUMENTS RÉCENTS
-============================================================= --}}
-
-<div class="bg-white rounded-2xl border border-slate-200
-            shadow-sm overflow-hidden">
-
-
-    {{-- HEADER --}}
-    <div class="px-6 py-5 border-b border-slate-200
-                flex flex-col sm:flex-row
-                sm:items-center
-                sm:justify-between gap-4">
-
-        <div>
-
-            <h2 class="font-bold text-lg text-slate-800">
-
-                Mes documents récents
-
-            </h2>
-
-            <p class="text-sm text-slate-500">
-
-                Les 10 derniers documents ajoutés
-
+            <h1 class="jd-header-title">
+                Tableau de bord
+            </h1>
+
+            <p class="jd-header-description">
+                Bienvenue
+                <strong>
+                    {{ $staff->prenom ?? '' }}
+                    {{ $staff->nom ?? '' }}
+                </strong>
             </p>
 
         </div>
 
+        <div class="jd-header-action">
 
-        <a href="{{ route('journaliste.documents.create') }}"
-           class="bg-blue-600 hover:bg-blue-700
-                  text-white px-4 py-2
-                  rounded-xl text-sm
-                  text-center transition">
+            <a href="{{ route('journaliste.documents.create') }}"
+               class="jd-btn-primary">
 
-            ➕ Nouveau document
+                <i class="bi bi-plus-lg"></i>
 
-        </a>
+                Nouveau document
+
+            </a>
+
+        </div>
 
     </div>
 
 
-    {{-- AUCUN DOCUMENT --}}
-    @if($documents->isEmpty())
+    {{-- =========================================================
+         STATISTIQUES PRINCIPALES
+    ========================================================== --}}
 
-        <div class="text-center py-16">
+    <div class="jd-stat-grid">
 
-            <div class="text-6xl mb-4">
+        {{-- TOTAL DOCUMENTS --}}
+        <div class="jd-stat-card">
 
-                📚
+            <div class="jd-stat-body">
+
+                <div class="jd-stat-info">
+
+                    <div class="jd-stat-label">
+                        Documents
+                    </div>
+
+                    <h2 class="jd-stat-value">
+                        {{ $totalDocuments }}
+                    </h2>
+
+                    <div class="jd-stat-description">
+                        Total publié et en gestion
+                    </div>
+
+                </div>
+
+                <div class="jd-stat-icon">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
 
             </div>
 
-            <h3 class="font-semibold text-lg text-slate-800">
+        </div>
 
-                Aucun document
 
-            </h3>
+        {{-- GRATUITS --}}
+        <div class="jd-stat-card success">
 
-            <p class="text-slate-500 mt-2">
+            <div class="jd-stat-body">
 
-                Commencez par ajouter votre premier document.
+                <div class="jd-stat-info">
 
-            </p>
+                    <div class="jd-stat-label">
+                        Documents gratuits
+                    </div>
+
+                    <h2 class="jd-stat-value">
+                        {{ $freeDocuments }}
+                    </h2>
+
+                    <div class="jd-stat-description">
+                        Accès libre
+                    </div>
+
+                </div>
+
+                <div class="jd-stat-icon">
+                    <i class="bi bi-unlock"></i>
+                </div>
+
+            </div>
 
         </div>
 
 
-    {{-- TABLEAU --}}
-    @else
+        {{-- PREMIUM --}}
+        <div class="jd-stat-card warning">
 
-        <div class="overflow-x-auto">
+            <div class="jd-stat-body">
 
-            <table class="min-w-full">
+                <div class="jd-stat-info">
 
+                    <div class="jd-stat-label">
+                        Documents premium
+                    </div>
 
-                {{-- EN-TÊTE --}}
-                <thead class="bg-slate-50">
+                    <h2 class="jd-stat-value">
+                        {{ $premiumDocuments }}
+                    </h2>
 
-                    <tr class="text-left text-xs
-                               font-semibold
-                               uppercase
-                               tracking-wider
-                               text-slate-500">
+                    <div class="jd-stat-description">
+                        Contenus payants
+                    </div>
 
-                        <th class="px-6 py-4">
+                </div>
 
-                            Titre
+                <div class="jd-stat-icon">
+                    <i class="bi bi-gem"></i>
+                </div>
 
-                        </th>
-
-                        <th class="px-4 py-4">
-
-                            Formation / Filière
-
-                        </th>
-
-                        <th class="px-4 py-4">
-
-                            Niveau / Module
-
-                        </th>
-
-                        <th class="px-4 py-4">
-
-                            Accès
-
-                        </th>
-
-                        <th class="px-4 py-4">
-
-                            Statut
-
-                        </th>
-
-                        <th class="px-4 py-4 text-center">
-
-                            Vues
-
-                        </th>
-
-                        <th class="px-6 py-4 text-center">
-
-                            Actions
-
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                {{-- CORPS --}}
-                <tbody class="divide-y divide-slate-100">
-
-
-                    @foreach($documents as $doc)
-
-                        <tr class="hover:bg-slate-50 transition">
-
-
-                            {{-- TITRE --}}
-                            <td class="px-6 py-4">
-
-                                <p class="font-semibold
-                                          text-slate-800">
-
-                                    {{ $doc->title }}
-
-                                </p>
-
-                                <p class="text-xs
-                                          text-slate-400 mt-1">
-
-                                    {{ $doc->documentType?->name
-                                        ?? 'Type non renseigné' }}
-
-                                </p>
-
-                            </td>
-
-
-                            {{-- FORMATION / FILIÈRE --}}
-                            <td class="px-4 py-4">
-
-                                <p class="text-sm
-                                          text-slate-700">
-
-                                    {{ $doc->formation?->name
-                                        ?? '—' }}
-
-                                </p>
-
-                                <p class="text-xs
-                                          text-slate-500 mt-1">
-
-                                    {{ $doc->filiere?->name
-                                        ?? 'Aucune filière' }}
-
-                                </p>
-
-                            </td>
-
-
-                            {{-- NIVEAU / MODULE --}}
-                            <td class="px-4 py-4">
-
-                                <p class="text-sm
-                                          text-slate-700">
-
-                                    {{ $doc->level?->name
-                                        ?? '—' }}
-
-                                </p>
-
-                                <p class="text-xs
-                                          text-slate-500 mt-1">
-
-                                    {{ $doc->subject?->name
-                                        ?? 'Aucun module' }}
-
-                                </p>
-
-                            </td>
-
-
-                            {{-- ACCÈS --}}
-                            <td class="px-4 py-4">
-
-                                @if(
-                                    $doc->access_type
-                                    === 'premium'
-                                )
-
-                                    <span class="inline-flex
-                                                 px-3 py-1
-                                                 bg-orange-100
-                                                 text-orange-700
-                                                 rounded-full
-                                                 text-xs
-                                                 font-semibold">
-
-                                        💎 Premium
-
-                                    </span>
-
-                                @else
-
-                                    <span class="inline-flex
-                                                 px-3 py-1
-                                                 bg-emerald-100
-                                                 text-emerald-700
-                                                 rounded-full
-                                                 text-xs
-                                                 font-semibold">
-
-                                        🆓 Gratuit
-
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- STATUT --}}
-                            <td class="px-4 py-4">
-
-                                @if(
-                                    $doc->status
-                                    === 'published'
-                                )
-
-                                    <span class="text-xs
-                                                 font-semibold
-                                                 text-green-700">
-
-                                        ✓ Publié
-
-                                    </span>
-
-                                @elseif(
-                                    $doc->status
-                                    === 'pending'
-                                )
-
-                                    <span class="text-xs
-                                                 font-semibold
-                                                 text-yellow-700">
-
-                                        ⏳ En attente
-
-                                    </span>
-
-                                @elseif(
-                                    $doc->status
-                                    === 'rejected'
-                                )
-
-                                    <span class="text-xs
-                                                 font-semibold
-                                                 text-red-700">
-
-                                        ✕ Rejeté
-
-                                    </span>
-
-                                @else
-
-                                    <span class="text-xs
-                                                 font-semibold
-                                                 text-slate-500">
-
-                                        📝 Brouillon
-
-                                    </span>
-
-                                @endif
-
-                            </td>
-
-
-                            {{-- VUES --}}
-                            <td class="px-4 py-4
-                                       text-center
-                                       font-semibold
-                                       text-slate-700">
-
-                                👁️ {{ $doc->views ?? 0 }}
-
-                            </td>
-
-
-                            {{-- ACTIONS --}}
-                            <td class="px-6 py-4">
-
-                                <div class="flex
-                                            justify-center
-                                            flex-wrap
-                                            gap-2">
-
-
-                                    {{-- VOIR --}}
-                                    <a href="{{ route(
-                                        'journaliste.documents.show',
-                                        $doc
-                                    ) }}"
-
-                                       class="px-3 py-2
-                                              bg-blue-100
-                                              hover:bg-blue-200
-                                              text-blue-700
-                                              rounded-lg
-                                              text-xs
-                                              font-semibold
-                                              transition">
-
-                                        Voir
-
-                                    </a>
-
-
-                                    {{-- MODIFIER --}}
-                                    <a href="{{ route(
-                                        'journaliste.documents.edit',
-                                        $doc
-                                    ) }}"
-
-                                       class="px-3 py-2
-                                              bg-amber-100
-                                              hover:bg-amber-200
-                                              text-amber-700
-                                              rounded-lg
-                                              text-xs
-                                              font-semibold
-                                              transition">
-
-                                        Modifier
-
-                                    </a>
-
-
-                                    {{-- SUPPRIMER --}}
-                                    <form action="{{ route(
-                                        'journaliste.documents.destroy',
-                                        $doc
-                                    ) }}"
-
-                                          method="POST">
-
-                                        @csrf
-
-                                        @method('DELETE')
-
-
-                                        <button
-                                            type="submit"
-
-                                            onclick="
-                                                return confirm(
-                                                    'Supprimer ce document ?'
-                                                );
-                                            "
-
-                                            class="px-3 py-2
-                                                   bg-red-100
-                                                   hover:bg-red-200
-                                                   text-red-700
-                                                   rounded-lg
-                                                   text-xs
-                                                   font-semibold
-                                                   transition">
-
-                                            Supprimer
-
-                                        </button>
-
-                                    </form>
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-
-                    @endforeach
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
-    @endif
 
-</div>
+        {{-- VUES --}}
+        <div class="jd-stat-card danger">
+
+            <div class="jd-stat-body">
+
+                <div class="jd-stat-info">
+
+                    <div class="jd-stat-label">
+                        Total des vues
+                    </div>
+
+                    <h2 class="jd-stat-value">
+                        {{ number_format($totalViews ?? 0, 0, ',', ' ') }}
+                    </h2>
+
+                    <div class="jd-stat-description">
+                        Consultations
+                    </div>
+
+                </div>
+
+                <div class="jd-stat-icon">
+                    <i class="bi bi-eye"></i>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         ÉTAT DES DOCUMENTS
+    ========================================================== --}}
+
+    <div class="jd-panel">
+
+        <div class="jd-panel-header">
+
+            <div>
+
+                <h2 class="jd-panel-title">
+                    État des documents
+                </h2>
+
+                <p class="jd-panel-subtitle">
+                    Suivi de vos publications
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="jd-panel-body">
+
+            <div class="jd-status-grid">
+
+                {{-- PUBLIÉS --}}
+                <div class="jd-status-card success">
+
+                    <div class="jd-status-icon">
+                        <i class="bi bi-check-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <h3 class="jd-status-value">
+                            {{ $publishedDocuments }}
+                        </h3>
+
+                        <div class="jd-status-label">
+                            Publiés
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- EN ATTENTE --}}
+                <div class="jd-status-card warning">
+
+                    <div class="jd-status-icon">
+                        <i class="bi bi-hourglass-split"></i>
+                    </div>
+
+                    <div>
+
+                        <h3 class="jd-status-value">
+                            {{ $pendingDocuments }}
+                        </h3>
+
+                        <div class="jd-status-label">
+                            En attente
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- BROUILLONS --}}
+                <div class="jd-status-card secondary">
+
+                    <div class="jd-status-icon">
+                        <i class="bi bi-file-earmark"></i>
+                    </div>
+
+                    <div>
+
+                        <h3 class="jd-status-value">
+                            {{ $draftDocuments }}
+                        </h3>
+
+                        <div class="jd-status-label">
+                            Brouillons
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- REJETÉS --}}
+                <div class="jd-status-card danger">
+
+                    <div class="jd-status-icon">
+                        <i class="bi bi-x-lg"></i>
+                    </div>
+
+                    <div>
+
+                        <h3 class="jd-status-value">
+                            {{ $rejectedDocuments }}
+                        </h3>
+
+                        <div class="jd-status-label">
+                            Rejetés
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         ACTIONS RAPIDES
+    ========================================================== --}}
+
+    <div class="jd-panel">
+
+        <div class="jd-panel-header">
+
+            <div>
+
+                <h2 class="jd-panel-title">
+                    Actions rapides
+                </h2>
+
+                <p class="jd-panel-subtitle">
+                    Accédez rapidement aux principales fonctionnalités.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="jd-panel-body">
+
+            <div class="jd-actions-grid">
+
+
+                {{-- NOUVEAU DOCUMENT --}}
+                <a href="{{ route('journaliste.documents.create') }}"
+                   class="jd-action primary">
+
+                    <div class="jd-action-top">
+
+                        <div class="jd-action-icon">
+                            <i class="bi bi-file-earmark-plus"></i>
+                        </div>
+
+                        <i class="bi bi-arrow-right jd-action-arrow"></i>
+
+                    </div>
+
+                    <h3 class="jd-action-title">
+                        Nouveau document
+                    </h3>
+
+                    <p class="jd-action-description">
+                        Ajouter une nouvelle publication.
+                    </p>
+
+                </a>
+
+
+                {{-- MES DOCUMENTS --}}
+                <a href="{{ route('journaliste.documents.index') }}"
+                   class="jd-action success">
+
+                    <div class="jd-action-top">
+
+                        <div class="jd-action-icon">
+                            <i class="bi bi-folder2-open"></i>
+                        </div>
+
+                        <i class="bi bi-arrow-right jd-action-arrow"></i>
+
+                    </div>
+
+                    <h3 class="jd-action-title">
+                        Mes documents
+                    </h3>
+
+                    <p class="jd-action-description">
+                        Gérer mes publications.
+                    </p>
+
+                </a>
+
+
+                {{-- UTILISATEURS --}}
+                <a href="{{ route('journaliste.users') }}"
+                   class="jd-action violet">
+
+                    <div class="jd-action-top">
+
+                        <div class="jd-action-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+
+                        <i class="bi bi-arrow-right jd-action-arrow"></i>
+
+                    </div>
+
+                    <h3 class="jd-action-title">
+                        Utilisateurs
+                    </h3>
+
+                    <p class="jd-action-description">
+                        Consulter les utilisateurs de la plateforme.
+                    </p>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         REVENUS / TÉLÉCHARGEMENTS
+    ========================================================== --}}
+
+    <div class="jd-revenue-grid">
+
+
+        {{-- REVENUS --}}
+        <div class="jd-revenue-card">
+
+            <div class="jd-revenue-content">
+
+                <div class="jd-revenue-icon warning">
+                    <i class="bi bi-cash-coin"></i>
+                </div>
+
+                <div>
+
+                    <p class="jd-revenue-label">
+                        Revenus
+                    </p>
+
+                    <h3 class="jd-revenue-value">
+                        {{ number_format($revenue ?? 0, 0, ',', ' ') }}
+                        FCFA
+                    </h3>
+
+                </div>
+
+            </div>
+
+            @if(Route::has('journaliste.revenues'))
+
+                <a href="{{ route('journaliste.revenues') }}"
+                   class="jd-revenue-link">
+
+                    Voir les revenus
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+            @else
+
+                <span class="jd-revenue-link">
+                    Les revenus seront disponibles ici.
+                </span>
+
+            @endif
+
+        </div>
+
+
+        {{-- TÉLÉCHARGEMENTS --}}
+        <div class="jd-revenue-card">
+
+            <div class="jd-revenue-content">
+
+                <div class="jd-revenue-icon primary">
+                    <i class="bi bi-download"></i>
+                </div>
+
+                <div>
+
+                    <p class="jd-revenue-label">
+                        Documents téléchargés
+                    </p>
+
+                    <h3 class="jd-revenue-value">
+                        {{ number_format($totalDownloads ?? 0, 0, ',', ' ') }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         DOCUMENTS RÉCENTS
+    ========================================================== --}}
+
+    <div class="jd-panel">
+
+        <div class="jd-panel-header">
+
+            <div>
+
+                <h2 class="jd-panel-title">
+                    Mes documents récents
+                </h2>
+
+                <p class="jd-panel-subtitle">
+                    Les 10 derniers documents ajoutés.
+                </p>
+
+            </div>
+
+            <a href="{{ route('journaliste.documents.index') }}"
+               class="jd-revenue-link">
+
+                Voir tous
+                <i class="bi bi-arrow-right"></i>
+
+            </a>
+
+        </div>
+
+
+        <div class="jd-panel-body">
+
+            @if($recentDocuments->isEmpty())
+
+                <div class="jd-empty">
+
+                    <div class="jd-empty-icon">
+                        <i class="bi bi-file-earmark-x"></i>
+                    </div>
+
+                    <h3 class="jd-empty-title">
+                        Aucun document
+                    </h3>
+
+                    <p class="jd-empty-text">
+                        Commencez par ajouter votre premier document.
+                    </p>
+
+                    <a href="{{ route('journaliste.documents.create') }}"
+                       class="jd-btn-primary">
+
+                        <i class="bi bi-plus-lg"></i>
+
+                        Ajouter un document
+
+                    </a>
+
+                </div>
+
+            @else
+
+                <div class="jd-table-wrapper">
+
+                    <table class="jd-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Document</th>
+                                <th>Formation / Filière</th>
+                                <th>Niveau / Module</th>
+                                <th>Accès</th>
+                                <th>Statut</th>
+                                <th>Vues</th>
+                                <th>Actions</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach($recentDocuments as $doc)
+
+                                <tr>
+
+                                    {{-- DOCUMENT --}}
+                                    <td>
+
+                                        <div>
+
+                                            <p class="jd-document-title"
+                                               title="{{ $doc->title }}">
+
+                                                {{ \Illuminate\Support\Str::limit(
+                                                    $doc->title,
+                                                    45
+                                                ) }}
+
+                                            </p>
+
+                                            <div class="jd-document-type">
+
+                                                {{ $doc->documentType?->name
+                                                    ?? 'Type non renseigné' }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- FORMATION / FILIÈRE --}}
+                                    <td>
+
+                                        <div>
+
+                                            @if($doc->formation)
+
+                                                <div class="jd-document-title">
+
+                                                    {{ $doc->formation->name }}
+
+                                                </div>
+
+                                            @endif
+
+                                            @if($doc->filiere)
+
+                                                <div class="jd-document-type">
+
+                                                    {{ $doc->filiere->name }}
+
+                                                </div>
+
+                                            @else
+
+                                                <div class="jd-document-type">
+                                                    Aucune filière
+                                                </div>
+
+                                            @endif
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- NIVEAU / MODULE --}}
+                                    <td>
+
+                                        <div>
+
+                                            <div class="jd-document-title">
+
+                                                {{ $doc->level?->name ?? '—' }}
+
+                                            </div>
+
+                                            <div class="jd-document-type">
+
+                                                {{ $doc->subject?->name
+                                                    ?? 'Aucun module' }}
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+
+                                    {{-- ACCÈS --}}
+                                    <td>
+
+                                        @if($doc->access_type === 'premium')
+
+                                            <span class="jd-badge jd-badge-warning">
+
+                                                <i class="bi bi-gem"></i>
+                                                Premium
+
+                                            </span>
+
+                                        @else
+
+                                            <span class="jd-badge jd-badge-success">
+
+                                                <i class="bi bi-unlock"></i>
+                                                Gratuit
+
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- STATUT --}}
+                                    <td>
+
+                                        @if($doc->status === 'published')
+
+                                            <span class="jd-badge jd-badge-success">
+
+                                                <i class="bi bi-check-lg"></i>
+                                                Publié
+
+                                            </span>
+
+                                        @elseif($doc->status === 'pending')
+
+                                            <span class="jd-badge jd-badge-warning">
+
+                                                <i class="bi bi-hourglass-split"></i>
+                                                En attente
+
+                                            </span>
+
+                                        @elseif($doc->status === 'rejected')
+
+                                            <span class="jd-badge jd-badge-danger">
+
+                                                <i class="bi bi-x-lg"></i>
+                                                Rejeté
+
+                                            </span>
+
+                                        @else
+
+                                            <span class="jd-badge jd-badge-secondary">
+
+                                                <i class="bi bi-pencil"></i>
+                                                Brouillon
+
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+
+                                    {{-- VUES --}}
+                                    <td>
+
+                                        <strong>
+
+                                            {{ number_format(
+                                                $doc->views ?? 0,
+                                                0,
+                                                ',',
+                                                ' '
+                                            ) }}
+
+                                        </strong>
+
+                                    </td>
+
+
+                                    {{-- ACTIONS --}}
+                                    <td>
+
+                                        <div class="jd-table-actions">
+
+                                            @if(Route::has('journaliste.documents.show'))
+
+                                                <a href="{{ route(
+                                                    'journaliste.documents.show',
+                                                    $doc
+                                                ) }}"
+                                                   class="jd-table-action"
+                                                   title="Voir">
+
+                                                    <i class="bi bi-eye"></i>
+
+                                                </a>
+
+                                            @endif
+
+
+                                            @if(Route::has('journaliste.documents.edit'))
+
+                                                <a href="{{ route(
+                                                    'journaliste.documents.edit',
+                                                    $doc
+                                                ) }}"
+                                                   class="jd-table-action"
+                                                   title="Modifier">
+
+                                                    <i class="bi bi-pencil"></i>
+
+                                                </a>
+
+                                            @endif
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            @endforeach
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    </div>
+
 </div>
 
 @endsection

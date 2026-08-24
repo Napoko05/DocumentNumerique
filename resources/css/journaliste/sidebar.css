@@ -1,0 +1,642 @@
+/* =========================================================
+   SIDEBAR JOURNALISTE
+   YAA'Scientia
+========================================================= */
+/* =========================================================
+   SIDEBAR JOURNALISTE
+   YAA'Scientia
+========================================================= */
+
+.journalist-sidebar {
+
+    --sidebar-width: 270px;
+
+    --sidebar-bg: #0f172a;
+    --sidebar-bg-light: #111c31;
+
+    --sidebar-text: #cbd5e1;
+    --sidebar-text-muted: #64748b;
+
+    --sidebar-primary: #2563eb;
+    --sidebar-primary-dark: #1d4ed8;
+
+
+    /* -----------------------------------------------------
+       DIMENSIONS
+    ----------------------------------------------------- */
+
+    width: var(--sidebar-width);
+
+    height: 100vh;
+    min-height: 100vh;
+
+    min-width: var(--sidebar-width);
+
+
+    /* -----------------------------------------------------
+       POSITIONNEMENT
+    ----------------------------------------------------- */
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+
+    /* -----------------------------------------------------
+       STRUCTURE
+    ----------------------------------------------------- */
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+
+    /* -----------------------------------------------------
+       APPARENCE
+    ----------------------------------------------------- */
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--sidebar-bg) 0%,
+            var(--sidebar-bg-light) 100%
+        );
+
+    color: #fff;
+
+    border-right:
+        1px solid rgba(255, 255, 255, .06);
+
+
+    /* -----------------------------------------------------
+       DÉBORDEMENT
+    ----------------------------------------------------- */
+
+    overflow: hidden;
+
+
+    /* -----------------------------------------------------
+       PRIORITÉ
+    ----------------------------------------------------- */
+
+    z-index: 1050;
+
+
+    /* -----------------------------------------------------
+       ANIMATION MOBILE
+    ----------------------------------------------------- */
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+}
+
+/* =========================================================
+   BRAND / LOGO
+========================================================= */
+
+.journalist-sidebar .sidebar-brand {
+
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 0 18px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, .08);
+
+    flex-shrink: 0;
+}
+
+.journalist-sidebar .sidebar-logo {
+
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+
+    padding: 5px;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, .08);
+}
+
+.journalist-sidebar .sidebar-brand-text {
+    min-width: 0;
+}
+
+.journalist-sidebar .sidebar-brand-title {
+
+    font-family: var(--sc-font-heading);
+
+    font-size: 14px;
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    color: #fff;
+}
+
+.journalist-sidebar .sidebar-brand-subtitle {
+
+    margin-top: 3px;
+
+    font-size: 11px;
+
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   BOUTON FERMER MOBILE
+========================================================= */
+
+.journalist-sidebar .sidebar-mobile-close {
+
+    width: 34px;
+    height: 34px;
+
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, .08);
+
+    color: #fff;
+
+    font-size: 21px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.journalist-sidebar .sidebar-mobile-close:hover {
+
+    background: rgba(255, 255, 255, .15);
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.journalist-sidebar .sidebar-navigation {
+
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 16px 12px;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, .15) transparent;
+}
+
+/* Chrome / Edge / Safari */
+
+.journalist-sidebar .sidebar-navigation::-webkit-scrollbar {
+    width: 5px;
+}
+
+.journalist-sidebar .sidebar-navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.journalist-sidebar .sidebar-navigation::-webkit-scrollbar-thumb {
+
+    background: rgba(255, 255, 255, .15);
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   TITRES DES SECTIONS
+========================================================= */
+
+.journalist-sidebar .sidebar-section-title {
+
+    margin:
+
+        22px 10px 8px;
+
+    color: var(--sidebar-text-muted);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    text-transform: uppercase;
+
+    letter-spacing: .12em;
+}
+
+
+/* =========================================================
+   LIENS
+========================================================= */
+
+.journalist-sidebar .sidebar-link {
+
+    position: relative;
+
+    width: 100%;
+    min-height: 43px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 9px 12px;
+
+    margin-bottom: 3px;
+
+    border-radius: 9px;
+
+    color: var(--sidebar-text);
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    transition:
+        background-color .2s ease,
+        color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* Hover */
+
+.journalist-sidebar .sidebar-link:hover {
+
+    color: #fff;
+
+    background:
+        rgba(255, 255, 255, .07);
+
+    transform: translateX(2px);
+}
+
+
+/* Active */
+
+.journalist-sidebar .sidebar-link.active {
+
+    color: #fff;
+
+    background:
+        linear-gradient(135deg,
+            var(--sidebar-primary),
+            var(--sidebar-primary-dark));
+
+    box-shadow:
+        0 6px 18px rgba(37, 99, 235, .25);
+}
+
+
+/* Petite barre active */
+
+.journalist-sidebar .sidebar-link.active::before {
+
+    content: '';
+
+    position: absolute;
+
+    left: -12px;
+
+    top: 8px;
+    bottom: 8px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+
+    background: #60a5fa;
+}
+
+
+/* =========================================================
+   ICÔNES
+========================================================= */
+
+.journalist-sidebar .sidebar-icon {
+
+    width: 22px;
+    height: 22px;
+
+    flex-shrink: 0;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #94a3b8;
+
+    font-size: 15px;
+
+    transition:
+        color .2s ease,
+        transform .2s ease;
+}
+
+.journalist-sidebar .sidebar-link:hover .sidebar-icon {
+
+    color: #fff;
+
+    transform: scale(1.05);
+}
+
+.journalist-sidebar .sidebar-link.active .sidebar-icon {
+    color: #fff;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.journalist-sidebar .sidebar-footer {
+
+    flex-shrink: 0;
+
+    padding: 13px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, .08);
+
+    background:
+        rgba(2, 6, 23, .18);
+}
+
+
+/* =========================================================
+   UTILISATEUR
+========================================================= */
+
+.journalist-sidebar .sidebar-user {
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 8px;
+
+    margin-bottom: 7px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(255, 255, 255, .04);
+}
+
+.journalist-sidebar .sidebar-avatar {
+
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(135deg,
+            #10b981,
+            #059669);
+
+    color: #fff;
+
+    font-size: 11px;
+
+    font-weight: 800;
+}
+
+.journalist-sidebar .sidebar-user-info {
+    min-width: 0;
+}
+
+.journalist-sidebar .sidebar-user-name {
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    color: #fff;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+.journalist-sidebar .sidebar-user-role {
+
+    margin-top: 2px;
+
+    color: #64748b;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   DÉCONNEXION
+========================================================= */
+
+.journalist-sidebar .sidebar-logout {
+
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 11px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: transparent;
+
+    color: #f87171;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.journalist-sidebar .sidebar-logout:hover {
+
+    background:
+        rgba(239, 68, 68, .10);
+
+    color: #fca5a5;
+}
+
+
+/* =========================================================
+   OVERLAY MOBILE
+========================================================= */
+
+.sidebar-overlay {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(2, 6, 23, .55);
+
+    backdrop-filter: blur(2px);
+
+    z-index: 1040;
+
+    opacity: 0;
+
+    transition:
+        opacity .25s ease;
+}
+
+.sidebar-overlay.is-visible {
+
+    display: block;
+
+    opacity: 1;
+}
+
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .journalist-sidebar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        transform:
+            translateX(-100%);
+
+        box-shadow:
+            12px 0 40px rgba(0, 0, 0, .20);
+    }
+
+
+    .journalist-sidebar.is-open {
+
+        transform:
+            translateX(0);
+    }
+
+}
+
+
+/* =========================================================
+   PETITS TÉLÉPHONES
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .journalist-sidebar {
+
+        width: min(290px,
+                88vw);
+    }
+
+    .journalist-sidebar .sidebar-brand {
+
+        min-height: 66px;
+
+        padding: 0 15px;
+    }
+
+    .journalist-sidebar .sidebar-navigation {
+
+        padding:
+            12px 10px;
+    }
+
+    .journalist-sidebar .sidebar-link {
+
+        min-height: 45px;
+
+        padding:
+            10px 11px;
+
+        font-size: 13px;
+    }
+
+    .journalist-sidebar .sidebar-footer {
+
+        padding: 10px;
+    }
+
+}
+
+
+/* =========================================================
+   ÉCRANS TRÈS LARGES
+========================================================= */
+
+@media (min-width: 1600px) {
+
+    .journalist-sidebar {
+
+        --sidebar-width: 285px;
+    }
+
+    .journalist-sidebar .sidebar-link {
+
+        min-height: 46px;
+
+        font-size: 14px;
+    }
+
+}

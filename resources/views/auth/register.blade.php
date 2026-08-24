@@ -2,110 +2,278 @@
 
 @section('content')
 
-<div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-surface-soft">
-    <div class="w-full max-w-md">
+<div class="register-page">
 
-        {{-- Logo --}}
-        <div class="text-center mb-8">
-            <a href="{{ url('/') }}" class="inline-flex flex-col items-center gap-2">
-                <img src="{{ asset('images/logo.png') }}" alt="YAA'Scientia"
-                     class="h-14 w-14 rounded-2xl object-contain shadow-sm">
-                <span class="font-heading font-bold text-xl text-ink">YAA'Scientia</span>
+    <div class="register-container">
+
+        {{-- =====================================================
+             LOGO / EN-TÊTE
+        ====================================================== --}}
+        <div class="register-header">
+
+            <a href="{{ url('/') }}" class="register-brand">
+
+                <img
+                    src="{{ asset('images/logo.png') }}"
+                    alt="YAA'Scientia"
+                    class="register-logo"
+                >
+
+                <span class="register-brand-name">
+                    YAA'Scientia
+                </span>
+
             </a>
-            <p class="text-sm text-ink-muted mt-2">Créez votre compte gratuitement</p>
+
+            <p class="register-subtitle">
+                Créez votre compte gratuitement
+            </p>
+
         </div>
 
-        {{-- Carte --}}
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
 
-            <h1 class="font-heading font-bold text-xl text-ink mb-6">Inscription</h1>
+        {{-- =====================================================
+             CARTE
+        ====================================================== --}}
+        <div class="register-card">
 
-            {{-- Erreurs --}}
+            <div class="register-card-header">
+
+                <h1 class="register-title">
+                    Inscription
+                </h1>
+
+                <p class="register-description">
+                    Créez votre compte pour accéder à YAA'Scientia.
+                </p>
+
+            </div>
+
+
+            {{-- =================================================
+                 ERREURS
+            ================================================== --}}
             @if($errors->any())
-                <div class="mb-4 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-                    {{ $errors->first() }}
+
+                <div class="register-alert register-alert-danger">
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                    <div>
+                        {{ $errors->first() }}
+                    </div>
+
                 </div>
+
             @endif
 
-            <form method="POST" action="{{ route('register') }}" class="space-y-4">
+
+            {{-- =================================================
+                 FORMULAIRE
+            ================================================== --}}
+            <form
+                method="POST"
+                action="{{ route('register') }}"
+                class="register-form"
+            >
+
                 @csrf
 
-                {{-- Nom + Prénom côte à côte --}}
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-1.5">Nom</label>
-                        <input type="text"
-                               name="nom"
-                               value="{{ old('nom') }}"
-                               required
-                               class="input-field"
-                               placeholder="SOME">
+
+                {{-- NOM + PRÉNOM --}}
+                <div class="register-row">
+
+                    <div class="register-group">
+
+                        <label
+                            for="nom"
+                            class="register-label"
+                        >
+                            Nom
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nom"
+                            name="nom"
+                            value="{{ old('nom') }}"
+                            class="register-input @error('nom') is-invalid @enderror"
+                            placeholder="SAVADOGO"
+                            autocomplete="family-name"
+                            required
+                        >
+
+                        @error('nom')
+                            <span class="register-error">
+                                {{ $message }}
+                            </span>
+                        @enderror
+
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-ink mb-1.5">Prénom</label>
-                        <input type="text"
-                               name="prenom"
-                               value="{{ old('prenom') }}"
-                               required
-                               class="input-field"
-                               placeholder="Arsène">
+
+
+                    <div class="register-group">
+
+                        <label
+                            for="prenom"
+                            class="register-label"
+                        >
+                            Prénom
+                        </label>
+
+                        <input
+                            type="text"
+                            id="prenom"
+                            name="prenom"
+                            value="{{ old('prenom') }}"
+                            class="register-input @error('prenom') is-invalid @enderror"
+                            placeholder="Lamine"
+                            autocomplete="given-name"
+                            required
+                        >
+
+                        @error('prenom')
+                            <span class="register-error">
+                                {{ $message }}
+                            </span>
+                        @enderror
+
                     </div>
+
                 </div>
 
-                {{-- Email --}}
-                <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">Email</label>
-                    <input type="email"
-                           name="email"
-                           value="{{ old('email') }}"
-                           required
-                           class="input-field"
-                           placeholder="email@exemple.com">
+
+                {{-- EMAIL --}}
+                <div class="register-group">
+
+                    <label
+                        for="email"
+                        class="register-label"
+                    >
+                        Adresse e-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        class="register-input @error('email') is-invalid @enderror"
+                        placeholder="email@exemple.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                    @error('email')
+                        <span class="register-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
                 </div>
 
-                {{-- Mot de passe --}}
-                <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">Mot de passe</label>
-                    <input type="password"
-                           name="password"
-                           required
-                           class="input-field"
-                           placeholder="••••••••">
+
+                {{-- MOT DE PASSE --}}
+                <div class="register-group">
+
+                    <label
+                        for="password"
+                        class="register-label"
+                    >
+                        Mot de passe
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="register-input @error('password') is-invalid @enderror"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    @error('password')
+                        <span class="register-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
                 </div>
 
-                {{-- Confirmation --}}
-                <div>
-                    <label class="block text-sm font-medium text-ink mb-1.5">Confirmer le mot de passe</label>
-                    <input type="password"
-                           name="password_confirmation"
-                           required
-                           class="input-field"
-                           placeholder="••••••••">
+
+                {{-- CONFIRMATION --}}
+                <div class="register-group">
+
+                    <label
+                        for="password_confirmation"
+                        class="register-label"
+                    >
+                        Confirmer le mot de passe
+                    </label>
+
+                    <input
+                        type="password"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        class="register-input"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                        required
+                    >
+
                 </div>
 
-                {{-- Actions --}}
-                <div class="flex flex-col gap-3 pt-2">
-                    <button type="submit" class="btn-primary w-full justify-center">
-                        Créer mon compte
+
+                {{-- =================================================
+                     ACTIONS
+                ================================================== --}}
+                <div class="register-actions">
+
+                    <button
+                        type="submit"
+                        class="register-submit"
+                    >
+                        <i class="bi bi-person-plus"></i>
+
+                        <span>
+                            Créer mon compte
+                        </span>
+
                     </button>
-                    <a href="{{ route('home') }}"
-                       class="text-center text-sm font-medium text-ink-muted hover:text-ink transition-colors">
+
+
+                    <a
+                        href="{{ route('home') }}"
+                        class="register-cancel"
+                    >
                         Annuler
                     </a>
+
                 </div>
 
             </form>
+
         </div>
 
-        {{-- Lien connexion --}}
-        <p class="text-center text-sm text-ink-muted mt-6">
-            Déjà un compte ?
-            <a href="{{ route('login') }}" class="font-semibold text-brand-800 hover:text-brand-700 transition-colors">
+
+        {{-- =====================================================
+             CONNEXION
+        ====================================================== --}}
+        <div class="register-login">
+
+            <span>
+                Déjà un compte ?
+            </span>
+
+            <a href="{{ route('login') }}">
                 Se connecter
             </a>
-        </p>
+
+        </div>
 
     </div>
+
 </div>
 
 @endsection

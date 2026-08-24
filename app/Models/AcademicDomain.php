@@ -9,7 +9,6 @@ class AcademicDomain extends Model
 {
     use HasFactory;
 
-
     /*
     |--------------------------------------------------------------------------
     | CHAMPS AUTORISÉS
@@ -17,21 +16,13 @@ class AcademicDomain extends Model
     */
 
     protected $fillable = [
-
         'name',
-
         'slug',
-
         'icon',
-
         'description',
-
         'position',
-
         'is_active',
-
     ];
-
 
     /*
     |--------------------------------------------------------------------------
@@ -40,53 +31,20 @@ class AcademicDomain extends Model
     */
 
     protected $casts = [
-
         'position' => 'integer',
-
         'is_active' => 'boolean',
-
     ];
 
-
     /*
     |--------------------------------------------------------------------------
-    | FORMATIONS DU DOMAINE
+    | FILIÈRES
     |--------------------------------------------------------------------------
     |
-    | Cette relation est conservée uniquement si la table
-    | formations possède encore la colonne academic_domain_id.
+    | Supérieur :
     |
-    | Exemple :
-    |
-    | Sciences exactes
+    | Domaine académique
     |        ↓
-    | Formation
-    |
-    */
-
-    public function formations()
-    {
-        return $this->hasMany(
-            Formation::class,
-            'academic_domain_id'
-        );
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FILIÈRES DU DOMAINE
-    |--------------------------------------------------------------------------
-    |
-    | Structure actuelle du supérieur :
-    |
-    | AcademicDomain
-    |       ↓
-    | Filiere
-    |
-    | La table filieres possède directement :
-    |
-    | academic_domain_id
+    | Filière
     |
     */
 
@@ -98,6 +56,23 @@ class AcademicDomain extends Model
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | DOCUMENTS
+    |--------------------------------------------------------------------------
+    |
+    | Relation utile pour les documents associés
+    | au domaine académique.
+    |
+    */
+
+    public function documents()
+    {
+        return $this->hasMany(
+            Document::class,
+            'academic_domain_id'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------

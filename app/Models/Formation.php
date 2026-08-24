@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class Formation extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
         'teaching_category_id',
         'name',
         'slug',
@@ -19,39 +17,89 @@ class Formation extends Model
         'icon',
         'position',
         'is_active',
-
     ];
-
-
 
     protected $casts = [
-
+        'position'  => 'integer',
         'is_active' => 'boolean',
-
     ];
-
-
 
     /*
     |--------------------------------------------------------------------------
-    | CATEGORIE D'ENSEIGNEMENT
+    | CATÉGORIE D'ENSEIGNEMENT
     |--------------------------------------------------------------------------
-    |
-    | Secondaire
-    | Supérieur
-    | Professionnel
-    |
     */
 
     public function teachingCategory()
     {
         return $this->belongsTo(
-            TeachingCategory::class
+            TeachingCategory::class,
+            'teaching_category_id'
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | NIVEAUX
+    |--------------------------------------------------------------------------
+    |
+    | Secondaire :
+    | Formation → Niveau
+    |
+    | Professionnel :
+    | Formation → Niveau
+    |
+    | ENS :
+    | Formation → Programme → Spécialité → Niveau
+    |
+    */
 
+    public function levels()
+    {
+        return $this->hasMany(
+            Level::class,
+            'formation_id'
+        );
+    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | PROGRAMMES
+    |--------------------------------------------------------------------------
+    |
+    | Utilisé principalement par ENS.
+    |
+    | ENS → Programme
+    |
+    */
+
+    public function programs()
+    {
+        return $this->hasMany(
+            Program::class,
+            'formation_id'
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉS DIRECTES
+    |--------------------------------------------------------------------------
+    |
+    | Utilisé pour :
+    |
+    | IDS → Spécialité
+    | UIT → Spécialité
+    |
+    */
+
+    public function specialites()
+    {
+        return $this->hasMany(
+            Specialite::class,
+            'formation_id'
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -62,54 +110,10 @@ class Formation extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'formation_id'
         );
     }
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | NIVEAUX
-    |--------------------------------------------------------------------------
-    |
-    | Secondaire :
-    |
-    | Formation
-    |    ↓
-    | Niveau
-    |
-    */
-
-    public function levels()
-    {
-        return $this->hasMany(
-            Level::class
-        );
-    }
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PROGRAMMES ENS
-    |--------------------------------------------------------------------------
-    |
-    | ENS uniquement
-    |
-    */
-
-    public function programs()
-    {
-        return $this->hasMany(
-            Program::class
-        );
-    }
-
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -119,11 +123,6 @@ class Formation extends Model
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
-
-
 }

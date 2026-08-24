@@ -9,81 +9,64 @@ class Program extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
-
         'formation_id',
-
         'name',
-
         'slug',
-
         'description',
-
+        'position',
         'is_active',
-
     ];
-
-
 
     protected $casts = [
-
+        'position'  => 'integer',
         'is_active' => 'boolean',
-
     ];
-
-
 
     /*
     |--------------------------------------------------------------------------
-    | FORMATION ENS
+    | FORMATION
     |--------------------------------------------------------------------------
     |
-    | Exemple :
-    |
-    | ENS
-    |   ↓
-    | CAPES
+    | ENS → Programme
     |
     */
 
     public function formation()
     {
         return $this->belongsTo(
-            Formation::class
+            Formation::class,
+            'formation_id'
         );
     }
 
-
-
     /*
     |--------------------------------------------------------------------------
-    | SPECIALITES
+    | SPÉCIALITÉS
     |--------------------------------------------------------------------------
     |
-    | CAPES
-    |    ↓
-    | Mathématiques
-    |    ↓
-    | Physique-Chimie
+    | ENS :
+    |
+    | Programme
+    |      ↓
+    | Spécialité
     |
     */
 
     public function specialites()
     {
         return $this->hasMany(
-            Specialite::class
+            Specialite::class,
+            'program_id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
     | NIVEAUX
     |--------------------------------------------------------------------------
     |
-    | Accès aux niveaux via les spécialités
+    | Les niveaux ENS passent par les spécialités.
     |
     */
 
@@ -91,11 +74,13 @@ class Program extends Model
     {
         return $this->hasManyThrough(
             Level::class,
-            Specialite::class
+            Specialite::class,
+            'program_id',
+            'specialite_id',
+            'id',
+            'id'
         );
     }
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -106,11 +91,11 @@ class Program extends Model
     public function documents()
     {
         return $this->hasMany(
-            Document::class
+            Document::class,
+            'program_id'
         );
     }
 
-   
     /*
     |--------------------------------------------------------------------------
     | SCOPE ACTIF
@@ -119,9 +104,6 @@ class Program extends Model
 
     public function scopeActive($query)
     {
-        return $query->where(
-            'is_active',
-            true
-        );
+        return $query->where('is_active', true);
     }
 }

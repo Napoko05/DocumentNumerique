@@ -12,18 +12,27 @@ return new class extends Migration
 
             $table->id();
 
-            // Secondaire uniquement
             $table->foreignId('level_id')
                 ->constrained('levels')
                 ->cascadeOnDelete();
 
             $table->string('name');
+
             $table->string('slug');
 
             $table->boolean('is_active')
                 ->default(true);
 
+            $table->unsignedInteger('position')
+                ->default(0);
+
             $table->timestamps();
+
+            $table->index('level_id');
+
+            $table->index('is_active');
+
+            $table->index('position');
 
             $table->unique([
                 'level_id',

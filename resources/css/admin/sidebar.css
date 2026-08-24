@@ -1,0 +1,758 @@
+/* =========================================================
+   ADMIN SIDEBAR
+   YAA'SCIENTIA
+   VERSION SANS TAILWIND
+========================================================= */
+
+:root {
+    --admin-sidebar-width: 256px;
+
+    --admin-sidebar-bg: #111827;
+    --admin-sidebar-bg-deep: #0f172a;
+
+    --admin-sidebar-text: #94a3b8;
+    --admin-sidebar-text-hover: #ffffff;
+
+    --admin-sidebar-active: #1e40af;
+    --admin-sidebar-active-light: #dbeafe;
+
+    --admin-sidebar-hover: rgba(255, 255, 255, 0.07);
+
+    --admin-sidebar-border: rgba(255, 255, 255, 0.08);
+
+    --admin-sidebar-danger: #f87171;
+    --admin-sidebar-danger-hover: rgba(239, 68, 68, 0.10);
+
+    --admin-brand: #2563eb;
+}
+
+
+/* =========================================================
+   SIDEBAR PRINCIPALE
+========================================================= */
+
+.admin-sidebar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    z-index: 1030;
+
+    width: var(--admin-sidebar-width);
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--admin-sidebar-bg) 0%,
+            var(--admin-sidebar-bg-deep) 100%
+        );
+
+    color: var(--admin-sidebar-text);
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, 0.08);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   HEADER / LOGO
+========================================================= */
+
+.admin-sidebar-header {
+
+    height: 64px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 20px;
+
+    border-bottom: 1px solid var(--admin-sidebar-border);
+}
+
+
+.admin-sidebar-brand {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+}
+
+
+.admin-sidebar-logo {
+
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    object-fit: contain;
+
+    padding: 2px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.10);
+}
+
+
+.admin-sidebar-brand-text {
+
+    min-width: 0;
+
+    line-height: 1.2;
+}
+
+
+.admin-sidebar-brand-text p {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+.admin-sidebar-brand-text span {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color: #64748b;
+
+    font-size: 11px;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.admin-sidebar-nav {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 16px 12px;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(255, 255, 255, 0.12)
+        transparent;
+}
+
+
+.admin-sidebar-nav::-webkit-scrollbar {
+
+    width: 5px;
+}
+
+
+.admin-sidebar-nav::-webkit-scrollbar-track {
+
+    background: transparent;
+}
+
+
+.admin-sidebar-nav::-webkit-scrollbar-thumb {
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   TITRES DE SECTION
+========================================================= */
+
+.admin-sidebar-section-title {
+
+    margin-top: 20px;
+
+    margin-bottom: 7px;
+
+    padding: 0 12px;
+
+    color: rgba(255, 255, 255, 0.30);
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   LIENS PRINCIPAUX
+========================================================= */
+
+.admin-nav-link {
+
+    position: relative;
+
+    width: 100%;
+
+    min-height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 2px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--admin-sidebar-text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.admin-nav-link:hover {
+
+    color: var(--admin-sidebar-text-hover);
+
+    background: var(--admin-sidebar-hover);
+
+    text-decoration: none;
+}
+
+
+.admin-nav-link.active {
+
+    color: var(--admin-sidebar-active-light);
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(37, 99, 235, 0.95),
+            rgba(30, 64, 175, 0.85)
+        );
+
+    box-shadow:
+        0 4px 12px rgba(30, 64, 175, 0.20);
+}
+
+
+.admin-nav-link.active::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 9px;
+
+    bottom: 9px;
+
+    width: 3px;
+
+    border-radius: 0 4px 4px 0;
+
+    background: #93c5fd;
+}
+
+
+/* =========================================================
+   BOUTONS NAVIGATION
+========================================================= */
+
+.admin-nav-button {
+
+    appearance: none;
+
+    text-align: left;
+}
+
+
+.admin-nav-button:focus {
+
+    outline: none;
+}
+
+
+.admin-nav-text {
+
+    flex: 1;
+
+    text-align: left;
+}
+
+
+/* =========================================================
+   ICONES
+========================================================= */
+
+.admin-nav-icon {
+
+    width: 17px;
+    height: 17px;
+
+    flex-shrink: 0;
+
+    stroke-width: 1.8;
+
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   FLECHE
+========================================================= */
+
+.admin-nav-arrow {
+
+    width: 15px;
+    height: 15px;
+
+    flex-shrink: 0;
+
+    transition:
+        transform 0.25s ease;
+}
+
+
+.admin-nav-arrow.rotate {
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   SOUS-MENU
+========================================================= */
+
+.admin-submenu {
+
+    position: relative;
+
+    margin-left: 16px;
+
+    padding-left: 13px;
+
+    padding-top: 3px;
+
+    padding-bottom: 4px;
+}
+
+
+.admin-submenu::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+
+    top: 5px;
+
+    bottom: 8px;
+
+    width: 1px;
+
+    background: rgba(255, 255, 255, 0.08);
+}
+
+
+.admin-submenu-link {
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    min-height: 36px;
+
+    padding: 8px 10px;
+
+    margin-bottom: 2px;
+
+    border-radius: 7px;
+
+    color: #7f8da3;
+
+    font-size: 12px;
+
+    font-weight: 500;
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        padding-left 0.2s ease;
+}
+
+
+.admin-submenu-link:hover {
+
+    color: #ffffff;
+
+    background: rgba(255, 255, 255, 0.06);
+
+    padding-left: 13px;
+
+    text-decoration: none;
+}
+
+
+.admin-submenu-link.active {
+
+    color: #bfdbfe;
+
+    background: rgba(37, 99, 235, 0.20);
+}
+
+
+.admin-submenu-link span:first-child {
+
+    width: 18px;
+
+    text-align: center;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ELEMENTS DÉSACTIVÉS
+========================================================= */
+
+.admin-nav-disabled {
+
+    min-height: 42px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    margin-bottom: 2px;
+
+    border-radius: 8px;
+
+    color: rgba(255, 255, 255, 0.23);
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    cursor: not-allowed;
+
+    user-select: none;
+}
+
+
+.admin-nav-disabled .admin-nav-icon {
+
+    opacity: 0.55;
+}
+
+
+.admin-coming-soon {
+
+    margin-left: auto;
+
+    padding: 3px 7px;
+
+    border-radius: 5px;
+
+    background: rgba(255, 255, 255, 0.07);
+
+    color: rgba(255, 255, 255, 0.35);
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.admin-sidebar-footer {
+
+    flex-shrink: 0;
+
+    padding: 14px 12px;
+
+    border-top: 1px solid var(--admin-sidebar-border);
+
+    background: rgba(0, 0, 0, 0.10);
+}
+
+
+/* =========================================================
+   UTILISATEUR CONNECTÉ
+========================================================= */
+
+.admin-sidebar-user {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    min-width: 0;
+
+    padding: 7px 10px;
+
+    margin-bottom: 7px;
+}
+
+
+.admin-user-avatar {
+
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: #ffffff;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    box-shadow:
+        0 3px 8px rgba(37, 99, 235, 0.25);
+}
+
+
+.admin-user-info {
+
+    min-width: 0;
+
+    overflow: hidden;
+}
+
+
+.admin-user-info p {
+
+    margin: 0;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.admin-user-info span {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #64748b;
+
+    font-size: 10px;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   DÉCONNEXION
+========================================================= */
+
+.admin-logout-button {
+
+    width: 100%;
+
+    min-height: 39px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 9px 12px;
+
+    border: 0;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: var(--admin-sidebar-danger);
+
+    font-family: inherit;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.admin-logout-button:hover {
+
+    background: var(--admin-sidebar-danger-hover);
+
+    color: #fca5a5;
+}
+
+
+.admin-logout-button:focus {
+
+    outline: none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .admin-sidebar {
+
+        transform: translateX(-100%);
+
+    }
+
+
+    .admin-sidebar.admin-sidebar-open {
+
+        transform: translateX(0);
+
+    }
+
+}
+
+
+@media (min-width: 992px) {
+
+    .admin-sidebar {
+
+        position: relative;
+
+        transform: translateX(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   PETITS ÉCRANS
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    :root {
+
+        --admin-sidebar-width: 275px;
+
+    }
+    .admin-sidebar-header {
+
+        padding: 0 18px;
+
+    }
+    .admin-sidebar-nav {
+
+        padding-left: 10px;
+
+        padding-right: 10px;
+
+    }
+}

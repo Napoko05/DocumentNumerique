@@ -1,452 +1,504 @@
-@extends('layouts.journalist_app')
+@extends('layouts.journaliste_app')
 
 @section('title', 'Mes documents')
 
 @section('content')
 
-<div class="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
+<div class="documents-page">
 
-<div class="max-w-7xl mx-auto">
+    <div class="documents-container">
 
-    <!-- HEADER -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 gap-4">
+        {{-- =====================================================
+             EN-TÊTE
+        ====================================================== --}}
 
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800">
-                📚 Mes documents
-            </h1>
+        <div class="documents-header">
 
-            <p class="text-gray-500 mt-1">
-                Gérez et suivez tous vos documents
-            </p>
-        </div>
+            <div class="documents-header-content">
 
-        <a href="{{ route('journaliste.documents.create') }}"
-           class="inline-flex items-center justify-center gap-2
-                  bg-blue-600 hover:bg-blue-700
-                  text-white px-5 py-3
-                  rounded-xl shadow-md transition">
+                <div class="documents-header-icon">
+                    📚
+                </div>
 
-            ➕ Nouveau document
+                <div>
+                    <h1>
+                        Mes documents
+                    </h1>
 
-        </a>
+                    <p>
+                        Gérez et suivez tous vos documents
+                    </p>
+                </div>
 
-    </div>
+            </div>
 
-
-    <!-- MESSAGE SUCCESS -->
-    @if(session('success'))
-
-        <div class="mb-6 p-4 rounded-xl
-                    bg-green-100 text-green-700
-                    border border-green-200">
-
-            {{ session('success') }}
+            <a
+                href="{{ route('journaliste.documents.create') }}"
+                class="documents-btn documents-btn-primary"
+            >
+                <span>＋</span>
+                Nouveau document
+            </a>
 
         </div>
 
-    @endif
+
+        {{-- =====================================================
+             MESSAGES
+        ====================================================== --}}
+
+        @if(session('success'))
+
+            <div class="documents-alert documents-alert-success">
+
+                <span class="documents-alert-icon">
+                    ✓
+                </span>
+
+                <div>
+                    {{ session('success') }}
+                </div>
+
+            </div>
+
+        @endif
 
 
-    <!-- MESSAGE ERROR -->
-    @if(session('error'))
+        @if(session('error'))
 
-        <div class="mb-6 p-4 rounded-xl
-                    bg-red-100 text-red-700
-                    border border-red-200">
+            <div class="documents-alert documents-alert-danger">
 
-            {{ session('error') }}
+                <span class="documents-alert-icon">
+                    !
+                </span>
 
-        </div>
+                <div>
+                    {{ session('error') }}
+                </div>
 
-    @endif
+            </div>
 
-
-    <!-- TABLE -->
-    <div class="bg-white shadow-xl rounded-2xl
-                overflow-hidden border border-gray-100">
-
-        <div class="overflow-x-auto">
-
-            <table class="min-w-full divide-y divide-gray-200">
-
-                <!-- HEADER -->
-                <thead class="bg-gray-100">
-
-                    <tr class="text-left text-gray-600
-                               text-xs uppercase tracking-wider">
-
-                        <th class="px-6 py-4">
-                            Document
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Formation
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Filière
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Niveau
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Matière / Module
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Accès
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Prix
-                        </th>
-
-                        <th class="px-6 py-4">
-                            Vues
-                        </th>
-
-                        <th class="px-6 py-4 text-right">
-                            Actions
-                        </th>
-
-                    </tr>
-
-                </thead>
+        @endif
 
 
-                <!-- BODY -->
-                <tbody class="divide-y divide-gray-100">
+        {{-- =====================================================
+             CARTE TABLEAU
+        ====================================================== --}}
 
-                    @forelse($documents as $document)
+        <div class="documents-card">
 
-                        <tr class="hover:bg-gray-50 transition">
+            {{-- En-tête de carte --}}
+
+            <div class="documents-card-header">
+
+                <div>
+
+                    <h2>
+                        Liste de mes documents
+                    </h2>
+
+                    <p>
+                        Retrouvez ici tous les documents que vous avez créés.
+                    </p>
+
+                </div>
+
+                <div class="documents-count">
+
+                    {{ $documents->total() }}
+
+                    <span>
+                        document{{ $documents->total() > 1 ? 's' : '' }}
+                    </span>
+
+                </div>
+
+            </div>
 
 
-                            <!-- TITRE -->
-                            <td class="px-6 py-4">
+            {{-- =================================================
+                 TABLEAU
+            ================================================== --}}
 
-                                <div class="font-semibold text-gray-800">
+            <div class="documents-table-wrapper">
 
-                                    {{ $document->title }}
+                <table class="documents-table">
 
-                                </div>
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Document
+                            </th>
+
+                            <th>
+                                Formation
+                            </th>
+
+                            <th>
+                                Filière
+                            </th>
+
+                            <th>
+                                Niveau
+                            </th>
+
+                            <th>
+                                Matière / Module
+                            </th>
+
+                            <th>
+                                Accès
+                            </th>
+
+                            <th>
+                                Prix
+                            </th>
+
+                            <th>
+                                Vues
+                            </th>
+
+                            <th class="documents-actions-header">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
 
 
-                                <!-- TYPE DOCUMENT -->
-                                @if($document->documentType)
+                    <tbody>
 
-                                    <div class="text-xs text-gray-400 mt-1">
+                        @forelse($documents as $document)
 
-                                        {{ $document->documentType->name }}
+                            <tr>
+
+                                {{-- DOCUMENT --}}
+
+                                <td class="documents-title-cell">
+
+                                    <div class="documents-title-wrapper">
+
+                                        <div class="documents-file-icon">
+                                            📄
+                                        </div>
+
+                                        <div class="documents-title-content">
+
+                                            <div class="documents-title">
+
+                                                {{ $document->title }}
+
+                                            </div>
+
+
+                                            @if($document->documentType)
+
+                                                <div class="documents-type">
+
+                                                    {{ $document->documentType->name }}
+
+                                                </div>
+
+                                            @endif
+
+
+                                            {{-- STATUT --}}
+
+                                            <div class="documents-status">
+
+                                                @if($document->status === 'published')
+
+                                                    <span class="documents-status-badge documents-status-published">
+                                                        ✓ Publié
+                                                    </span>
+
+                                                @elseif($document->status === 'pending')
+
+                                                    <span class="documents-status-badge documents-status-pending">
+                                                        ⏳ En attente
+                                                    </span>
+
+                                                @elseif($document->status === 'rejected')
+
+                                                    <span class="documents-status-badge documents-status-rejected">
+                                                        ✕ Rejeté
+                                                    </span>
+
+                                                @else
+
+                                                    <span class="documents-status-badge documents-status-draft">
+                                                        📝 Brouillon
+                                                    </span>
+
+                                                @endif
+
+                                            </div>
+
+                                        </div>
 
                                     </div>
 
-                                @endif
+                                </td>
 
 
-                                <!-- STATUT -->
-                                <div class="mt-2">
+                                {{-- FORMATION --}}
 
-                                    @if($document->status === 'published')
+                                <td class="documents-data-cell">
 
-                                        <span class="inline-flex px-2 py-1
-                                                     text-xs font-semibold
-                                                     rounded-full
-                                                     bg-green-100
-                                                     text-green-700">
+                                    {{ $document->formation?->name ?? '—' }}
 
-                                            Publié
+                                </td>
 
-                                        </span>
 
-                                    @elseif($document->status === 'pending')
+                                {{-- FILIERE --}}
 
-                                        <span class="inline-flex px-2 py-1
-                                                     text-xs font-semibold
-                                                     rounded-full
-                                                     bg-yellow-100
-                                                     text-yellow-700">
+                                <td class="documents-data-cell">
 
-                                            En attente
+                                    {{ $document->filiere?->name ?? '—' }}
 
-                                        </span>
+                                </td>
 
-                                    @elseif($document->status === 'rejected')
 
-                                        <span class="inline-flex px-2 py-1
-                                                     text-xs font-semibold
-                                                     rounded-full
-                                                     bg-red-100
-                                                     text-red-700">
+                                {{-- NIVEAU --}}
 
-                                            Rejeté
+                                <td class="documents-data-cell">
+
+                                    {{ $document->level?->name ?? '—' }}
+
+                                </td>
+
+
+                                {{-- MATIERE --}}
+
+                                <td class="documents-data-cell">
+
+                                    {{ $document->subject?->name ?? '—' }}
+
+                                </td>
+
+
+                                {{-- ACCÈS --}}
+
+                                <td>
+
+                                    @if($document->access_type === 'free')
+
+                                        <span class="documents-access documents-access-free">
+
+                                            <span class="documents-access-dot"></span>
+
+                                            Gratuit
 
                                         </span>
 
                                     @else
 
-                                        <span class="inline-flex px-2 py-1
-                                                     text-xs font-semibold
-                                                     rounded-full
-                                                     bg-gray-100
-                                                     text-gray-600">
+                                        <span class="documents-access documents-access-premium">
 
-                                            Brouillon
+                                            <span class="documents-access-dot"></span>
+
+                                            Premium
 
                                         </span>
 
                                     @endif
 
-                                </div>
-
-                            </td>
+                                </td>
 
 
-                            <!-- FORMATION -->
-                            <td class="px-6 py-4 text-sm text-gray-600">
+                                {{-- PRIX --}}
 
-                                {{ $document->formation?->name ?? '—' }}
+                                <td class="documents-price">
 
-                            </td>
+                                    @if(
+                                        $document->access_type === 'premium'
+                                        && $document->price
+                                    )
 
+                                        {{ number_format(
+                                            (float) $document->price,
+                                            0,
+                                            ',',
+                                            ' '
+                                        ) }}
 
-                            <!-- FILIERE -->
-                            <td class="px-6 py-4 text-sm text-gray-600">
+                                        <small>FCFA</small>
 
-                                {{ $document->filiere?->name ?? '—' }}
+                                    @else
 
-                            </td>
+                                        <span class="documents-empty">
+                                            —
+                                        </span>
 
+                                    @endif
 
-                            <!-- NIVEAU -->
-                            <td class="px-6 py-4 text-sm text-gray-600">
-
-                                {{ $document->level?->name ?? '—' }}
-
-                            </td>
-
-
-                            <!-- MATIERE / MODULE -->
-                            <td class="px-6 py-4 text-sm text-gray-600">
-
-                                {{ $document->subject?->name ?? '—' }}
-
-                            </td>
+                                </td>
 
 
-                            <!-- ACCES -->
-                            <td class="px-6 py-4">
+                                {{-- VUES --}}
 
-                                @if($document->access_type === 'free')
+                                <td class="documents-views">
 
-                                    <span class="inline-flex px-3 py-1
-                                                 text-xs font-semibold
-                                                 rounded-full
-                                                 bg-green-100
-                                                 text-green-700">
-
-                                        🟢 Gratuit
-
+                                    <span>
+                                        👁
                                     </span>
 
-                                @else
+                                    {{ $document->views ?? 0 }}
 
-                                    <span class="inline-flex px-3 py-1
-                                                 text-xs font-semibold
-                                                 rounded-full
-                                                 bg-orange-100
-                                                 text-orange-700">
-
-                                        🟠 Premium
-
-                                    </span>
-
-                                @endif
-
-                            </td>
+                                </td>
 
 
-                            <!-- PRIX -->
-                            <td class="px-6 py-4 text-sm text-gray-700">
+                                {{-- ACTIONS --}}
 
-                                @if(
-                                    $document->access_type === 'premium'
-                                    && $document->price
-                                )
+                                <td>
 
-                                    {{ number_format(
-                                        (float) $document->price,
-                                        0,
-                                        ',',
-                                        ' '
-                                    ) }}
-
-                                    FCFA
-
-                                @else
-
-                                    <span class="text-gray-400">
-
-                                        —
-
-                                    </span>
-
-                                @endif
-
-                            </td>
+                                    <div class="documents-actions">
 
 
-                            <!-- VUES -->
-                            <td class="px-6 py-4 text-sm text-gray-700">
+                                        {{-- VOIR --}}
 
-                                👁️ {{ $document->views ?? 0 }}
+                                        <a
+                                            href="{{ route(
+                                                'journaliste.documents.show',
+                                                $document
+                                            ) }}"
+                                            class="documents-action documents-action-view"
+                                            title="Voir le document"
+                                        >
 
-                            </td>
+                                            👁
 
+                                            <span>
+                                                Voir
+                                            </span>
 
-                            <!-- ACTIONS -->
-                            <td class="px-6 py-4">
-
-                                <div class="flex flex-wrap
-                                            justify-end gap-2">
-
-
-                                    <!-- VOIR -->
-                                    <a href="{{ route(
-                                        'journaliste.documents.show',
-                                        $document
-                                    ) }}"
-
-                                       class="px-3 py-2
-                                              text-sm font-medium
-                                              rounded-lg
-                                              bg-blue-100
-                                              text-blue-700
-                                              hover:bg-blue-200
-                                              transition">
-
-                                        Voir
-
-                                    </a>
+                                        </a>
 
 
-                                    <!-- MODIFIER -->
-                                    <a href="{{ route(
-                                        'journaliste.documents.edit',
-                                        $document
-                                    ) }}"
+                                        {{-- MODIFIER --}}
 
-                                       class="px-3 py-2
-                                              text-sm font-medium
-                                              rounded-lg
-                                              bg-yellow-100
-                                              text-yellow-700
-                                              hover:bg-yellow-200
-                                              transition">
+                                        <a
+                                            href="{{ route(
+                                                'journaliste.documents.edit',
+                                                $document
+                                            ) }}"
+                                            class="documents-action documents-action-edit"
+                                            title="Modifier le document"
+                                        >
 
-                                        Modifier
+                                            ✏
 
-                                    </a>
+                                            <span>
+                                                Modifier
+                                            </span>
+
+                                        </a>
 
 
-                                    <!-- SUPPRIMER -->
-                                    <form action="{{ route(
-                                        'journaliste.documents.destroy',
-                                        $document
-                                    ) }}"
+                                        {{-- SUPPRIMER --}}
 
-                                          method="POST"
-
-                                          onsubmit="
-                                            return confirm(
+                                        <form
+                                            action="{{ route(
+                                                'journaliste.documents.destroy',
+                                                $document
+                                            ) }}"
+                                            method="POST"
+                                            class="documents-delete-form"
+                                            onsubmit="return confirm(
                                                 'Voulez-vous vraiment supprimer ce document ?'
-                                            );
-                                          ">
+                                            );"
+                                        >
 
-                                        @csrf
+                                            @csrf
 
-                                        @method('DELETE')
+                                            @method('DELETE')
 
 
-                                        <button type="submit"
+                                            <button
+                                                type="submit"
+                                                class="documents-action documents-action-delete"
+                                                title="Supprimer le document"
+                                            >
 
-                                                class="px-3 py-2
-                                                       text-sm font-medium
-                                                       rounded-lg
-                                                       bg-red-100
-                                                       text-red-700
-                                                       hover:bg-red-200
-                                                       transition">
+                                                🗑
 
-                                            Supprimer
+                                                <span>
+                                                    Supprimer
+                                                </span>
 
-                                        </button>
+                                            </button>
 
-                                    </form>
+                                        </form>
 
-                                </div>
+                                    </div>
 
-                            </td>
+                                </td>
 
-                        </tr>
+                            </tr>
 
-                    @empty
+                        @empty
 
-                        <tr>
+                            <tr>
 
-                            <td colspan="9"
-                                class="text-center
-                                       py-14 text-gray-500">
+                                <td
+                                    colspan="9"
+                                    class="documents-empty-row"
+                                >
 
-                                <div class="text-4xl mb-3">
+                                    <div class="documents-empty-icon">
+                                        📂
+                                    </div>
 
-                                    📂
+                                    <h3>
+                                        Aucun document trouvé
+                                    </h3>
 
-                                </div>
+                                    <p>
+                                        Vous n'avez encore créé aucun document.
+                                    </p>
 
-                                <p class="font-medium">
+                                    <a
+                                        href="{{ route(
+                                            'journaliste.documents.create'
+                                        ) }}"
+                                        class="documents-empty-btn"
+                                    >
+                                        ＋ Créer mon premier document
+                                    </a>
 
-                                    Aucun document trouvé
+                                </td>
 
-                                </p>
+                            </tr>
 
-                                <p class="text-sm mt-1">
+                        @endforelse
 
-                                    Cliquez sur « Nouveau document »
-                                    pour ajouter votre premier document.
+                    </tbody>
 
-                                </p>
+                </table>
 
-                            </td>
+            </div>
 
-                        </tr>
 
-                    @endforelse
+            {{-- =================================================
+                 PAGINATION
+            ================================================== --}}
 
-                </tbody>
+            @if($documents->hasPages())
 
-            </table>
+                <div class="documents-pagination">
+
+                    {{ $documents->links() }}
+
+                </div>
+
+            @endif
 
         </div>
 
     </div>
-
-
-    <!-- PAGINATION -->
-    @if($documents->hasPages())
-
-        <div class="mt-6">
-
-            {{ $documents->links() }}
-
-        </div>
-
-    @endif
-
-</div>
 
 </div>
 
