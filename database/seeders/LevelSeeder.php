@@ -16,15 +16,6 @@ class LevelSeeder extends Seeder
         |--------------------------------------------------------------------------
         | SECONDAIRE GÉNÉRAL
         |--------------------------------------------------------------------------
-        |
-        | Catégorie
-        |    ↓
-        | Formation
-        |    ↓
-        | Niveau
-        |    ↓
-        | Matière
-        |
         */
 
         $formationGeneral = Formation::where(
@@ -73,7 +64,6 @@ class LevelSeeder extends Seeder
             ];
 
             foreach ($levels as $level) {
-
                 Level::updateOrCreate(
                     [
                         'formation_id' => $formationGeneral->id,
@@ -93,20 +83,10 @@ class LevelSeeder extends Seeder
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | SECONDAIRE TECHNIQUE
         |--------------------------------------------------------------------------
-        |
-        | Catégorie
-        |    ↓
-        | Formation
-        |    ↓
-        | Niveau
-        |    ↓
-        | Matière / Module
-        |
         */
 
         $formationTechnique = Formation::where(
@@ -135,7 +115,6 @@ class LevelSeeder extends Seeder
             ];
 
             foreach ($levels as $level) {
-
                 Level::updateOrCreate(
                     [
                         'formation_id' => $formationTechnique->id,
@@ -155,22 +134,10 @@ class LevelSeeder extends Seeder
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
         | SUPÉRIEUR
         |--------------------------------------------------------------------------
-        |
-        | Catégorie
-        |    ↓
-        | Domaine académique
-        |    ↓
-        | Filière
-        |    ↓
-        | Niveau
-        |    ↓
-        | Matière / Module
-        |
         */
 
         $filieres = Filiere::where(
@@ -209,7 +176,6 @@ class LevelSeeder extends Seeder
             ];
 
             foreach ($levels as $level) {
-
                 Level::updateOrCreate(
                     [
                         'filiere_id' => $filiere->id,
@@ -229,30 +195,27 @@ class LevelSeeder extends Seeder
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
-        | PROFESSIONNEL — ENSP / ENEP / ATE
+        | PROFESSIONNEL — ENEP
         |--------------------------------------------------------------------------
         |
-        | Formation
-        |    ↓
+        | ENEP
+        | ↓
         | Niveau
-        |    ↓
-        | Matière / Module
+        | ↓
+        | Module
         |
+        | Pas de 3ème année.
+        |--------------------------------------------------------------------------
         */
 
-        $formationsPro = Formation::whereIn(
+        $enep = Formation::where(
             'slug',
-            [
-                'ensp',
-                'enep',
-                'ate',
-            ]
-        )->get();
+            'enep'
+        )->first();
 
-        foreach ($formationsPro as $formation) {
+        if ($enep) {
 
             $levels = [
                 [
@@ -265,24 +228,19 @@ class LevelSeeder extends Seeder
                     'slug' => 'deuxieme-annee',
                     'order' => 2,
                 ],
-                [
-                    'name' => '3ème année',
-                    'slug' => 'troisieme-annee',
-                    'order' => 3,
-                ],
             ];
 
             foreach ($levels as $level) {
 
                 Level::updateOrCreate(
                     [
-                        'formation_id' => $formation->id,
+                        'formation_id' => $enep->id,
                         'filiere_id' => null,
                         'specialite_id' => null,
                         'slug' => $level['slug'],
                     ],
                     [
-                        'formation_id' => $formation->id,
+                        'formation_id' => $enep->id,
                         'filiere_id' => null,
                         'specialite_id' => null,
                         'name' => $level['name'],
@@ -293,40 +251,40 @@ class LevelSeeder extends Seeder
             }
         }
 
-
         /*
         |--------------------------------------------------------------------------
-        | PROFESSIONNEL — IDS
+        | PROFESSIONNEL — ENSP
         |--------------------------------------------------------------------------
         |
-        | Formation
-        |    ↓
+        | ENSP
+        | ↓
         | Spécialité
-        |    ↓
+        | ↓
         | Niveau
-        |    ↓
-        | Matière / Module
+        | ↓
+        | Module
         |
+        |--------------------------------------------------------------------------
         */
 
-        $ids = Formation::where(
+        $ensp = Formation::where(
             'slug',
-            'ids'
+            'ensp'
         )->first();
 
-        if ($ids) {
+        if ($ensp) {
 
-            $specialitesIds = Specialite::whereHas(
-                'formation',
-                function ($query) use ($ids) {
-                    $query->where('id', $ids->id);
-                }
-            )->get();
+            $specialitesEnsp = Specialite::where(
+                'formation_id',
+                $ensp->id
+            )
+                ->where('is_active', true)
+                ->get();
 
-            foreach ($specialitesIds as $specialite) {
+            foreach ($specialitesEnsp as $specialite) {
 
                 $this->createSpecialiteLevels(
-                    $ids,
+                    $ensp,
                     $specialite,
                     [
                         [
@@ -349,28 +307,135 @@ class LevelSeeder extends Seeder
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | PROFESSIONNEL — IDS
+        |--------------------------------------------------------------------------
+        |
+        | IDS
+        | ↓
+        | Spécialité
+        | ↓
+        | Niveau
+        | ↓
+        | Module
+        |
+        |--------------------------------------------------------------------------
+        */
+
+        $ids = Formation::where(
+            'slug',
+            'ids'
+        )->first();
+
+        if ($ids) {
+
+            $specialitesIds = Specialite::where(
+                'formation_id',
+                $ids->id
+            )
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($specialitesIds as $specialite) {
+
+                $this->createSpecialiteLevels(
+                    $ids,
+                    $specialite,
+                    [
+                        [
+                            'name' => 'Licence 1',
+                            'slug' => 'licence-1',
+                            'order' => 1,
+                        ],
+                        [
+                            'name' => 'Licence 2',
+                            'slug' => 'licence-2',
+                            'order' => 2,
+                        ],
+                        [
+                            'name' => 'Licence 3',
+                            'slug' => 'licence-3',
+                            'order' => 3,
+                        ],
+                    ]
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PROFESSIONNEL — UIT
+        |--------------------------------------------------------------------------
+        |
+        | UIT
+        | ↓
+        | Spécialité
+        | ↓
+        | Niveau
+        | ↓
+        | Module
+        |
+        |--------------------------------------------------------------------------
+        */
+
+        $uit = Formation::where(
+            'slug',
+            'uit'
+        )->first();
+
+        if ($uit) {
+
+            $specialitesUit = Specialite::where(
+                'formation_id',
+                $uit->id
+            )
+                ->where('is_active', true)
+                ->get();
+
+            foreach ($specialitesUit as $specialite) {
+
+                $this->createSpecialiteLevels(
+                    $uit,
+                    $specialite,
+                    [
+                        [
+                            'name' => 'Licence 1',
+                            'slug' => 'licence-1',
+                            'order' => 1,
+                        ],
+                        [
+                            'name' => 'Licence 2',
+                            'slug' => 'licence-2',
+                            'order' => 2,
+                        ],
+                        [
+                            'name' => 'Licence 3',
+                            'slug' => 'licence-3',
+                            'order' => 3,
+                        ],
+                    ]
+                );
+            }
+        }
 
         /*
         |--------------------------------------------------------------------------
         | PROFESSIONNEL — ENS
         |--------------------------------------------------------------------------
         |
-        | Formation
-        |    ↓
+        | ENS
+        | ↓
         | Programme
-        |    ↓
+        | ↓
         | Spécialité
-        |    ↓
+        | ↓
         | Niveau
-        |    ↓
-        | Matière / Module
+        | ↓
+        | Module
         |
-        | IMPORTANT :
-        | levels NE possède PAS de program_id.
-        |
-        | Le niveau est donc rattaché à :
-        | formation_id + specialite_id
-        |
+        | NE PAS MODIFIER
+        |--------------------------------------------------------------------------
         */
 
         $ens = Formation::where(
@@ -411,13 +476,6 @@ class LevelSeeder extends Seeder
             }
         }
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CRÉER LES NIVEAUX D'UNE SPÉCIALITÉ
-    |--------------------------------------------------------------------------
-    */
 
     private function createSpecialiteLevels(
         Formation $formation,

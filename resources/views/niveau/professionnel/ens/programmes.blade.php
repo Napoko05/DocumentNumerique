@@ -2,67 +2,296 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="formation-page">
 
-    <div class="max-w-6xl mx-auto text-center mb-12">
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
 
-        <h1 class="text-4xl font-extrabold text-gray-800">
-            👨‍🏫 ENS
-        </h1>
+    <section class="formation-hero">
 
-        <p class="text-gray-500 mt-2">
-            Choisissez votre programme.
-        </p>
+        <div class="container">
 
-    </div>
+            <div class="formation-badge">
+                <i class="bi bi-mortarboard-fill"></i>
+                PROGRAMMES DE FORMATION
+            </div>
+
+            <h1>
+                {{ $formation->icon ?? '🎓' }}
+                {{ $formation->name }}
+            </h1>
+
+            <p>
+                {{ $formation->description
+                    ?? 'Choisissez votre programme de formation.' }}
+            </p>
+
+        </div>
+
+    </section>
 
 
-    <div class="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
+    {{-- =========================================================
+         CONTENT
+    ========================================================== --}}
 
+    <section class="formation-content">
 
-        @foreach($programmes as $programme)
+        <div class="container">
 
-        <a href="{{ route('vitrine.ens.specialites',[
-    'programmeSlug'=>$programme->slug
-]) }}"
-            class="bg-white rounded-2xl shadow-md p-8 text-center hover:shadow-xl transition">
+            <div class="section-heading">
 
+                <div>
 
-            <div class="text-6xl">
-                🎓
+                    <span class="section-kicker">
+                        PROGRAMMES
+                    </span>
+
+                    <h2>
+                        Choisissez votre programme
+                    </h2>
+
+                </div>
+
+                <span class="class-count">
+                    {{ $programmes->count() }}
+                    programme{{ $programmes->count() > 1 ? 's' : '' }}
+                </span>
+
             </div>
 
 
-            <h2 class="mt-4 font-bold text-xl text-gray-800">
-                {{ $programme->name }}
-            </h2>
+            {{-- =================================================
+                 PROGRAMMES
+            ================================================== --}}
+
+            @if($programmes->isNotEmpty())
+
+                <div class="classes-grid">
+
+                    @foreach($programmes as $programme)
+
+                        <a
+                            href="{{ route('vitrine.professionnel.ens.specialites', [
+                                'programmeSlug' => $programme->slug
+                            ]) }}"
+                            class="class-card"
+                        >
+
+                            <div class="class-card-top">
+
+                                <div class="class-icon">
+                                    {{ $programme->icon ?? '🎓' }}
+                                </div>
+
+                                <div class="class-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+
+                            </div>
 
 
-            <p class="text-gray-500 mt-2">
-                Accéder aux spécialités
-            </p>
+                            <div class="class-card-body">
+
+                                <h3>
+                                    {{ $programme->name }}
+                                </h3>
+
+                                <p>
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    {{ $programme->description
+                                        ?? 'Programme de formation disponible.' }}
+
+                                </p>
+
+                            </div>
 
 
-        </a>
+                            <div class="class-card-footer">
+
+                                <span>
+                                    Voir les spécialités
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    @endforeach
+
+                </div>
 
 
-        @endforeach
+                {{-- =================================================
+                     MOBILE CAROUSEL
+                ================================================== --}}
+
+                <div
+                    id="programmesCarousel"
+                    class="carousel slide classes-carousel"
+                    data-bs-ride="false"
+                >
+
+                    <div class="carousel-inner">
+
+                        @foreach($programmes as $index => $programme)
+
+                            <div
+                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                            >
+
+                                <div class="mobile-class-card">
+
+                                    <a
+                                        href="{{ route('vitrine.professionnel.ens.specialites', [
+                                            'programmeSlug' => $programme->slug
+                                        ]) }}"
+                                        class="class-card"
+                                    >
+
+                                        <div class="class-card-top">
+
+                                            <div class="class-icon">
+                                                {{ $programme->icon ?? '🎓' }}
+                                            </div>
+
+                                            <div class="class-arrow">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </div>
+
+                                        </div>
 
 
-    </div>
+                                        <div class="class-card-body">
 
-</div>
-<div class="max-w-6xl mx-auto mb-8">
+                                            <h3>
+                                                {{ $programme->name }}
+                                            </h3>
 
-    <a href="{{ route('vitrine.professionnel.formations', [
-        'formationSlug' => $formation->slug,
+                                            <p>
 
-    ]) }}"
-    class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
+                                                <i class="bi bi-info-circle"></i>
 
-        ← Retour
+                                                {{ $programme->description
+                                                    ?? 'Programme de formation disponible.' }}
 
-    </a>
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="class-card-footer">
+
+                                            <span>
+                                                Voir les spécialités
+                                            </span>
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+
+                    @if($programmes->count() > 1)
+
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#programmesCarousel"
+                            data-bs-slide="prev"
+                        >
+
+                            <span class="carousel-control-prev-icon"></span>
+
+                            <span class="visually-hidden">
+                                Précédent
+                            </span>
+
+                        </button>
+
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#programmesCarousel"
+                            data-bs-slide="next"
+                        >
+
+                            <span class="carousel-control-next-icon"></span>
+
+                            <span class="visually-hidden">
+                                Suivant
+                            </span>
+
+                        </button>
+
+                    @endif
+
+                </div>
+
+
+            @else
+
+                {{-- =================================================
+                     EMPTY STATE
+                ================================================== --}}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun programme disponible
+                    </h3>
+
+                    <p>
+                        Aucun programme n'est actuellement disponible
+                        pour cette formation.
+                    </p>
+
+                </div>
+
+            @endif
+
+
+            {{-- =================================================
+                 RETOUR
+            ================================================== --}}
+
+            <div class="doc-type-back-container">
+
+                <a
+                    href="{{ route('vitrine.professionnel.formations') }}"
+                    class="doc-type-back-btn"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Retour aux formations
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
 
 </div>
 

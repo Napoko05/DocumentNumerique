@@ -1,0 +1,395 @@
+/* =========================================================
+   PAGE FILIÈRES — ENSEIGNEMENT SUPÉRIEUR
+   ========================================================= */
+
+.superieur-filieres-page {
+    min-height: 100vh;
+    padding: 56px 20px;
+
+    background: linear-gradient(
+        to bottom,
+        #eff6ff 0%,
+        #f8fafc 100%
+    );
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.superieur-filieres-header {
+    max-width: 1150px;
+    margin: 0 auto 48px;
+    text-align: center;
+}
+
+.superieur-filieres-header h1 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 36px;
+    font-weight: 800;
+
+    line-height: 1.3;
+}
+
+.superieur-filieres-header p {
+    margin: 10px 0 0;
+
+    color: #6b7280;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   GRILLE
+   ========================================================= */
+
+.superieur-filieres-grid {
+    max-width: 1250px;
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 24px;
+}
+
+
+/* =========================================================
+   CARTE FILIÈRE
+   ========================================================= */
+
+.superieur-filiere-card {
+    min-height: 245px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px 22px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 20px;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.08);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.superieur-filiere-card:hover {
+    transform: translateY(-7px);
+
+    border-color: #3b82f6;
+
+    box-shadow:
+        0 16px 32px rgba(15, 23, 42, 0.14);
+}
+
+
+/* =========================================================
+   ICÔNE
+   ========================================================= */
+
+.superieur-filiere-icon {
+    width: 76px;
+    height: 76px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    font-size: 40px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.superieur-filiere-card:hover
+.superieur-filiere-icon {
+    transform: scale(1.1);
+
+    background: #bfdbfe;
+}
+
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.superieur-filiere-content {
+    margin-top: 20px;
+
+    text-align: center;
+}
+
+
+.superieur-filiere-content h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    transition: color 0.25s ease;
+}
+
+
+.superieur-filiere-card:hover
+.superieur-filiere-content h3 {
+    color: #2563eb;
+}
+
+
+.superieur-filiere-content p {
+    margin: 9px 0 0;
+
+    color: #6b7280;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   NOMBRE DE DOCUMENTS
+   ========================================================= */
+
+.superieur-filiere-documents {
+    display: inline-block;
+
+    margin-top: 12px;
+
+    color: #2563eb;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   AUCUNE FILIÈRE
+   ========================================================= */
+
+.superieur-filieres-empty {
+    grid-column: 1 / -1;
+
+    max-width: 650px;
+
+    margin: 0 auto;
+
+    padding: 50px 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 20px;
+
+    text-align: center;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+
+.superieur-filieres-empty-icon {
+    margin-bottom: 15px;
+
+    font-size: 48px;
+}
+
+
+.superieur-filieres-empty h3 {
+    margin: 0;
+
+    color: #374151;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+.superieur-filieres-empty p {
+    max-width: 500px;
+
+    margin: 10px auto 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BOUTON RETOUR
+   ========================================================= */
+
+.superieur-filieres-back {
+    max-width: 1250px;
+
+    margin: 30px auto 0;
+
+    text-align: left;
+}
+
+
+.superieur-filieres-back-btn {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 11px 19px;
+
+    background: #ffffff;
+
+    color: #2563eb;
+
+    border: 1px solid #dbe3ef;
+
+    border-radius: 11px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    box-shadow:
+        0 4px 10px rgba(15, 23, 42, 0.06);
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.superieur-filieres-back-btn:hover {
+    background: #eff6ff;
+
+    border-color: #3b82f6;
+
+    color: #1d4ed8;
+
+    transform: translateX(-3px);
+
+    box-shadow:
+        0 7px 16px rgba(15, 23, 42, 0.10);
+}
+
+
+/* =========================================================
+   TABLETTE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .superieur-filieres-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .superieur-filieres-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 20px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 550px) {
+
+    .superieur-filieres-page {
+        padding: 40px 15px;
+    }
+
+
+    .superieur-filieres-header {
+        margin-bottom: 32px;
+    }
+
+
+    .superieur-filieres-header h1 {
+        font-size: 27px;
+    }
+
+
+    .superieur-filieres-header p {
+        font-size: 14px;
+    }
+
+
+    .superieur-filieres-grid {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+
+    .superieur-filiere-card {
+        min-height: 215px;
+
+        padding: 28px 20px;
+    }
+
+
+    .superieur-filiere-icon {
+        width: 68px;
+        height: 68px;
+
+        font-size: 35px;
+    }
+
+
+    .superieur-filiere-content h3 {
+        font-size: 18px;
+    }
+
+
+    .superieur-filieres-back {
+        margin-top: 22px;
+    }
+
+}

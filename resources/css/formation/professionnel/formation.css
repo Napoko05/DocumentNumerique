@@ -1,0 +1,468 @@
+/* =========================================================
+   PAGE ENSEIGNEMENT PROFESSIONNEL
+   ========================================================= */
+
+.professionnel-page{
+    min-height:100vh;
+    background:#f6f8fb;
+    color:#1f2937;
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.professionnel-hero{
+    position:relative;
+    padding:70px 20px 85px;
+    background:linear-gradient(
+        135deg,
+        #0b2a4a 0%,
+        #123f6d 55%,
+        #0b4da2 100%
+    );
+    color:#fff;
+    text-align:center;
+    overflow:hidden;
+}
+
+.professionnel-hero::before{
+    content:"";
+    position:absolute;
+    width:420px;
+    height:420px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.10);
+    top:-220px;
+    right:-100px;
+}
+
+.professionnel-hero::after{
+    content:"";
+    position:absolute;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.08);
+    bottom:-180px;
+    left:-100px;
+}
+
+.professionnel-hero .container{
+    position:relative;
+    z-index:2;
+}
+
+.professionnel-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 16px;
+    margin-bottom:18px;
+    border:1px solid rgba(255,255,255,.22);
+    border-radius:50px;
+    background:rgba(255,255,255,.10);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:1.2px;
+    text-transform:uppercase;
+}
+
+.professionnel-badge i{
+    font-size:15px;
+}
+
+.professionnel-hero h1{
+    margin:0;
+    font-size:42px;
+    line-height:1.2;
+    font-weight:800;
+    letter-spacing:-.5px;
+}
+
+.professionnel-hero p{
+    max-width:650px;
+    margin:14px auto 0;
+    color:rgba(255,255,255,.78);
+    font-size:16px;
+    line-height:1.7;
+}
+
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
+.professionnel-content{
+    padding:55px 20px 80px;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.professionnel-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.professionnel-card{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    min-height:245px;
+    padding:24px;
+    background:#fff;
+    border:1px solid #e5eaf0;
+    border-radius:18px;
+    color:#1f2937;
+    text-decoration:none;
+    box-shadow:0 5px 18px rgba(20,45,75,.05);
+    overflow:hidden;
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.professionnel-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:4px;
+    background:#0b4da2;
+    transform:scaleX(0);
+    transform-origin:left;
+    transition:transform .25s ease;
+}
+
+.professionnel-card:hover{
+    transform:translateY(-6px);
+    border-color:#c8d9ed;
+    box-shadow:0 16px 35px rgba(20,45,75,.12);
+    color:#1f2937;
+}
+
+.professionnel-card:hover::before{
+    transform:scaleX(1);
+}
+
+
+/* =========================================================
+   CARD TOP
+   ========================================================= */
+
+.professionnel-card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.professionnel-icon{
+    width:58px;
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:16px;
+    background:#eaf2fc;
+    color:#0b4da2;
+    font-size:25px;
+    transition:
+        background .25s ease,
+        color .25s ease,
+        transform .25s ease;
+}
+
+.professionnel-card:hover .professionnel-icon{
+    background:#0b4da2;
+    color:#fff;
+    transform:scale(1.05);
+}
+
+.professionnel-arrow{
+    width:36px;
+    height:36px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#f4f6f8;
+    color:#667085;
+    font-size:15px;
+    transition:.25s ease;
+}
+
+.professionnel-card:hover .professionnel-arrow{
+    background:#0b4da2;
+    color:#fff;
+}
+
+
+/* =========================================================
+   CARD BODY
+   ========================================================= */
+
+.professionnel-card-body{
+    flex:1;
+    padding-top:24px;
+}
+
+.professionnel-card-body h3{
+    margin:0 0 9px;
+    color:#172033;
+    font-size:21px;
+    font-weight:800;
+}
+
+.professionnel-card-body p{
+    display:flex;
+    align-items:flex-start;
+    gap:7px;
+    margin:0;
+    color:#7a8493;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.professionnel-card-body p i{
+    flex-shrink:0;
+    color:#0b4da2;
+    margin-top:3px;
+}
+
+
+/* =========================================================
+   CARD FOOTER
+   ========================================================= */
+
+.professionnel-card-footer{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding-top:18px;
+    border-top:1px solid #edf0f3;
+    color:#0b4da2;
+    font-size:13px;
+    font-weight:700;
+}
+
+.professionnel-card-footer i{
+    transition:transform .25s ease;
+}
+
+.professionnel-card:hover .professionnel-card-footer i{
+    transform:translateX(4px);
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+.professionnel-empty{
+    max-width:600px;
+    margin:20px auto 0;
+    padding:55px 30px;
+    text-align:center;
+    background:#fff;
+    border:1px solid #e5eaf0;
+    border-radius:20px;
+    box-shadow:0 5px 20px rgba(20,45,75,.05);
+}
+
+.professionnel-empty-icon{
+    width:70px;
+    height:70px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 20px;
+    border-radius:50%;
+    background:#edf3fa;
+    color:#0b4da2;
+    font-size:28px;
+}
+
+.professionnel-empty h3{
+    margin:0 0 8px;
+    color:#263244;
+    font-size:20px;
+    font-weight:800;
+}
+
+.professionnel-empty p{
+    margin:0;
+    color:#7b8491;
+    font-size:14px;
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   CAROUSEL MOBILE
+   ========================================================= */
+
+.professionnel-carousel{
+    display:none;
+}
+
+.professionnel-carousel-item{
+    padding:5px 42px 15px;
+}
+
+.professionnel-mobile-card{
+    width:100%;
+    min-height:255px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:1199px){
+
+    .professionnel-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+}
+
+
+@media(max-width:991px){
+
+    .professionnel-hero{
+        padding:60px 20px 70px;
+    }
+
+    .professionnel-hero h1{
+        font-size:36px;
+    }
+
+    .professionnel-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+
+@media(max-width:767px){
+
+    .professionnel-hero{
+        padding:48px 18px 58px;
+    }
+
+    .professionnel-hero h1{
+        font-size:30px;
+    }
+
+    .professionnel-hero p{
+        font-size:14px;
+    }
+
+    .professionnel-content{
+        padding:40px 15px 60px;
+    }
+
+    .section-heading{
+        align-items:flex-start;
+        flex-direction:column;
+        margin-bottom:22px;
+    }
+
+    .section-heading h2{
+        font-size:23px;
+    }
+
+    .professionnel-grid{
+        display:none;
+    }
+
+    .professionnel-carousel{
+        display:block;
+    }
+
+    .professionnel-card{
+        min-height:250px;
+    }
+
+    .professionnel-carousel .carousel-control-prev,
+    .professionnel-carousel .carousel-control-next{
+        width:34px;
+        height:34px;
+        top:50%;
+        bottom:auto;
+        transform:translateY(-50%);
+        border-radius:50%;
+        background:#0b4da2;
+        opacity:1;
+    }
+
+    .professionnel-carousel .carousel-control-prev{
+        left:0;
+    }
+
+    .professionnel-carousel .carousel-control-next{
+        right:0;
+    }
+
+    .professionnel-carousel .carousel-control-prev-icon,
+    .professionnel-carousel .carousel-control-next-icon{
+        width:14px;
+        height:14px;
+    }
+
+}
+
+
+@media(max-width:480px){
+
+    .professionnel-badge{
+        font-size:10px;
+        padding:7px 12px;
+    }
+
+    .professionnel-hero h1{
+        font-size:26px;
+    }
+
+    .professionnel-content{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .class-count{
+        font-size:12px;
+    }
+
+    .professionnel-carousel-item{
+        padding-left:35px;
+        padding-right:35px;
+    }
+
+    .professionnel-card{
+        padding:20px;
+        border-radius:16px;
+    }
+
+    .professionnel-card-body h3{
+        font-size:19px;
+    }
+
+    .professionnel-card-footer{
+        font-size:12px;
+    }
+
+}

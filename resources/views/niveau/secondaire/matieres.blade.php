@@ -2,71 +2,151 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="matiere-page">
 
     {{-- HEADER --}}
-    <div class="max-w-6xl mx-auto text-center mb-12">
+    <div class="matiere-header">
 
-        <h1 class="text-3xl font-extrabold text-gray-800">
+        <div class="matiere-back">
+            <a
+                href="{{ route('vitrine.secondaire.general.classes', $classe->formation->slug) }}"
+                class="matiere-back-btn">
+                ← Précédent
+            </a>
+        </div>
+
+        <h1>
             📚 Classe : {{ $classe->name }}
         </h1>
 
-        <p class="text-gray-500 mt-2">
-            Choisissez une matière.
+        <p>
+            Choisissez une matière pour accéder aux ressources pédagogiques.
         </p>
 
     </div>
 
+
     {{-- MATIÈRES --}}
-    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
+    @if($matieres->count())
 
-        @forelse($matieres as $matiere)
+    <div class="matiere-carousel-wrapper">
 
-            <a href="{{ route('vitrine.secondaire.general.type_doc', [$classe->slug, $matiere->slug]) }}"
-               class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition p-6 border hover:border-green-400">
+        <button
+            type="button"
+            class="matiere-carousel-btn matiere-carousel-prev"
+            aria-label="Matières précédentes">
+            ‹
+        </button>
 
-                <div class="text-4xl text-center">
 
+        <div
+            class="matiere-carousel"
+            id="matiereCarousel">
+
+            @foreach($matieres as $matiere)
+
+            <a
+                href="{{ route(
+                            'vitrine.secondaire.general.type_doc',
+                            [$classe->slug, $matiere->slug]
+                        ) }}"
+                class="matiere-card">
+
+                <div class="matiere-card-icon">
                     {{ $matiere->icon ?? '📚' }}
-
                 </div>
 
-                <div class="mt-3 text-center font-bold text-gray-800">
-
+                <h3>
                     {{ $matiere->name }}
+                </h3>
 
-                </div>
-
-                <div class="text-center text-sm text-gray-500 mt-1">
-
+                <p>
                     📄 {{ $matiere->documents_count }} document(s)
-
-                </div>
+                </p>
 
             </a>
 
-        @empty
+            @endforeach
 
-            <div class="col-span-full">
+        </div>
 
-                <div class="bg-white rounded-xl shadow p-10 text-center">
 
-                    <h3 class="text-lg font-semibold text-gray-700">
-
-                        Aucune matière disponible.
-
-                    </h3>
-
-                </div>
-
-            </div>
-
-        @endforelse
+        <button
+            type="button"
+            class="matiere-carousel-btn matiere-carousel-next"
+            aria-label="Matières suivantes">
+            ›
+        </button>
 
     </div>
+
+    @else
+
+    <div class="matiere-empty">
+
+        <div class="matiere-empty-card">
+
+            <div class="matiere-empty-icon">
+                📚
+            </div>
+
+            <h3>
+                Aucune matière disponible.
+            </h3>
+
+            <p>
+                Cette classe ne contient actuellement aucune matière.
+            </p>
+
+        </div>
+
+    </div>
+
+    @endif
 
 </div>
 
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        const carousel = document.getElementById('matiereCarousel');
+
+        const previousButton = document.querySelector(
+            '.matiere-carousel-prev'
+        );
+
+        const nextButton = document.querySelector(
+            '.matiere-carousel-next'
+        );
+
+        if (!carousel) {
+            return;
+        }
+
+        const scrollAmount = 300;
+
+
+        previousButton.addEventListener('click', function() {
+
+            carousel.scrollBy({
+                left: -scrollAmount,
+                behavior: 'smooth'
+            });
+
+        });
+
+
+        nextButton.addEventListener('click', function() {
+
+            carousel.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+
+        });
+
+    });
+</script>
 
 @endsection

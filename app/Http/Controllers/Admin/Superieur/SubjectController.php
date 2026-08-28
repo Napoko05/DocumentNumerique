@@ -32,14 +32,14 @@ class SubjectController extends Controller
     {
         $domaines = AcademicDomain::with([
             'filieres.levels.subjects' => function ($query) {
-                $query->orderBy('order');
+                $query->orderBy('position', 'asc');
             }
         ])
         ->where(
             'is_active',
             true
         )
-        ->orderBy('position')
+        ->orderBy('position', 'asc')
         ->get();
 
         return view(

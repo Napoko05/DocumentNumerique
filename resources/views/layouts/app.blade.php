@@ -60,7 +60,19 @@
     'resources/css/login/style_register.css',
     'resources/js/app.js',
     'resources/js/yaascientia-home.js',
-     'resources/css/journaliste/profile.css',
+    'resources/css/journaliste/profile.css',
+    'resources/css/formation/secondaire/classe.css',
+    'resources/css/formation/secondaire/matiere.css',
+    'resources/css/formation/secondaire/type_doc.css',
+    'resources/css/formation/secondaire/document.css',
+    'resources/css/formation/superieur/filiere.css',
+    'resources/css/formation/superieur/niveau.css',
+    'resources/css/formation/superieur/module.css',
+    'resources/css/formation/superieur/accademie.css',
+    'resources/css/formation/professionnel/formation.css',
+    'resources/css/formation/professionnel/accademie.css',
+    'resources/css/formation/professionnel/accademie.css',
+    'resources/css/formation/professionnel/accademie.css',
     ])
 
 

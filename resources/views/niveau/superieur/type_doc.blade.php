@@ -2,116 +2,195 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="doc-type-page">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
-        <h1 class="text-3xl font-extrabold text-gray-800">
+    <div class="doc-type-header">
 
+        <h1>
             📖 Types de documents
-
         </h1>
-        <p class="text-gray-600 mt-2">
 
-            <span class="font-semibold">
-                {{ $filiere->name }}
-            </span>
-
+        <p>
+            <strong>{{ $filiere->name }}</strong>
             •
-            <span>
-                {{ $niveau->name }}
-            </span>
-
+            <span>{{ $niveau->name }}</span>
         </p>
-        <p class="text-gray-500 mt-2">
 
+        <p>
             Choisissez le type de document.
-
         </p>
+
     </div>
-    <!-- TYPES DE DOCUMENTS -->
-    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
 
-        @foreach($types as $type)
+    <div class="doc-type-carousel-wrapper">
 
-        <a href="{{ route('vitrine.superieur.documents', [
+        <button
+            type="button"
+            class="doc-type-carousel-btn doc-type-carousel-prev"
+            id="docTypePrev"
+            aria-label="Précédent">
+            ‹
+        </button>
 
-    'domaineSlug' => $domaine->slug,
-    'filiereSlug' => $filiere->slug,
-    'niveauSlug' => $niveau->slug,
-    'typeSlug'   => $type->slug
+        <div
+            class="doc-type-carousel"
+            id="docTypeCarousel">
 
-]) }}"
-            class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border hover:border-blue-500 text-center">
+            <div class="doc-type-track">
 
-            <div class="text-5xl">
+                @forelse($types as $type)
 
-                @switch($type->slug)
+                    <a
+                        href="{{ route('vitrine.superieur.documents', [
+                            'domaineSlug' => $domaine->slug,
+                            'filiereSlug' => $filiere->slug,
+                            'niveauSlug' => $niveau->slug,
+                            'typeSlug' => $type->slug
+                        ]) }}"
+                        class="doc-type-card">
 
-                @case('cours')
-                📚
-                @break
+                        <div class="doc-type-icon">
 
-                @case('travaux-diriges-td')
-                📝
-                @break
+                            @switch($type->slug)
 
-                @case('travaux-pratiques-tp')
-                🧪
-                @break
+                                @case('cours')
+                                    📚
+                                    @break
 
-                @case('examens')
-                📄
-                @break
+                                @case('travaux-diriges-td')
+                                    📝
+                                    @break
 
-                @case('corriges')
-                ✅
-                @break
+                                @case('travaux-pratiques-tp')
+                                    🧪
+                                    @break
 
-                @case('fiches-de-revision')
-                📑
-                @break
+                                @case('examens')
+                                    📄
+                                    @break
 
-                @default
-                📁
+                                @case('corriges')
+                                    ✅
+                                    @break
 
-                @endswitch
+                                @case('fiches-de-revision')
+                                    📑
+                                    @break
+
+                                @default
+                                    📁
+
+                            @endswitch
+
+                        </div>
+
+                        <h3>
+                            {{ $type->name }}
+                        </h3>
+
+                        <p>
+                            {{ $type->documents_count ?? 0 }}
+                            document(s)
+                        </p>
+
+                    </a>
+
+                @empty
+
+                    <div class="doc-type-empty">
+
+                        <h3>
+                            Aucun type de document disponible.
+                        </h3>
+
+                    </div>
+
+                @endforelse
+
             </div>
 
-            <div class="mt-4 font-bold text-gray-800">
+        </div>
 
-                {{ $type->name }}
+        <button
+            type="button"
+            class="doc-type-carousel-btn doc-type-carousel-next"
+            id="docTypeNext"
+            aria-label="Suivant">
+            ›
+        </button>
 
-            </div>
+    </div>
 
-            @if(isset($type->documents_count))
+    <div class="doc-type-back-container">
 
-            <div class="text-sm text-blue-500 mt-2">
+        <a
+            href="{{ route('vitrine.superieur.filieres', [
+                'domaineSlug' => $domaine->slug
+            ]) }}"
+            class="doc-type-back-btn">
 
-                {{ $type->documents_count }} documents
+            ← Retour aux filières
 
-            </div>
-
-            @endif
         </a>
-        @endforeach
+
     </div>
-</div>
-
-<!-- BOUTON RETOUR -->
-<div class="max-w-6xl mx-auto mb-8">
-
-    <a href="{{ route('vitrine.superieur.filieres', [
-
-        'domaineSlug' => $domaine->slug
-
-    ]) }}"
-    class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-        ← Retour aux filières
-
-    </a>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const carousel = document.getElementById('docTypeCarousel');
+    const prevButton = document.getElementById('docTypePrev');
+    const nextButton = document.getElementById('docTypeNext');
+
+    if (!carousel || !prevButton || !nextButton) {
+        return;
+    }
+
+    function updateButtons() {
+
+        const maxScroll =
+            carousel.scrollWidth - carousel.clientWidth;
+
+        prevButton.disabled =
+            carousel.scrollLeft <= 5;
+
+        nextButton.disabled =
+            carousel.scrollLeft >= maxScroll - 5;
+    }
+
+    prevButton.addEventListener('click', function () {
+
+        carousel.scrollBy({
+            left: -260,
+            behavior: 'smooth'
+        });
+
+    });
+
+    nextButton.addEventListener('click', function () {
+
+        carousel.scrollBy({
+            left: 260,
+            behavior: 'smooth'
+        });
+
+    });
+
+    carousel.addEventListener(
+        'scroll',
+        updateButtons
+    );
+
+    window.addEventListener(
+        'resize',
+        updateButtons
+    );
+
+    setTimeout(updateButtons, 100);
+
+});
+</script>
 
 @endsection

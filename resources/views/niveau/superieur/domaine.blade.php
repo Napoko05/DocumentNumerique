@@ -2,94 +2,94 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="superieur-domaines-page">
 
+    {{-- HEADER --}}
+    <div class="superieur-domaines-header">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
-
-        <h1 class="text-4xl font-extrabold text-gray-800">
+        <h1>
             🎓 Enseignement Supérieur
         </h1>
 
-        <p class="text-gray-500 mt-2">
+        <p>
             Choisissez votre domaine académique.
         </p>
 
     </div>
 
 
+    {{-- DOMAINES --}}
+    <div class="superieur-domaines-grid">
 
-    <!-- DOMAINES -->
-    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        @forelse($domaines as $domaine)
 
+            <a
+                href="{{ route('vitrine.superieur.filieres', [
+                    'domaineSlug' => $domaine->slug
+                ]) }}"
+                class="superieur-domaine-card"
+            >
 
-        @foreach($domaines as $domaine)
+                <div class="superieur-domaine-icon">
 
+                    @switch($domaine->slug)
 
-        <a href="{{ route('vitrine.superieur.filieres', [
-            'domaineSlug' => $domaine->slug
-        ]) }}"
-        class="group bg-white rounded-2xl shadow-md
-        hover:shadow-xl transition-all duration-300
-        p-8 border border-gray-100
-        hover:border-blue-500
-        hover:-translate-y-1">
+                        @case('sciences-exactes')
+                            🔬
+                            @break
 
+                        @case('sciences-sociales')
+                            🌍
+                            @break
 
-            <div class="text-5xl text-center group-hover:scale-110 transition">
+                        @case('sciences-langage')
+                            📚
+                            @break
 
-                @switch($domaine->slug)
+                        @default
+                            🎓
 
-                    @case('sciences-exactes')
-                        🔬
-                    @break
+                    @endswitch
 
-                    @case('sciences-sociales')
-                        🌍
-                    @break
-
-                    @case('sciences-langage')
-                        📚
-                    @break
-
-                    @default
-                        🎓
-
-                @endswitch
-
-            </div>
+                </div>
 
 
+                <div class="superieur-domaine-content">
 
-            <div class="mt-5 text-center">
+                    <h3>
+                        {{ $domaine->name }}
+                    </h3>
 
+                    <p>
+                        Découvrir les formations disponibles
+                    </p>
 
-                <h3 class="font-bold text-gray-800 
-                    group-hover:text-blue-600 text-xl">
+                </div>
 
-                    {{ $domaine->name }}
+            </a>
 
+        @empty
+
+            <div class="superieur-domaines-empty">
+
+                <div class="superieur-domaines-empty-icon">
+                    🎓
+                </div>
+
+                <h3>
+                    Aucun domaine disponible.
                 </h3>
 
-
-                <p class="text-sm text-gray-500 mt-3">
-
-                    Découvrir les formations disponibles
-
+                <p>
+                    Aucun domaine académique n'est actuellement disponible.
                 </p>
-
 
             </div>
 
-
-        </a>
-
-
-        @endforeach
-
+        @endforelse
 
     </div>
+
 </div>
 
 @endsection

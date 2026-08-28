@@ -93,7 +93,7 @@ class DocumentController extends Controller
 
         $subjects = Subject::query()
             ->where('is_active', true)
-            ->orderBy('order')
+            ->orderBy('position')
             ->orderBy('name')
             ->get();
 
@@ -468,36 +468,32 @@ class DocumentController extends Controller
     {
         $formationId = $request->query('formation_id');
 
-        if (
-            !is_numeric($formationId) ||
-            (int)$formationId <= 0
-        ) {
+        if (!is_numeric($formationId) || (int)$formationId <= 0) {
             return response()->json([]);
         }
 
         $formation = Formation::query()
-            ->where('id', (int)$formationId)
+            ->whereKey((int)$formationId)
             ->where('is_active', true)
+            ->whereIn('slug', [
+                'ids',
+                'ensp',
+                'uit',
+            ])
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
             ->first();
 
         if (!$formation) {
             return response()->json([]);
         }
 
-        if (!in_array(
-            $formation->slug,
-            ['ids', 'uit'],
-            true
-        )) {
-            return response()->json([]);
-        }
-
         $specialites = Specialite::query()
-            ->where(
-                'formation_id',
-                $formation->id
-            )
+            ->where('formation_id', $formation->id)
             ->where('is_active', true)
+            ->orderBy('position')
             ->orderBy('name')
             ->get([
                 'id',
@@ -530,21 +526,14 @@ class DocumentController extends Controller
     {
         $formationId = $request->query('formation_id');
 
-        if (
-            !is_numeric($formationId) ||
-            (int) $formationId <= 0
-        ) {
+        if (!is_numeric($formationId) || (int)$formationId <= 0) {
             return response()->json([]);
         }
 
         $formation = Formation::query()
-            ->whereKey((int) $formationId)
+            ->whereKey((int)$formationId)
             ->where('is_active', true)
-            ->whereIn('slug', [
-                'ensp',
-                'enep',
-                'ate',
-            ])
+            ->where('slug', 'enep')
             ->whereHas('teachingCategory', function ($query) {
                 $query->where('slug', 'professionnel')
                     ->where('is_active', true);
@@ -555,19 +544,19 @@ class DocumentController extends Controller
             return response()->json([]);
         }
 
-        $levels = Level::query()
-            ->where('formation_id', $formation->id)
-            ->whereNull('filiere_id')
-            ->whereNull('specialite_id')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
-            ]);
-
-        return response()->json($levels);
+        return response()->json(
+            Level::query()
+                ->where('formation_id', $formation->id)
+                ->whereNull('filiere_id')
+                ->whereNull('specialite_id')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->orderBy('name')
+                ->get([
+                    'id',
+                    'name',
+                ])
+        );
     }
     /*
     |--------------------------------------------------------------------------
@@ -580,69 +569,108 @@ class DocumentController extends Controller
     | UIT
     |
     */
-
     public function getLevelsBySpecialite(Request $request)
     {
-        $specialiteId = $request->query('specialite_id');
+        try {
+            $specialiteId = $request->query('specialite_id');
+            $formationId = $request->query('formation_id');
+            $programId = $request->query('program_id');
 
-        if (
-            !is_numeric($specialiteId) ||
-            (int) $specialiteId <= 0
-        ) {
-            return response()->json([]);
-        }
-
-        $specialite = Specialite::query()
-            ->whereKey((int) $specialiteId)
-            ->where('is_active', true)
-            ->where(function ($query) {
-
-                // IDS / UIT
-                $query->whereHas('formation', function ($formation) {
-                    $formation
-                        ->where('is_active', true)
-                        ->whereIn('slug', [
-                            'ids',
-                            'uit',
-                        ])
-                        ->whereHas('teachingCategory', function ($category) {
-                            $category
-                                ->where('slug', 'professionnel')
-                                ->where('is_active', true);
-                        });
-                })
-
-                    // ENS
-                    ->orWhereHas('program.formation', function ($formation) {
-                        $formation
-                            ->where('is_active', true)
-                            ->where('slug', 'ens')
-                            ->whereHas('teachingCategory', function ($category) {
-                                $category
-                                    ->where('slug', 'professionnel')
-                                    ->where('is_active', true);
-                            });
-                    });
-            })
-            ->first();
-
-        if (!$specialite) {
-            return response()->json([]);
-        }
-
-        $levels = Level::query()
-            ->where('specialite_id', $specialite->id)
-            ->whereNull('formation_id')
-            ->whereNull('filiere_id')
-            ->where('is_active', true)
-            ->orderBy('order')
-            ->orderBy('name')
-            ->get([
-                'id',
-                'name',
+            \Log::info('SPECIALITE LEVELS DEBUG', [
+                'specialite_id' => $specialiteId,
+                'formation_id' => $formationId,
+                'program_id' => $programId,
             ]);
 
-        return response()->json($levels);
+            if (!is_numeric($specialiteId) || (int)$specialiteId <= 0) {
+                return response()->json([]);
+            }
+
+            $specialite = Specialite::query()
+                ->whereKey((int)$specialiteId)
+                ->where('is_active', true)
+                ->first();
+
+            if (!$specialite) {
+                return response()->json([]);
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | ENS
+        |--------------------------------------------------------------------------
+        | Pour ENS, la spécialité est rattachée au programme.
+        | Le programme est lui-même rattaché à la formation.
+        |--------------------------------------------------------------------------
+        */
+
+            if ($programId) {
+                if (!is_numeric($programId) || (int)$programId <= 0) {
+                    return response()->json([]);
+                }
+
+                if (
+                    !$specialite->program_id ||
+                    (int)$specialite->program_id !== (int)$programId
+                ) {
+                    return response()->json([]);
+                }
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | AUTRES FORMATIONS
+        |--------------------------------------------------------------------------
+        | ENSP / IDS / UIT utilisent directement formation_id.
+        |--------------------------------------------------------------------------
+        */
+
+            if (!$programId && $formationId) {
+                if (
+                    !is_numeric($formationId) ||
+                    (int)$formationId <= 0
+                ) {
+                    return response()->json([]);
+                }
+
+                if (
+                    !$specialite->formation_id ||
+                    (int)$specialite->formation_id !== (int)$formationId
+                ) {
+                    return response()->json([]);
+                }
+            }
+
+            $levels = Level::query()
+                ->where('specialite_id', $specialite->id)
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->orderBy('name')
+                ->get([
+                    'id',
+                    'name',
+                ]);
+
+            \Log::info('LEVELS TROUVES', [
+                'specialite_id' => $specialite->id,
+                'specialite' => $specialite->name,
+                'count' => $levels->count(),
+                'levels' => $levels->toArray(),
+            ]);
+
+            return response()->json($levels);
+        } catch (\Throwable $e) {
+
+            \Log::error('SPECIALITE LEVELS ERROR', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'message' => 'Erreur lors du chargement des niveaux.',
+            ], 500);
+        }
     }
 
     /*
@@ -656,35 +684,53 @@ class DocumentController extends Controller
     {
         $levelId = $request->query('level_id');
 
+        \Log::info('SUBJECTS REQUEST', [
+            'level_id' => $levelId,
+        ]);
+
         if (
             !is_numeric($levelId) ||
-            (int)$levelId <= 0
+            (int) $levelId <= 0
         ) {
+            \Log::warning('SUBJECTS INVALID LEVEL', [
+                'level_id' => $levelId,
+            ]);
+
             return response()->json([]);
         }
 
-        $levelExists = Level::query()
-            ->where('id', $levelId)
+        $level = Level::query()
+            ->whereKey((int) $levelId)
             ->where('is_active', true)
-            ->exists();
+            ->first();
 
-        if (!$levelExists) {
+        if (!$level) {
+            \Log::warning('LEVEL NOT FOUND', [
+                'level_id' => $levelId,
+            ]);
+
             return response()->json([]);
         }
 
         $subjects = Subject::query()
-            ->where(
-                'level_id',
-                $levelId
-            )
+            ->where('level_id', $level->id)
             ->where('is_active', true)
-            ->orderBy('order')
+            ->orderBy('position')
             ->orderBy('name')
             ->get([
                 'id',
                 'name',
                 'slug',
             ]);
+
+        \Log::info('SUBJECTS FOUND', [
+            'level_id' => $level->id,
+            'level_name' => $level->name,
+            'formation_id' => $level->formation_id,
+            'specialite_id' => $level->specialite_id,
+            'count' => $subjects->count(),
+            'subjects' => $subjects->toArray(),
+        ]);
 
         return response()->json($subjects);
     }
@@ -1390,7 +1436,7 @@ class DocumentController extends Controller
 
         $subjects = Subject::query()
             ->where('is_active', true)
-            ->orderBy('order')
+            ->orderBy('position')
             ->orderBy('name')
             ->get();
 

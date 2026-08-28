@@ -1,14 +1,10 @@
 @extends('layouts.journaliste_app')
 
-@section('title', 'Ajouter un document')
+@section('title','Ajouter un document')
 
 @section('content')
 
 <div class="container py-4">
-
-    {{-- ========================================================= --}}
-    {{-- EN-TÊTE --}}
-    {{-- ========================================================= --}}
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -34,90 +30,80 @@
     </div>
 
 
-    {{-- ========================================================= --}}
     {{-- MESSAGES --}}
-    {{-- ========================================================= --}}
 
     @if(session('success'))
 
-        <div
-            class="alert alert-success alert-dismissible fade show"
-            role="alert">
+    <div
+        class="alert alert-success alert-dismissible fade show"
+        role="alert">
 
-            <i class="bi bi-check-circle me-2"></i>
+        <i class="bi bi-check-circle me-2"></i>
 
-            {{ session('success') }}
+        {{ session('success') }}
 
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Fermer">
-            </button>
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Fermer">
+        </button>
 
-        </div>
+    </div>
 
     @endif
 
 
     @if(session('error'))
 
-        <div
-            class="alert alert-danger alert-dismissible fade show"
-            role="alert">
+    <div
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert">
 
-            <i class="bi bi-exclamation-triangle me-2"></i>
+        <i class="bi bi-exclamation-triangle me-2"></i>
 
-            {{ session('error') }}
+        {{ session('error') }}
 
-            <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="alert"
-                aria-label="Fermer">
-            </button>
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Fermer">
+        </button>
 
-        </div>
+    </div>
 
     @endif
 
 
-    {{-- ========================================================= --}}
-    {{-- ERREURS DE VALIDATION --}}
-    {{-- ========================================================= --}}
+    {{-- ERREURS --}}
 
     @if($errors->any())
 
-        <div class="alert alert-danger" role="alert">
+    <div class="alert alert-danger" role="alert">
 
-            <div class="fw-bold mb-2">
+        <div class="fw-bold mb-2">
 
-                <i class="bi bi-exclamation-triangle me-2"></i>
+            <i class="bi bi-exclamation-triangle me-2"></i>
 
-                Veuillez corriger les erreurs suivantes :
-
-            </div>
-
-            <ul class="mb-0">
-
-                @foreach($errors->all() as $error)
-
-                    <li>
-                        {{ $error }}
-                    </li>
-
-                @endforeach
-
-            </ul>
+            Veuillez corriger les erreurs suivantes :
 
         </div>
 
+        <ul class="mb-0">
+
+            @foreach($errors->all() as $error)
+
+            <li>{{ $error }}</li>
+
+            @endforeach
+
+        </ul>
+
+    </div>
+
     @endif
 
-
-    {{-- ========================================================= --}}
-    {{-- FORMULAIRE --}}
-    {{-- ========================================================= --}}
 
     <form
         id="documentForm"
@@ -126,38 +112,24 @@
         enctype="multipart/form-data"
         novalidate
 
-        {{-- ===================================================== --}}
-        {{-- AJAX --}}
-        {{-- ===================================================== --}}
-
         data-formations-url="{{ url('/journaliste/ajax/formations') }}"
-
         data-academic-domains-url="{{ url('/journaliste/ajax/academic-domains') }}"
-
         data-filieres-url="{{ url('/journaliste/ajax/filieres') }}"
-
         data-secondary-levels-url="{{ url('/journaliste/ajax/secondary/levels') }}"
-
         data-higher-levels-url="{{ url('/journaliste/ajax/higher/levels') }}"
-
         data-professional-levels-url="{{ url('/journaliste/ajax/professional/levels') }}"
-
         data-programs-url="{{ url('/journaliste/ajax/programs') }}"
-
         data-specialites-by-formation-url="{{ url('/journaliste/ajax/specialites-by-formation') }}"
-
         data-specialites-url="{{ url('/journaliste/ajax/specialites') }}"
-
         data-specialite-levels-url="{{ url('/journaliste/ajax/specialite/levels') }}"
-
         data-subjects-url="{{ url('/journaliste/ajax/subjects') }}">
 
         @csrf
 
 
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
         {{-- PROGRESSION --}}
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
 
         <div class="document-wizard mb-4">
 
@@ -172,8 +144,6 @@
 
                 </div>
 
-
-                {{-- ÉTAPE 1 --}}
 
                 <div
                     class="wizard-step active"
@@ -196,7 +166,7 @@
                                 stroke="currentColor"
                                 stroke-width="2.5"
                                 stroke-linecap="round"
-                                stroke-linejoin="round"/>
+                                stroke-linejoin="round" />
 
                         </svg>
 
@@ -216,8 +186,6 @@
 
                 </div>
 
-
-                {{-- ÉTAPE 2 --}}
 
                 <div
                     class="wizard-step"
@@ -240,7 +208,7 @@
                                 stroke="currentColor"
                                 stroke-width="2.5"
                                 stroke-linecap="round"
-                                stroke-linejoin="round"/>
+                                stroke-linejoin="round" />
 
                         </svg>
 
@@ -260,8 +228,6 @@
 
                 </div>
 
-
-                {{-- ÉTAPE 3 --}}
 
                 <div
                     class="wizard-step"
@@ -284,7 +250,7 @@
                                 stroke="currentColor"
                                 stroke-width="2.5"
                                 stroke-linecap="round"
-                                stroke-linejoin="round"/>
+                                stroke-linejoin="round" />
 
                         </svg>
 
@@ -309,10 +275,9 @@
         </div>
 
 
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
         {{-- ÉTAPE 1 --}}
-        {{-- CLASSIFICATION --}}
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
 
         <div
             class="form-step active"
@@ -328,13 +293,10 @@
 
                 </div>
 
-
                 <div class="card-body p-4">
 
 
-                    {{-- ================================================= --}}
                     {{-- CATÉGORIE --}}
-                    {{-- ================================================= --}}
 
                     <div class="mb-4">
 
@@ -360,16 +322,14 @@
 
                             @foreach($categories as $category)
 
-                                <option
-                                    value="{{ $category->id }}"
-                                    data-slug="{{ $category->slug }}"
-                                    @selected(
-                                        old('teaching_category_id') == $category->id
-                                    )>
+                            <option
+                                value="{{ $category->id }}"
+                                data-slug="{{ $category->slug }}"
+                                @selected(old('teaching_category_id')==$category->id)>
 
-                                    {{ $category->name }}
+                                {{ $category->name }}
 
-                                </option>
+                            </option>
 
                             @endforeach
 
@@ -377,9 +337,9 @@
 
                         @error('teaching_category_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -393,8 +353,7 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- DOMAINE ACADÉMIQUE --}}
-                    {{-- SUPÉRIEUR --}}
+                    {{-- SUPÉRIEUR : DOMAINE --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -426,9 +385,9 @@
 
                         @error('academic_domain_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -475,9 +434,9 @@
 
                         @error('formation_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -524,9 +483,9 @@
 
                         @error('filiere_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -541,7 +500,7 @@
 
                     {{-- ================================================= --}}
                     {{-- PROGRAMME --}}
-                    {{-- ENS UNIQUEMENT --}}
+                    {{-- PROFESSIONNEL / PROGRAMMES SPÉCIFIQUES --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -573,9 +532,9 @@
 
                         @error('program_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -590,7 +549,6 @@
 
                     {{-- ================================================= --}}
                     {{-- SPÉCIALITÉ --}}
-                    {{-- IDS / UIT / ENS --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -622,9 +580,9 @@
 
                         @error('specialite_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -669,11 +627,9 @@
                         </select>
 
                         @error('level_id')
-
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
-
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
                         @enderror
 
                         <div
@@ -686,7 +642,7 @@
 
 
                     {{-- ================================================= --}}
-                    {{-- MATIÈRE / MODULE --}}
+                    {{-- MATIÈRE --}}
                     {{-- ================================================= --}}
 
                     <div
@@ -718,9 +674,9 @@
 
                         @error('subject_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -733,9 +689,7 @@
                     </div>
 
 
-                    {{-- ================================================= --}}
                     {{-- AIDE --}}
-                    {{-- ================================================= --}}
 
                     <div
                         id="classificationInfo"
@@ -749,9 +703,7 @@
                     </div>
 
 
-                    {{-- ================================================= --}}
                     {{-- NAVIGATION --}}
-                    {{-- ================================================= --}}
 
                     <div class="d-flex justify-content-end mt-4">
 
@@ -775,10 +727,9 @@
         </div>
 
 
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
         {{-- ÉTAPE 2 --}}
-        {{-- INFORMATIONS DOCUMENT --}}
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
 
         <div
             class="form-step"
@@ -823,9 +774,9 @@
 
                         @error('title')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -853,9 +804,9 @@
 
                         @error('description')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -883,9 +834,9 @@
 
                         @error('content')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -918,15 +869,13 @@
 
                             @foreach($documentTypes as $type)
 
-                                <option
-                                    value="{{ $type->id }}"
-                                    @selected(
-                                        old('document_type_id') == $type->id
-                                    )>
+                            <option
+                                value="{{ $type->id }}"
+                                @selected(old('document_type_id')==$type->id)>
 
-                                    {{ $type->name }}
+                                {{ $type->name }}
 
-                                </option>
+                            </option>
 
                             @endforeach
 
@@ -934,9 +883,9 @@
 
                         @error('document_type_id')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -967,9 +916,9 @@
 
                         @error('file_path')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -1005,9 +954,9 @@
 
                         @error('cover_image')
 
-                            <div class="invalid-feedback">
-                                {{ $message }}
-                            </div>
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
 
                         @enderror
 
@@ -1038,9 +987,7 @@
 
                                 <option
                                     value="free"
-                                    @selected(
-                                        old('access_type', 'free') === 'free'
-                                    )>
+                                    @selected(old('access_type','free')==='free' )>
 
                                     Gratuit
 
@@ -1048,9 +995,7 @@
 
                                 <option
                                     value="premium"
-                                    @selected(
-                                        old('access_type') === 'premium'
-                                    )>
+                                    @selected(old('access_type')==='premium' )>
 
                                     Premium
 
@@ -1060,9 +1005,9 @@
 
                             @error('access_type')
 
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                            <div class="invalid-feedback">
+                                {{ $message }}
+                            </div>
 
                             @enderror
 
@@ -1102,9 +1047,9 @@
 
                             @error('price')
 
-                                <div class="invalid-feedback d-block">
-                                    {{ $message }}
-                                </div>
+                            <div class="invalid-feedback d-block">
+                                {{ $message }}
+                            </div>
 
                             @enderror
 
@@ -1112,8 +1057,6 @@
 
                     </div>
 
-
-                    {{-- NAVIGATION --}}
 
                     <div class="d-flex justify-content-between mt-4">
 
@@ -1148,10 +1091,9 @@
         </div>
 
 
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
         {{-- ÉTAPE 3 --}}
-        {{-- VALIDATION --}}
-        {{-- ===================================================== --}}
+        {{-- ========================================================= --}}
 
         <div
             class="form-step"
@@ -1179,17 +1121,25 @@
                     </div>
 
 
-                    {{-- RÉCAPITULATIF --}}
-
                     <div
                         id="document-summary"
                         class="document-summary">
                     </div>
 
 
-                    {{-- CONFIRMATION --}}
-
-                    <div class="form-check mt-4">
+                    <div
+                        class="form-check mt-4"
+                        style="
+        display:flex !important;
+        align-items:flex-start !important;
+        gap:10px !important;
+        width:100% !important;
+        margin:0 !important;
+        padding:14px 16px !important;
+        border:1px solid #d9e1ea !important;
+        border-radius:8px !important;
+        background:#f8fafc !important;
+    ">
 
                         <input
                             class="form-check-input"
@@ -1197,11 +1147,36 @@
                             name="confirm_information"
                             id="confirm_information"
                             value="1"
-                            required>
+                            required
+                            style="
+            width:18px !important;
+            min-width:18px !important;
+            max-width:18px !important;
+            height:18px !important;
+            min-height:18px !important;
+            max-height:18px !important;
+            margin:2px 0 0 0 !important;
+            padding:0 !important;
+            flex:0 0 18px !important;
+            appearance:auto !important;
+            cursor:pointer !important;
+            accent-color:#0d6efd !important;
+        ">
 
                         <label
                             class="form-check-label"
-                            for="confirm_information">
+                            for="confirm_information"
+                            style="
+            display:block !important;
+            width:auto !important;
+            margin:0 !important;
+            padding:0 !important;
+            font-size:14px !important;
+            line-height:1.5 !important;
+            color:#343a40 !important;
+            cursor:pointer !important;
+            flex:1 !important;
+        ">
 
                             Je confirme que les informations saisies
                             sont exactes et que le document respecte
@@ -1211,16 +1186,21 @@
 
                         @error('confirm_information')
 
-                            <div class="text-danger small mt-1">
-                                {{ $message }}
-                            </div>
+                        <div
+                            class="text-danger small mt-1"
+                            style="
+                width:100% !important;
+                flex-basis:100% !important;
+            ">
+
+                            {{ $message }}
+
+                        </div>
 
                         @enderror
 
                     </div>
 
-
-                    {{-- NAVIGATION --}}
 
                     <div class="d-flex justify-content-between mt-4">
 
@@ -1261,12 +1241,8 @@
 @endsection
 
 
-{{-- ============================================================= --}}
-{{-- JAVASCRIPT --}}
-{{-- ============================================================= --}}
-
 @push('scripts')
 
-    @vite('resources/js/journaliste/document-wizard.js')
+@vite('resources/js/journaliste/document-wizard.js')
 
 @endpush

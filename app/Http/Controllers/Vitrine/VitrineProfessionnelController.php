@@ -3,321 +3,747 @@
 namespace App\Http\Controllers\Vitrine;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Document;
 use App\Models\DocumentType;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Program;
 use App\Models\Specialite;
-use App\Models\TeachingCategory;
+use App\Models\Subject;
 
 class VitrineProfessionnelController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | FORMATIONS PROFESSIONNELLES
+    | FORMATIONS
     |--------------------------------------------------------------------------
-    |
-    | ENSP / ENEP / IDS / ATE
-    |
-    | Formation
-    |     ↓
-    | Niveau
-    |     ↓
-    | Type de document
-    |     ↓
-    | Document
-    |
     */
 
-
-    /**
-     * Afficher les formations professionnelles hors ENS.
-     */
     public function formations()
     {
-        $categorie = TeachingCategory::where(
-            'slug',
-            'professionnel'
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
-
-        $formations = Formation::where(
-            'teaching_category_id',
-            $categorie->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy(
-                'position'
-            )
-            ->orderBy(
-                'name'
-            )
+        $formations = Formation::query()
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->with('teachingCategory')
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
 
-
         return view(
-            'niveau.professionnel.formations',
-            compact(
-                'categorie',
-                'formations'
-            )
+            'niveau.professionnel.formation',
+            compact('formations')
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMATION
+    |--------------------------------------------------------------------------
+    */
 
-
-    /**
-     * Afficher les niveaux d'une formation simple.
-     *
-     * ENSP → Niveau
-     * ENEP → Niveau
-     * IDS  → Niveau
-     * ATE  → Niveau
-     */
-    public function niveaux(
-        $formationSlug
-    ) {
-        $formation = Formation::where(
-            'slug',
-            $formationSlug
-        )
-            ->where(
-                'slug',
-                '!=',
-                'ens'
-            )
-            ->where(
-                'is_active',
-                true
-            )
+    public function niveaux(string $formationSlug)
+    {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
+        /*
+        | ENS
+        */
 
-        $niveaux = Level::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy(
-                'order'
-            )
-            ->get();
+        if ($formation->slug === 'ens') {
+            return redirect()->route(
+                'vitrine.professionnel.ens.programmes'
+            );
+        }
 
+        /*
+        | ENEP
+        */
 
-        return view(
-            'niveau.professionnel.ecoles.niveaux',
-            compact(
-                'formation',
-                'niveaux'
-            )
-        );
+        if ($formation->slug === 'enep') {
+            $niveaux = Level::query()
+                ->where('formation_id', $formation->id)
+                ->whereNull('filiere_id')
+                ->whereNull('specialite_id')
+                ->where('is_active', true)
+                ->orderBy('order')
+                ->orderBy('name')
+                ->get();
+
+            return view(
+                'niveau.professionnel.enep.niveaux',
+                compact('formation', 'niveaux')
+            );
+        }
+
+        /*
+        | ENSP / IDS / UIT
+        */
+
+        if (in_array($formation->slug, ['ensp', 'ids', 'uit'])) {
+            return $this->specialitesFormation($formationSlug);
+        }
+
+        abort(404);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENEP
+    | FORMATION → NIVEAU → MODULE
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les types de documents
-     * d'un niveau de formation simple.
-     */
-    public function typeDocuments(
-        $formationSlug,
-        $niveauSlug
+    public function modules(
+        string $formationSlug,
+        string $niveauSlug
     ) {
-        $formation = Formation::where(
-            'slug',
-            $formationSlug
-        )
-            ->where(
-                'slug',
-                '!=',
-                'ens'
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->where('slug', 'enep')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $niveau = Level::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $niveauSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('formation_id', $formation->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $types = DocumentType::where(
-            'is_active',
-            true
-        )
-            ->orderBy(
-                'name'
-            )
+        $subjects = Subject::query()
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use ($formation, $niveau) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('level_id', $niveau->id);
+            })
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
 
-
         return view(
-            'niveau.professionnel.ecoles.type_doc',
+            'niveau.professionnel.enep.modules',
             compact(
                 'formation',
                 'niveau',
+                'subjects'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ENEP
+    | NIVEAU → MODULE → TYPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function typeDocumentsModule(
+        string $formationSlug,
+        string $niveauSlug,
+        string $moduleSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->where('slug', 'enep')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('formation_id', $formation->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $types = DocumentType::query()
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use (
+                $formation,
+                $niveau,
+                $module
+            ) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('level_id', $niveau->id)
+                    ->where('subject_id', $module->id);
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'niveau.professionnel.enep.type_doc',
+            compact(
+                'formation',
+                'niveau',
+                'module',
                 'types'
             )
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENEP
+    | MODULE → TYPE → DOCUMENTS
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les documents
-     * d'une formation professionnelle simple.
-     */
-    public function documents(
-        $formationSlug,
-        $niveauSlug,
-        $typeSlug
+    public function documentsModule(
+        string $formationSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug
     ) {
-        $formation = Formation::where(
-            'slug',
-            $formationSlug
-        )
-            ->where(
-                'slug',
-                '!=',
-                'ens'
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->where('slug', 'enep')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $niveau = Level::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $niveauSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('formation_id', $formation->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $type = DocumentType::where(
-            'slug',
-            $typeSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
 
-        $documents = Document::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'level_id',
-                $niveau->id
-            )
-            ->where(
-                'document_type_id',
-                $type->id
-            )
-            ->where(
-                'status',
-                'published'
-            )
-            ->latest()
-            ->paginate(12);
-
+        $documents = Document::query()
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->with([
+                'formation',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->latest('published_at')
+            ->paginate(12)
+            ->withQueryString();
 
         return view(
-            'niveau.professionnel.ecoles.documents',
+            'niveau.professionnel.enep.documents',
             compact(
                 'formation',
                 'niveau',
-                'type',
+                'module',
+                'documentType',
                 'documents'
             )
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENEP
+    | MODULE → TYPE → DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function showDocumentModule(
+        string $formationSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug,
+        string $documentSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->where('slug', 'enep')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('formation_id', $formation->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $document = Document::query()
+            ->with([
+                'formation',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->where('slug', $documentSlug)
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->firstOrFail();
+
+        $document->increment('views');
+
+        return view(
+            'niveau.professionnel.enep.show',
+            compact(
+                'formation',
+                'niveau',
+                'module',
+                'documentType',
+                'document'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ENSP / IDS / UIT
+    | FORMATION → SPÉCIALITÉS
+    |--------------------------------------------------------------------------
+    */
+
+    public function specialitesFormation(
+        string $formationSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialites = Specialite::query()
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->orderBy('position')
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'niveau.professionnel.specialites',
+            compact(
+                'formation',
+                'specialites'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → NIVEAUX
+    |--------------------------------------------------------------------------
+    */
+
+    public function niveauxSpecialite(
+        string $formationSlug,
+        string $specialiteSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveaux = Level::query()
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'niveau.professionnel.niveaux',
+            compact(
+                'formation',
+                'specialite',
+                'niveaux'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → NIVEAU → MODULE
+    |--------------------------------------------------------------------------
+    */
+
+    public function modulesSpecialite(
+        string $formationSlug,
+        string $specialiteSlug,
+        string $niveauSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $subjects = Subject::query()
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use (
+                $formation,
+                $specialite,
+                $niveau
+            ) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('specialite_id', $specialite->id)
+                    ->where('level_id', $niveau->id);
+            })
+            ->orderBy('position')
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'niveau.professionnel.modules',
+            compact(
+                'formation',
+                'specialite',
+                'niveau',
+                'subjects'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → NIVEAU → MODULE → TYPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function typeDocumentsSpecialiteModule(
+        string $formationSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $types = DocumentType::query()
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use (
+                $formation,
+                $specialite,
+                $niveau,
+                $module
+            ) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('specialite_id', $specialite->id)
+                    ->where('level_id', $niveau->id)
+                    ->where('subject_id', $module->id);
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'niveau.professionnel.type_doc',
+            compact(
+                'formation',
+                'specialite',
+                'niveau',
+                'module',
+                'types'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → MODULE → TYPE → DOCUMENTS
+    |--------------------------------------------------------------------------
+    */
+
+    public function documentsSpecialiteModule(
+        string $formationSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $documents = Document::query()
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('specialite_id', $specialite->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->with([
+                'formation',
+                'specialite',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->latest('published_at')
+            ->paginate(12)
+            ->withQueryString();
+
+        return view(
+            'niveau.professionnel.documents',
+            compact(
+                'formation',
+                'specialite',
+                'niveau',
+                'module',
+                'documentType',
+                'documents'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → MODULE → TYPE → DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function showDocumentSpecialiteModule(
+        string $formationSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug,
+        string $documentSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', $formationSlug)
+            ->whereIn('slug', ['ensp', 'ids', 'uit'])
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $document = Document::query()
+            ->with([
+                'formation',
+                'specialite',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->where('slug', $documentSlug)
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('specialite_id', $specialite->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->firstOrFail();
+
+        $document->increment('views');
+
+        return view(
+            'niveau.professionnel.show',
+            compact(
+                'formation',
+                'specialite',
+                'niveau',
+                'module',
+                'documentType',
+                'document'
+            )
+        );
+    }
 
     /*
     |--------------------------------------------------------------------------
     | ENS
+    | FORMATION → PROGRAMMES
     |--------------------------------------------------------------------------
-    |
-    | ENS
-    |     ↓
-    | Programme
-    |     ↓
-    | Spécialité
-    |     ↓
-    | Niveau
-    |     ↓
-    | Type de document
-    |     ↓
-    | Document
-    |
     */
 
-
-    /**
-     * Afficher les programmes de l'ENS.
-     */
     public function programmes()
     {
-        $formation = Formation::where(
-            'slug',
-            'ens'
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->where('slug', 'ens')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $programmes = Program::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy(
-                'name'
-            )
+        $programmes = Program::query()
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
-
 
         return view(
             'niveau.professionnel.ens.programmes',
@@ -328,53 +754,34 @@ class VitrineProfessionnelController extends Controller
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | PROGRAMME → SPÉCIALITÉS
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les spécialités
-     * d'un programme ENS.
-     */
-    public function specialites(
-        $programmeSlug
-    ) {
-        $formation = Formation::where(
-            'slug',
-            'ens'
-        )
-            ->where(
-                'is_active',
-                true
-            )
+    public function specialites(string $programmeSlug)
+    {
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('is_active', true)
+            ->whereHas('formation', function ($query) {
+                $query->where('slug', 'ens')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $programme = Program::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $programmeSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->whereKey($programme->formation_id)
             ->firstOrFail();
 
-
-        $specialites = Specialite::where(
-            'program_id',
-            $programme->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy(
-                'name'
-            )
+        $specialites = Specialite::query()
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
-
 
         return view(
             'niveau.professionnel.ens.specialites',
@@ -386,69 +793,42 @@ class VitrineProfessionnelController extends Controller
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | SPÉCIALITÉ → NIVEAUX
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les niveaux
-     * d'une spécialité ENS.
-     */
     public function niveauxEns(
-        $programmeSlug,
-        $specialiteSlug
+        string $programmeSlug,
+        string $specialiteSlug
     ) {
-        $formation = Formation::where(
-            'slug',
-            'ens'
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('is_active', true)
+            ->whereHas('formation', function ($query) {
+                $query->where('slug', 'ens')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $programme = Program::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $programmeSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->whereKey($programme->formation_id)
             ->firstOrFail();
 
-
-        $specialite = Specialite::where(
-            'program_id',
-            $programme->id
-        )
-            ->where(
-                'slug',
-                $specialiteSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $niveaux = Level::where(
-            'specialite_id',
-            $specialite->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy(
-                'order'
-            )
+        $niveaux = Level::query()
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->orderBy('name')
             ->get();
-
 
         return view(
             'niveau.professionnel.ens.niveaux',
@@ -461,81 +841,136 @@ class VitrineProfessionnelController extends Controller
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | NIVEAU → MODULE
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les types de documents
-     * d'un niveau ENS.
-     */
-    public function typeDocumentsEns(
-        $programmeSlug,
-        $specialiteSlug,
-        $niveauSlug
+    public function modulesEns(
+        string $programmeSlug,
+        string $specialiteSlug,
+        string $niveauSlug
     ) {
-        $formation = Formation::where(
-            'slug',
-            'ens'
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('is_active', true)
+            ->whereHas('formation', function ($query) {
+                $query->where('slug', 'ens')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $programme = Program::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $programmeSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->whereKey($programme->formation_id)
             ->firstOrFail();
 
-
-        $specialite = Specialite::where(
-            'program_id',
-            $programme->id
-        )
-            ->where(
-                'slug',
-                $specialiteSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $niveau = Level::where(
-            'specialite_id',
-            $specialite->id
-        )
-            ->where(
-                'slug',
-                $niveauSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $types = DocumentType::where(
-            'is_active',
-            true
-        )
-            ->orderBy(
-                'name'
-            )
+        $subjects = Subject::query()
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use (
+                $formation,
+                $programme,
+                $specialite,
+                $niveau
+            ) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('program_id', $programme->id)
+                    ->where('specialite_id', $specialite->id)
+                    ->where('level_id', $niveau->id);
+            })
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
 
+        return view(
+            'niveau.professionnel.ens.modules',
+            compact(
+                'formation',
+                'programme',
+                'specialite',
+                'niveau',
+                'subjects'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | MODULE → TYPES
+    |--------------------------------------------------------------------------
+    */
+
+    public function typeDocumentsEnsModule(
+        string $programmeSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug
+    ) {
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('is_active', true)
+            ->whereHas('formation', function ($query) {
+                $query->where('slug', 'ens')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $formation = Formation::query()
+            ->whereKey($programme->formation_id)
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $types = DocumentType::query()
+            ->where('is_active', true)
+            ->whereHas('documents', function ($query) use (
+                $formation,
+                $programme,
+                $specialite,
+                $niveau,
+                $module
+            ) {
+                $query->where('status', 'published')
+                    ->where('formation_id', $formation->id)
+                    ->where('program_id', $programme->id)
+                    ->where('specialite_id', $specialite->id)
+                    ->where('level_id', $niveau->id)
+                    ->where('subject_id', $module->id);
+            })
+            ->orderBy('name')
+            ->get();
 
         return view(
             'niveau.professionnel.ens.type_doc',
@@ -544,115 +979,82 @@ class VitrineProfessionnelController extends Controller
                 'programme',
                 'specialite',
                 'niveau',
+                'module',
                 'types'
             )
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | MODULE → TYPE → DOCUMENTS
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Afficher les documents ENS.
-     */
-    public function documentsEns(
-        $programmeSlug,
-        $specialiteSlug,
-        $niveauSlug,
-        $typeSlug
+    public function documentsEnsModule(
+        string $programmeSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug
     ) {
-        $formation = Formation::where(
-            'slug',
-            'ens'
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('is_active', true)
+            ->whereHas('formation', function ($query) {
+                $query->where('slug', 'ens')
+                    ->where('is_active', true);
+            })
             ->firstOrFail();
 
-
-        $programme = Program::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'slug',
-                $programmeSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $formation = Formation::query()
+            ->whereKey($programme->formation_id)
             ->firstOrFail();
 
-
-        $specialite = Specialite::where(
-            'program_id',
-            $programme->id
-        )
-            ->where(
-                'slug',
-                $specialiteSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $niveau = Level::where(
-            'specialite_id',
-            $specialite->id
-        )
-            ->where(
-                'slug',
-                $niveauSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
-
-        $type = DocumentType::where(
-            'slug',
-            $typeSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
             ->firstOrFail();
 
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
 
-        $documents = Document::where(
-            'formation_id',
-            $formation->id
-        )
-            ->where(
-                'program_id',
-                $programme->id
-            )
-            ->where(
-                'specialite_id',
-                $specialite->id
-            )
-            ->where(
-                'level_id',
-                $niveau->id
-            )
-            ->where(
-                'document_type_id',
-                $type->id
-            )
-            ->where(
-                'status',
-                'published'
-            )
-            ->latest()
-            ->paginate(12);
-
+        $documents = Document::query()
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('program_id', $programme->id)
+            ->where('specialite_id', $specialite->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->with([
+                'formation',
+                'program',
+                'specialite',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->latest('published_at')
+            ->paginate(12)
+            ->withQueryString();
 
         return view(
             'niveau.professionnel.ens.documents',
@@ -661,8 +1063,98 @@ class VitrineProfessionnelController extends Controller
                 'programme',
                 'specialite',
                 'niveau',
-                'type',
+                'module',
+                'documentType',
                 'documents'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | MODULE → TYPE → DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
+    public function showDocumentEnsModule(
+        string $programmeSlug,
+        string $specialiteSlug,
+        string $niveauSlug,
+        string $moduleSlug,
+        string $typeSlug,
+        string $documentSlug
+    ) {
+        $formation = Formation::query()
+            ->where('slug', 'ens')
+            ->where('is_active', true)
+            ->whereHas('teachingCategory', function ($query) {
+                $query->where('slug', 'professionnel')
+                    ->where('is_active', true);
+            })
+            ->firstOrFail();
+
+        $programme = Program::query()
+            ->where('slug', $programmeSlug)
+            ->where('formation_id', $formation->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $specialite = Specialite::query()
+            ->where('slug', $specialiteSlug)
+            ->where('program_id', $programme->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $niveau = Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('specialite_id', $specialite->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $module = Subject::query()
+            ->where('slug', $moduleSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $documentType = DocumentType::query()
+            ->where('slug', $typeSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $document = Document::query()
+            ->with([
+                'formation',
+                'program',
+                'specialite',
+                'level',
+                'subject',
+                'documentType',
+                'staff',
+            ])
+            ->where('slug', $documentSlug)
+            ->where('status', 'published')
+            ->where('formation_id', $formation->id)
+            ->where('program_id', $programme->id)
+            ->where('specialite_id', $specialite->id)
+            ->where('level_id', $niveau->id)
+            ->where('subject_id', $module->id)
+            ->where('document_type_id', $documentType->id)
+            ->firstOrFail();
+
+        $document->increment('views');
+
+        return view(
+            'niveau.professionnel.ens.show',
+            compact(
+                'formation',
+                'programme',
+                'specialite',
+                'niveau',
+                'module',
+                'documentType',
+                'document'
             )
         );
     }

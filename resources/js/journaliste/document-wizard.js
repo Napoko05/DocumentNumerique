@@ -1,234 +1,93 @@
 document.addEventListener('DOMContentLoaded', function () {
-
     'use strict';
 
-    // ================================================================
-    // FORMULAIRE
-    // ================================================================
-
     const form = document.getElementById('documentForm');
-
     if (!form) {
         console.warn('[Document Wizard] Formulaire introuvable.');
         return;
     }
 
+    const categorySelect = document.getElementById('teaching_category_id');
+    const academicDomainSelect = document.getElementById('academic_domain_id');
+    const formationSelect = document.getElementById('formation_id');
+    const filiereSelect = document.getElementById('filiere_id');
+    const programSelect = document.getElementById('program_id');
+    const specialiteSelect = document.getElementById('specialite_id');
+    const levelSelect = document.getElementById('level_id');
+    const subjectSelect = document.getElementById('subject_id');
 
-    // ================================================================
-    // SELECTS
-    // ================================================================
+    const academicDomainContainer = document.getElementById('academicDomainContainer');
+    const formationContainer = document.getElementById('formationContainer');
+    const filiereContainer = document.getElementById('filiereContainer');
+    const programContainer = document.getElementById('programContainer');
+    const specialiteContainer = document.getElementById('specialiteContainer');
+    const levelContainer = document.getElementById('levelContainer');
+    const subjectContainer = document.getElementById('subjectContainer');
 
-    const categorySelect =
-        document.getElementById('teaching_category_id');
+    const progressFill = document.getElementById('wizardProgressFill');
+    const summary = document.getElementById('document-summary');
+    const accessType = document.getElementById('access_type');
+    const priceContainer = document.getElementById('price-container');
+    const priceInput = document.getElementById('price');
+    const confirmInformation = document.getElementById('confirm_information');
+    const publishButton = document.getElementById('publishDocumentBtn');
 
-    const academicDomainSelect =
-        document.getElementById('academic_domain_id');
-
-    const formationSelect =
-        document.getElementById('formation_id');
-
-    const filiereSelect =
-        document.getElementById('filiere_id');
-
-    const programSelect =
-        document.getElementById('program_id');
-
-    const specialiteSelect =
-        document.getElementById('specialite_id');
-
-    const levelSelect =
-        document.getElementById('level_id');
-
-    const subjectSelect =
-        document.getElementById('subject_id');
-
-
-    // ================================================================
-    // CONTAINERS
-    // ================================================================
-
-    const academicDomainContainer =
-        document.getElementById('academicDomainContainer');
-
-    const formationContainer =
-        document.getElementById('formationContainer');
-
-    const filiereContainer =
-        document.getElementById('filiereContainer');
-
-    const programContainer =
-        document.getElementById('programContainer');
-
-    const specialiteContainer =
-        document.getElementById('specialiteContainer');
-
-    const levelContainer =
-        document.getElementById('levelContainer');
-
-    const subjectContainer =
-        document.getElementById('subjectContainer');
-
-
-    // ================================================================
-    // AUTRES ÉLÉMENTS
-    // ================================================================
-
-    const progressFill =
-        document.getElementById('wizardProgressFill');
-
-    const summary =
-        document.getElementById('document-summary');
-
-    const accessType =
-        document.getElementById('access_type');
-
-    const priceContainer =
-        document.getElementById('price-container');
-
-    const priceInput =
-        document.getElementById('price');
-
-    const confirmInformation =
-        document.getElementById('confirm_information');
-
-    const publishButton =
-        document.getElementById('publishDocumentBtn');
-
-
-    // ================================================================
-    // URL AJAX
-    // ================================================================
-
- const urls = {
-
-    formations:
-        form.dataset.formationsUrl,
-
-    academicDomains:
-        form.dataset.academicDomainsUrl,
-
-    filieres:
-        form.dataset.filieresUrl,
-
-    secondaryLevels:
-        form.dataset.secondaryLevelsUrl,
-
-    higherLevels:
-        form.dataset.higherLevelsUrl,
-
-    professionalLevels:
-        form.dataset.professionalLevelsUrl,
-
-    specialitesByFormation:
-        form.dataset.specialitesByFormationUrl,
-
-    programs:
-        form.dataset.programsUrl,
-
-    specialites:
-        form.dataset.specialitesUrl,
-
-    specialiteLevels:
-        form.dataset.specialiteLevelsUrl,
-
-    subjects:
-        form.dataset.subjectsUrl
-};
-
-    // ================================================================
-    // ÉTAT
-    // ================================================================
+    const urls = {
+        formations: form.dataset.formationsUrl,
+        academicDomains: form.dataset.academicDomainsUrl,
+        filieres: form.dataset.filieresUrl,
+        secondaryLevels: form.dataset.secondaryLevelsUrl,
+        higherLevels: form.dataset.higherLevelsUrl,
+        professionalLevels: form.dataset.professionalLevelsUrl,
+        specialitesByFormation: form.dataset.specialitesByFormationUrl,
+        programs: form.dataset.programsUrl,
+        specialites: form.dataset.specialitesUrl,
+        specialiteLevels: form.dataset.specialiteLevelsUrl,
+        subjects: form.dataset.subjectsUrl
+    };
 
     let currentStep = 1;
-
     let requestSequence = 0;
 
-
-    // ================================================================
-    // UTILITAIRES AFFICHAGE
-    // ================================================================
-
     function show(element) {
-
-        if (element) {
-            element.style.display = '';
-        }
+        if (element) element.style.display = '';
     }
-
 
     function hide(element) {
-
-        if (element) {
-            element.style.display = 'none';
-        }
+        if (element) element.style.display = 'none';
     }
-
 
     function resetSelect(select, placeholder) {
-
-        if (!select) {
-            return;
-        }
-
+        if (!select) return;
         select.innerHTML = '';
-
-        const option =
-            document.createElement('option');
-
+        const option = document.createElement('option');
         option.value = '';
         option.textContent = placeholder;
-
         select.appendChild(option);
-
         select.disabled = true;
     }
-
 
     function setLoading(select, message) {
-
-        if (!select) {
-            return;
-        }
-
+        if (!select) return;
         select.innerHTML = '';
-
-        const option =
-            document.createElement('option');
-
+        const option = document.createElement('option');
         option.value = '';
         option.textContent = message;
-
         select.appendChild(option);
-
         select.disabled = true;
     }
 
-
     function populateSelect(select, items, placeholder) {
-
-        if (!select) {
-            return;
-        }
+        if (!select) return;
 
         resetSelect(select, placeholder);
 
-        if (!Array.isArray(items) || items.length === 0) {
-            return;
-        }
+        if (!Array.isArray(items) || items.length === 0) return;
 
         items.forEach(function (item) {
+            if (!item || item.id === undefined || item.name === undefined) return;
 
-            if (
-                !item ||
-                item.id === undefined ||
-                item.name === undefined
-            ) {
-                return;
-            }
-
-            const option =
-                document.createElement('option');
-
+            const option = document.createElement('option');
             option.value = item.id;
             option.textContent = item.name;
 
@@ -242,9 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
         select.disabled = false;
     }
 
-
     function hideAllClassificationContainers() {
-
         hide(academicDomainContainer);
         hide(formationContainer);
         hide(filiereContainer);
@@ -254,28 +111,15 @@ document.addEventListener('DOMContentLoaded', function () {
         hide(subjectContainer);
     }
 
-
-    // ================================================================
-    // CATÉGORIE
-    // ================================================================
-
     function getCategorySlug() {
+        if (!categorySelect) return null;
 
-        if (!categorySelect) {
-            return null;
-        }
-
-        const option =
-            categorySelect.options[
-                categorySelect.selectedIndex
-            ];
+        const option = categorySelect.options[categorySelect.selectedIndex];
 
         return option?.dataset?.slug || null;
     }
 
-
     function isSecondary() {
-
         return [
             'secondaire',
             'secondaire-general',
@@ -283,458 +127,494 @@ document.addEventListener('DOMContentLoaded', function () {
         ].includes(getCategorySlug());
     }
 
-
     function isHigher() {
-
         return [
             'superieur',
             'supérieur'
         ].includes(getCategorySlug());
     }
 
-
     function isProfessional() {
-
         return [
             'professionnel',
             'professional'
         ].includes(getCategorySlug());
     }
 
-
-    // ================================================================
-    // FORMATION PROFESSIONNELLE
-    // ================================================================
-
     function getFormationSlug() {
+        if (!formationSelect) return null;
 
-        if (!formationSelect) {
-            return null;
-        }
-
-        const option =
-            formationSelect.options[
-                formationSelect.selectedIndex
-            ];
+        const option = formationSelect.options[formationSelect.selectedIndex];
 
         return option?.dataset?.slug || null;
     }
 
 
-    function isProfessionalDirectFormation() {
 
-        return [
-            'ensp',
-            'enep',
-            'ate'
-        ].includes(getFormationSlug());
+    function isProfessionalENEP() {
+        return getFormationSlug() === 'enep';
     }
 
+    function isProfessionalENSP() {
+        return getFormationSlug() === 'ensp';
+    }
+
+    function isProfessionalIDS() {
+        return getFormationSlug() === 'ids';
+    }
+
+    function isProfessionalUIT() {
+        return getFormationSlug() === 'uit';
+    }
+
+    function isProfessionalENS() {
+        return getFormationSlug() === 'ens';
+    }
 
     function isProfessionalSpecializedFormation() {
-
         return [
+            'ensp',
             'ids',
             'uit'
         ].includes(getFormationSlug());
     }
 
-
     function isProfessionalProgramFormation() {
-
-        return getFormationSlug() === 'ens';
+        return isProfessionalENS();
     }
-
-
-    // ================================================================
-    // AJAX
-    // ================================================================
 
     async function loadData(url, params = {}, sequence) {
-
         if (!url) {
-            console.error(
-                '[Document Wizard] URL AJAX manquante.'
-            );
-
+            console.error('[Document Wizard] URL AJAX manquante.');
             return [];
         }
 
-        const query =
-            new URLSearchParams();
+        const query = new URLSearchParams();
 
-        Object.entries(params).forEach(
-            ([key, value]) => {
-
-                if (
-                    value !== null &&
-                    value !== undefined &&
-                    value !== ''
-                ) {
-                    query.append(key, value);
-                }
+        Object.entries(params).forEach(([key, value]) => {
+            if (value !== null && value !== undefined && value !== '') {
+                query.append(key, value);
             }
-        );
+        });
 
-        const finalUrl =
-            `${url}?${query.toString()}`;
+        const finalUrl = `${url}?${query.toString()}`;
 
         try {
-
-            const response =
-                await fetch(
-                    finalUrl,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Accept': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        },
-                        credentials: 'same-origin'
-                    }
-                );
+            const response = await fetch(finalUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            });
 
             if (!response.ok) {
-                throw new Error(
-                    `HTTP ${response.status}`
-                );
+                throw new Error(`HTTP ${response.status}`);
             }
 
-            const data =
-                await response.json();
+            const data = await response.json();
 
-            // Une ancienne requête ne doit jamais
-            // écraser une nouvelle requête.
-            if (sequence !== requestSequence) {
-                return null;
-            }
+            if (sequence !== requestSequence) return null;
 
-            if (Array.isArray(data)) {
-                return data;
-            }
+            if (Array.isArray(data)) return data;
 
-            if (
-                data &&
-                Array.isArray(data.data)
-            ) {
-                return data.data;
-            }
+            if (data && Array.isArray(data.data)) return data.data;
 
             return [];
-
         } catch (error) {
-
             if (sequence === requestSequence) {
-
-                console.error(
-                    '[Document Wizard] AJAX:',
-                    error
-                );
+                console.error('[Document Wizard] AJAX:', error);
             }
-
             return [];
         }
     }
 
-
-    // ================================================================
-    // CATÉGORIE → PARCOURS
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | CATÉGORIE → PARCOURS
+    |--------------------------------------------------------------------------
+    */
 
     if (categorySelect) {
+        categorySelect.addEventListener('change', async function () {
 
-        categorySelect.addEventListener(
-            'change',
-            async function () {
+            const category = getCategorySlug();
 
-                const category =
-                    getCategorySlug();
+            requestSequence++;
 
-                requestSequence++;
+            const sequence = requestSequence;
 
-                const sequence =
-                    requestSequence;
+            hideAllClassificationContainers();
 
-                hideAllClassificationContainers();
+            resetSelect(
+                academicDomainSelect,
+                '-- Sélectionner un domaine académique --'
+            );
 
-                resetSelect(
-                    academicDomainSelect,
-                    '-- Sélectionner un domaine académique --'
+            resetSelect(
+                formationSelect,
+                '-- Sélectionner une formation --'
+            );
+
+            resetSelect(
+                filiereSelect,
+                '-- Sélectionner une filière --'
+            );
+
+            resetSelect(
+                programSelect,
+                '-- Sélectionner un programme --'
+            );
+
+            resetSelect(
+                specialiteSelect,
+                '-- Sélectionner une spécialité --'
+            );
+
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
+
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
+
+            if (!category) return;
+
+            /*
+            |--------------------------------------------------------------------------
+            | SECONDAIRE
+            |--------------------------------------------------------------------------
+            */
+
+            if (isSecondary()) {
+
+                show(formationContainer);
+
+                setLoading(
+                    formationSelect,
+                    '-- Chargement des formations... --'
                 );
 
-                resetSelect(
+                const formations = await loadData(
+                    urls.formations,
+                    { category: category },
+                    sequence
+                );
+
+                if (
+                    formations === null ||
+                    sequence !== requestSequence
+                ) return;
+
+                populateSelect(
                     formationSelect,
+                    formations,
                     '-- Sélectionner une formation --'
                 );
 
-                resetSelect(
-                    filiereSelect,
-                    '-- Sélectionner une filière --'
-                );
-
-                resetSelect(
-                    programSelect,
-                    '-- Sélectionner un programme --'
-                );
-
-                resetSelect(
-                    specialiteSelect,
-                    '-- Sélectionner une spécialité --'
-                );
-
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
-
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
-
-
-                if (!category) {
-                    return;
-                }
-
-
-                // ====================================================
-                // SECONDAIRE
-                // ====================================================
-
-                if (isSecondary()) {
-
-                    show(formationContainer);
-
-                    setLoading(
-                        formationSelect,
-                        '-- Chargement des formations... --'
-                    );
-
-                    const formations =
-                        await loadData(
-                            urls.formations,
-                            {
-                                category: category
-                            },
-                            sequence
-                        );
-
-                    if (
-                        formations === null ||
-                        sequence !== requestSequence
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        formationSelect,
-                        formations,
-                        '-- Sélectionner une formation --'
-                    );
-
-                    return;
-                }
-
-
-                // ====================================================
-                // SUPÉRIEUR
-                // ====================================================
-
-                if (isHigher()) {
-
-                    show(academicDomainContainer);
-
-                    setLoading(
-                        academicDomainSelect,
-                        '-- Chargement des domaines académiques... --'
-                    );
-
-                    const domains =
-                        await loadData(
-                            urls.academicDomains,
-                            {
-                                category: category
-                            },
-                            sequence
-                        );
-
-                    if (
-                        domains === null ||
-                        sequence !== requestSequence
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        academicDomainSelect,
-                        domains,
-                        '-- Sélectionner un domaine académique --'
-                    );
-
-                    return;
-                }
-
-
-                // ====================================================
-                // PROFESSIONNEL
-                // ====================================================
-
-                if (isProfessional()) {
-
-                    show(formationContainer);
-
-                    setLoading(
-                        formationSelect,
-                        '-- Chargement des formations... --'
-                    );
-
-                    const formations =
-                        await loadData(
-                            urls.formations,
-                            {
-                                category: category
-                            },
-                            sequence
-                        );
-
-                    if (
-                        formations === null ||
-                        sequence !== requestSequence
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        formationSelect,
-                        formations,
-                        '-- Sélectionner une formation --'
-                    );
-                }
+                return;
             }
-        );
-    }
 
+            /*
+            |--------------------------------------------------------------------------
+            | SUPÉRIEUR
+            |--------------------------------------------------------------------------
+            */
 
-    // ================================================================
-    // SUPÉRIEUR
-    // Domaine → Filière
-    // ================================================================
+            if (isHigher()) {
 
-    if (academicDomainSelect) {
-
-        academicDomainSelect.addEventListener(
-            'change',
-            async function () {
-
-                if (!isHigher()) {
-                    return;
-                }
-
-                const domainId =
-                    this.value;
-
-                requestSequence++;
-
-                const sequence =
-                    requestSequence;
-
-                resetSelect(
-                    filiereSelect,
-                    '-- Sélectionner une filière --'
-                );
-
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
-
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
-
-                hide(filiereContainer);
-                hide(levelContainer);
-                hide(subjectContainer);
-
-                if (!domainId) {
-                    return;
-                }
-
-                show(filiereContainer);
+                show(academicDomainContainer);
 
                 setLoading(
-                    filiereSelect,
-                    '-- Chargement des filières... --'
+                    academicDomainSelect,
+                    '-- Chargement des domaines académiques... --'
                 );
 
-                const filieres =
-                    await loadData(
-                        urls.filieres,
-                        {
-                            academic_domain_id: domainId
-                        },
-                        sequence
-                    );
+                const domains = await loadData(
+                    urls.academicDomains,
+                    { category: category },
+                    sequence
+                );
 
                 if (
-                    filieres === null ||
-                    sequence !== requestSequence ||
-                    this.value !== domainId
-                ) {
-                    return;
-                }
+                    domains === null ||
+                    sequence !== requestSequence
+                ) return;
 
                 populateSelect(
-                    filiereSelect,
-                    filieres,
-                    '-- Sélectionner une filière --'
+                    academicDomainSelect,
+                    domains,
+                    '-- Sélectionner un domaine académique --'
+                );
+
+                return;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | PROFESSIONNEL
+            |--------------------------------------------------------------------------
+            */
+
+            if (isProfessional()) {
+
+                show(formationContainer);
+
+                setLoading(
+                    formationSelect,
+                    '-- Chargement des formations... --'
+                );
+
+                const formations = await loadData(
+                    urls.formations,
+                    { category: category },
+                    sequence
+                );
+
+                if (
+                    formations === null ||
+                    sequence !== requestSequence
+                ) return;
+
+                populateSelect(
+                    formationSelect,
+                    formations,
+                    '-- Sélectionner une formation --'
                 );
             }
-        );
+        });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | SUPÉRIEUR
+    | Domaine → Filière
+    |--------------------------------------------------------------------------
+    */
 
-    // ================================================================
-    // SUPÉRIEUR
-    // Filière → Niveau
-    // ================================================================
+    if (academicDomainSelect) {
+        academicDomainSelect.addEventListener('change', async function () {
+
+            if (!isHigher()) return;
+
+            const domainId = this.value;
+
+            requestSequence++;
+
+            const sequence = requestSequence;
+
+            resetSelect(
+                filiereSelect,
+                '-- Sélectionner une filière --'
+            );
+
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
+
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
+
+            hide(filiereContainer);
+            hide(levelContainer);
+            hide(subjectContainer);
+
+            if (!domainId) return;
+
+            show(filiereContainer);
+
+            setLoading(
+                filiereSelect,
+                '-- Chargement des filières... --'
+            );
+
+            const filieres = await loadData(
+                urls.filieres,
+                {
+                    academic_domain_id: domainId
+                },
+                sequence
+            );
+
+            if (
+                filieres === null ||
+                sequence !== requestSequence ||
+                this.value !== domainId
+            ) return;
+
+            populateSelect(
+                filiereSelect,
+                filieres,
+                '-- Sélectionner une filière --'
+            );
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUPÉRIEUR
+    | Filière → Niveau
+    |--------------------------------------------------------------------------
+    */
 
     if (filiereSelect) {
+        filiereSelect.addEventListener('change', async function () {
 
-        filiereSelect.addEventListener(
-            'change',
-            async function () {
+            if (!isHigher()) return;
 
-                if (!isHigher()) {
-                    return;
-                }
+            const filiereId = this.value;
 
-                const filiereId =
-                    this.value;
+            requestSequence++;
 
-                requestSequence++;
+            const sequence = requestSequence;
 
-                const sequence =
-                    requestSequence;
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
 
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
 
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
+            hide(levelContainer);
+            hide(subjectContainer);
 
-                hide(levelContainer);
-                hide(subjectContainer);
+            if (!filiereId) return;
 
-                if (!filiereId) {
-                    return;
-                }
+            show(levelContainer);
+
+            setLoading(
+                levelSelect,
+                '-- Chargement des niveaux... --'
+            );
+
+            const levels = await loadData(
+                urls.higherLevels,
+                {
+                    filiere_id: filiereId
+                },
+                sequence
+            );
+
+            if (
+                levels === null ||
+                sequence !== requestSequence ||
+                this.value !== filiereId
+            ) return;
+
+            populateSelect(
+                levelSelect,
+                levels,
+                '-- Sélectionner un niveau / une classe --'
+            );
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FORMATION
+    |--------------------------------------------------------------------------
+    |
+    | SECONDAIRE
+    | Formation → Niveau
+    |
+    | ENEP
+    | Formation → Niveau
+    |
+    | ENSP
+    | Formation → Spécialité → Niveau
+    |
+    | IDS
+    | Formation → Spécialité → Niveau
+    |
+    | UIT
+    | Formation → Spécialité → Niveau
+    |
+    | ENS
+    | Formation → Programme → Spécialité → Niveau
+    |
+    |--------------------------------------------------------------------------
+    */
+
+    if (formationSelect) {
+        formationSelect.addEventListener('change', async function () {
+
+            console.log('==============================');
+            console.log('[TEST FORMATION CHANGE]');
+            console.log('ID:', this.value);
+            console.log(
+                'TEXT:',
+                this.options[this.selectedIndex]?.textContent
+            );
+            console.log(
+                'SLUG:',
+                this.options[this.selectedIndex]?.dataset?.slug
+            );
+            console.log(
+                'Category:',
+                getCategorySlug()
+            );
+            console.log(
+                'ENEP:',
+                this.options[this.selectedIndex]?.dataset?.slug === 'enep'
+            );
+            console.log(
+                'ENS:',
+                this.options[this.selectedIndex]?.dataset?.slug === 'ens'
+            );
+            console.log('==============================');
+
+            const formationId = this.value;
+
+            // ... le reste de ton code ne change pas
+
+            requestSequence++;
+
+            const sequence = requestSequence;
+
+            resetSelect(
+                programSelect,
+                '-- Sélectionner un programme --'
+            );
+
+            resetSelect(
+                specialiteSelect,
+                '-- Sélectionner une spécialité --'
+            );
+
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
+
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
+
+            hide(programContainer);
+            hide(specialiteContainer);
+            hide(levelContainer);
+            hide(subjectContainer);
+
+            if (!formationId) return;
+
+            /*
+            |--------------------------------------------------------------------------
+            | SECONDAIRE
+            |--------------------------------------------------------------------------
+            */
+
+            if (isSecondary()) {
 
                 show(levelContainer);
 
@@ -743,334 +623,84 @@ document.addEventListener('DOMContentLoaded', function () {
                     '-- Chargement des niveaux... --'
                 );
 
-                const levels =
-                    await loadData(
-                        urls.higherLevels,
-                        {
-                            filiere_id: filiereId
-                        },
-                        sequence
-                    );
+                const levels = await loadData(
+                    urls.secondaryLevels,
+                    {
+                        formation_id: formationId
+                    },
+                    sequence
+                );
 
                 if (
                     levels === null ||
                     sequence !== requestSequence ||
-                    this.value !== filiereId
-                ) {
-                    return;
-                }
+                    this.value !== formationId
+                ) return;
 
                 populateSelect(
                     levelSelect,
                     levels,
                     '-- Sélectionner un niveau / une classe --'
                 );
+
+                return;
             }
-        );
-    }
 
+            /*
+            |--------------------------------------------------------------------------
+            | PROFESSIONNEL
+            |--------------------------------------------------------------------------
+            */
 
-    // ================================================================
-    // FORMATION
-    //
-    // SECONDAIRE :
-    // Formation → Niveau
-    //
-    // PROFESSIONNEL :
-    // ENSP / ENEP / ATE → Niveau
-    // IDS / UIT → Spécialité
-    // ENS → Programme
-    // ================================================================
+            if (!isProfessional()) return;
 
-    if (formationSelect) {
+            /*
+            |--------------------------------------------------------------------------
+            | ENS
+            | Formation → Programme
+            |--------------------------------------------------------------------------
+            */
 
-        formationSelect.addEventListener(
-            'change',
-            async function () {
+            if (isProfessionalENS()) {
 
-                const formationId =
-                    this.value;
+                show(programContainer);
 
-                requestSequence++;
-
-                const sequence =
-                    requestSequence;
-
-
-                // ====================================================
-                // SECONDAIRE
-                // ====================================================
-
-                if (isSecondary()) {
-
-                    resetSelect(
-                        levelSelect,
-                        '-- Sélectionner un niveau / une classe --'
-                    );
-
-                    resetSelect(
-                        subjectSelect,
-                        '-- Sélectionner une matière / un module --'
-                    );
-
-                    hide(levelContainer);
-                    hide(subjectContainer);
-
-                    if (!formationId) {
-                        return;
-                    }
-
-                    show(levelContainer);
-
-                    setLoading(
-                        levelSelect,
-                        '-- Chargement des niveaux... --'
-                    );
-
-                    const levels =
-                        await loadData(
-                            urls.secondaryLevels,
-                            {
-                                formation_id: formationId
-                            },
-                            sequence
-                        );
-
-                    if (
-                        levels === null ||
-                        sequence !== requestSequence ||
-                        this.value !== formationId
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        levelSelect,
-                        levels,
-                        '-- Sélectionner un niveau / une classe --'
-                    );
-
-                    return;
-                }
-
-
-                // ====================================================
-                // PROFESSIONNEL
-                // ====================================================
-
-                if (!isProfessional()) {
-                    return;
-                }
-
-
-                resetSelect(
+                setLoading(
                     programSelect,
+                    '-- Chargement des programmes... --'
+                );
+
+                const programs = await loadData(
+                    urls.programs,
+                    {
+                        formation_id: formationId
+                    },
+                    sequence
+                );
+
+                if (
+                    programs === null ||
+                    sequence !== requestSequence ||
+                    this.value !== formationId
+                ) return;
+
+                populateSelect(
+                    programSelect,
+                    programs,
                     '-- Sélectionner un programme --'
                 );
 
-                resetSelect(
-                    specialiteSelect,
-                    '-- Sélectionner une spécialité --'
-                );
-
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
-
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
-
-                hide(programContainer);
-                hide(specialiteContainer);
-                hide(levelContainer);
-                hide(subjectContainer);
-
-                if (!formationId) {
-                    return;
-                }
-
-
-                // ====================================================
-                // ENS
-                // Formation → Programme
-                // ====================================================
-
-                if (
-                    isProfessionalProgramFormation()
-                ) {
-
-                    show(programContainer);
-
-                    setLoading(
-                        programSelect,
-                        '-- Chargement des programmes... --'
-                    );
-
-                    const programs =
-                        await loadData(
-                            urls.programs,
-                            {
-                                formation_id: formationId
-                            },
-                            sequence
-                        );
-
-                    if (
-                        programs === null ||
-                        sequence !== requestSequence ||
-                        this.value !== formationId
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        programSelect,
-                        programs,
-                        '-- Sélectionner un programme --'
-                    );
-
-                    return;
-                }
-
-
-                // ====================================================
-                // IDS / UIT
-                // Formation → Spécialité
-                // ====================================================
-
-                if (
-                    isProfessionalSpecializedFormation()
-                ) {
-
-                    show(specialiteContainer);
-
-                    setLoading(
-                        specialiteSelect,
-                        '-- Chargement des spécialités... --'
-                    );
-
-                    const specialites =
-                        await loadData(
-                            urls.specialitesByFormation,
-                            {
-                                formation_id: formationId
-                            },
-                            sequence
-                        );
-
-                    if (
-                        specialites === null ||
-                        sequence !== requestSequence ||
-                        this.value !== formationId
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        specialiteSelect,
-                        specialites,
-                        '-- Sélectionner une spécialité --'
-                    );
-
-                    return;
-                }
-
-
-                // ====================================================
-                // ENSP / ENEP / ATE
-                // Formation → Niveau
-                // ====================================================
-
-                if (
-                    isProfessionalDirectFormation()
-                ) {
-
-                    show(levelContainer);
-
-                    setLoading(
-                        levelSelect,
-                        '-- Chargement des niveaux... --'
-                    );
-
-                    const levels =
-                        await loadData(
-                            urls.professionalLevels,
-                            {
-                                formation_id: formationId
-                            },
-                            sequence
-                        );
-
-                    if (
-                        levels === null ||
-                        sequence !== requestSequence ||
-                        this.value !== formationId
-                    ) {
-                        return;
-                    }
-
-                    populateSelect(
-                        levelSelect,
-                        levels,
-                        '-- Sélectionner un niveau / une classe --'
-                    );
-                }
+                return;
             }
-        );
-    }
 
+            /*
+            |--------------------------------------------------------------------------
+            | ENSP / IDS / UIT
+            | Formation → Spécialité
+            |--------------------------------------------------------------------------
+            */
 
-    // ================================================================
-    // ENS
-    // Programme → Spécialité
-    // ================================================================
-
-    if (programSelect) {
-
-        programSelect.addEventListener(
-            'change',
-            async function () {
-
-                if (
-                    !isProfessional() ||
-                    !isProfessionalProgramFormation()
-                ) {
-                    return;
-                }
-
-                const programId =
-                    this.value;
-
-                requestSequence++;
-
-                const sequence =
-                    requestSequence;
-
-                resetSelect(
-                    specialiteSelect,
-                    '-- Sélectionner une spécialité --'
-                );
-
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
-
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
-
-                hide(specialiteContainer);
-                hide(levelContainer);
-                hide(subjectContainer);
-
-                if (!programId) {
-                    return;
-                }
+            if (isProfessionalSpecializedFormation()) {
 
                 show(specialiteContainer);
 
@@ -1079,71 +709,37 @@ document.addEventListener('DOMContentLoaded', function () {
                     '-- Chargement des spécialités... --'
                 );
 
-                const specialites =
-                    await loadData(
-                        urls.specialites,
-                        {
-                            program_id: programId
-                        },
-                        sequence
-                    );
+                const specialites = await loadData(
+                    urls.specialitesByFormation,
+                    {
+                        formation_id: formationId
+                    },
+                    sequence
+                );
+                
 
                 if (
                     specialites === null ||
                     sequence !== requestSequence ||
-                    this.value !== programId
-                ) {
-                    return;
-                }
+                    this.value !== formationId
+                ) return;
 
                 populateSelect(
                     specialiteSelect,
                     specialites,
                     '-- Sélectionner une spécialité --'
                 );
+
+                return;
             }
-        );
-    }
 
-
-    // ================================================================
-    // SPÉCIALITÉ → NIVEAU
-    // ================================================================
-
-    if (specialiteSelect) {
-
-        specialiteSelect.addEventListener(
-            'change',
-            async function () {
-
-                if (!isProfessional()) {
-                    return;
-                }
-
-                const specialiteId =
-                    this.value;
-
-                requestSequence++;
-
-                const sequence =
-                    requestSequence;
-
-                resetSelect(
-                    levelSelect,
-                    '-- Sélectionner un niveau / une classe --'
-                );
-
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
-
-                hide(levelContainer);
-                hide(subjectContainer);
-
-                if (!specialiteId) {
-                    return;
-                }
+            /*
+            |--------------------------------------------------------------------------
+            | ENEP
+            | Formation → Niveau
+            |--------------------------------------------------------------------------
+            */
+            if (isProfessionalENEP()) {
 
                 show(levelContainer);
 
@@ -1152,108 +748,256 @@ document.addEventListener('DOMContentLoaded', function () {
                     '-- Chargement des niveaux... --'
                 );
 
-                const levels =
-                    await loadData(
-                        urls.specialiteLevels,
-                        {
-                            specialite_id: specialiteId
-                        },
-                        sequence
-                    );
+                const levels = await loadData(
+                    urls.professionalLevels,
+                    {
+                        formation_id: formationId
+                    },
+                    sequence
+                );
 
                 if (
                     levels === null ||
                     sequence !== requestSequence ||
-                    this.value !== specialiteId
-                ) {
-                    return;
-                }
+                    this.value !== formationId
+                ) return;
 
                 populateSelect(
                     levelSelect,
                     levels,
                     '-- Sélectionner un niveau / une classe --'
                 );
+
+                return;
             }
-        );
+        });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | ENS
+    | Programme → Spécialité
+    |--------------------------------------------------------------------------
+    */
 
-    // ================================================================
-    // NIVEAU → MATIÈRE / MODULE
-    // ================================================================
+    if (programSelect) {
+        programSelect.addEventListener('change', async function () {
+            
+
+            if (
+                !isProfessional() ||
+                !isProfessionalENS()
+            ) return;
+
+            const programId = this.value;
+
+            requestSequence++;
+
+            const sequence = requestSequence;
+
+            resetSelect(
+                specialiteSelect,
+                '-- Sélectionner une spécialité --'
+            );
+
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
+
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
+
+            hide(specialiteContainer);
+            hide(levelContainer);
+            hide(subjectContainer);
+
+            if (!programId) return;
+
+            show(specialiteContainer);
+
+            setLoading(
+                specialiteSelect,
+                '-- Chargement des spécialités... --'
+            );
+
+            const specialites = await loadData(
+                urls.specialites,
+                {
+                    program_id: programId
+                },
+                sequence
+            );
+
+            if (
+                specialites === null ||
+                sequence !== requestSequence ||
+                this.value !== programId
+            ) return;
+
+            populateSelect(
+                specialiteSelect,
+                specialites,
+                '-- Sélectionner une spécialité --'
+            );
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → NIVEAU
+    |--------------------------------------------------------------------------
+    |
+    | ENS
+    | Programme → Spécialité → Niveau
+    |
+    | ENSP
+    | Formation → Spécialité → Niveau
+    |
+    | IDS
+    | Formation → Spécialité → Niveau
+    |
+    | UIT
+    | Formation → Spécialité → Niveau
+    |
+    |--------------------------------------------------------------------------
+    */
+
+    if (specialiteSelect) {
+        specialiteSelect.addEventListener('change', async function () {
+
+            if (!isProfessional()) return;
+
+            const specialiteId = this.value;
+            const formationId = formationSelect?.value || '';
+            const programId = programSelect?.value || '';
+
+            requestSequence++;
+
+            const sequence = requestSequence;
+
+            resetSelect(
+                levelSelect,
+                '-- Sélectionner un niveau / une classe --'
+            );
+
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
+
+            hide(levelContainer);
+            hide(subjectContainer);
+
+            if (!specialiteId) return;
+
+            show(levelContainer);
+
+            setLoading(
+                levelSelect,
+                '-- Chargement des niveaux... --'
+            );
+
+            const params = {
+                specialite_id: specialiteId,
+                formation_id: formationId
+            };
+
+            if (isProfessionalENS()) {
+                params.program_id = programId;
+            }
+
+            const levels = await loadData(
+                urls.specialiteLevels,
+                params,
+                sequence
+            );
+
+            if (
+                levels === null ||
+                sequence !== requestSequence ||
+                this.value !== specialiteId ||
+                formationSelect?.value !== formationId ||
+                (
+                    isProfessionalENS() &&
+                    programSelect?.value !== programId
+                )
+            ) return;
+
+            populateSelect(
+                levelSelect,
+                levels,
+                '-- Sélectionner un niveau / une classe --'
+            );
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NIVEAU → MODULE
+    |--------------------------------------------------------------------------
+    */
 
     if (levelSelect) {
+        levelSelect.addEventListener('change', async function () {
 
-        levelSelect.addEventListener(
-            'change',
-            async function () {
+            const levelId = this.value;
 
-                const levelId =
-                    this.value;
+            requestSequence++;
 
-                requestSequence++;
+            const sequence = requestSequence;
 
-                const sequence =
-                    requestSequence;
+            resetSelect(
+                subjectSelect,
+                '-- Sélectionner une matière / un module --'
+            );
 
-                resetSelect(
-                    subjectSelect,
-                    '-- Sélectionner une matière / un module --'
-                );
+            hide(subjectContainer);
 
-                hide(subjectContainer);
+            if (!levelId) return;
 
-                if (!levelId) {
-                    return;
-                }
+            show(subjectContainer);
 
-                show(subjectContainer);
+            setLoading(
+                subjectSelect,
+                '-- Chargement des matières / modules... --'
+            );
 
-                setLoading(
-                    subjectSelect,
-                    '-- Chargement des matières / modules... --'
-                );
+            const subjects = await loadData(
+                urls.subjects,
+                {
+                    level_id: levelId
+                },
+                sequence
+            );
 
-                const subjects =
-                    await loadData(
-                        urls.subjects,
-                        {
-                            level_id: levelId
-                        },
-                        sequence
-                    );
+            if (
+                subjects === null ||
+                sequence !== requestSequence ||
+                this.value !== levelId
+            ) return;
 
-                if (
-                    subjects === null ||
-                    sequence !== requestSequence ||
-                    this.value !== levelId
-                ) {
-                    return;
-                }
-
-                populateSelect(
-                    subjectSelect,
-                    subjects,
-                    '-- Sélectionner une matière / un module --'
-                );
-            }
-        );
+            populateSelect(
+                subjectSelect,
+                subjects,
+                '-- Sélectionner une matière / un module --'
+            );
+        });
     }
 
-
-    // ================================================================
-    // PRIX
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | PRIX
+    |--------------------------------------------------------------------------
+    */
 
     function updatePriceVisibility() {
 
-        if (!accessType) {
-            return;
-        }
+        if (!accessType) return;
 
-        const premium =
-            accessType.value === 'premium';
+        const premium = accessType.value === 'premium';
 
         if (premium) {
 
@@ -1275,7 +1019,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
     if (accessType) {
 
         accessType.addEventListener(
@@ -1286,10 +1029,11 @@ document.addEventListener('DOMContentLoaded', function () {
         updatePriceVisibility();
     }
 
-
-    // ================================================================
-    // WIZARD
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | WIZARD
+    |--------------------------------------------------------------------------
+    */
 
     function updateWizard() {
 
@@ -1297,11 +1041,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .querySelectorAll('.form-step')
             .forEach(function (step) {
 
-                const number =
-                    parseInt(
-                        step.id.replace('step-', ''),
-                        10
-                    );
+                const number = parseInt(
+                    step.id.replace('step-', ''),
+                    10
+                );
 
                 step.classList.toggle(
                     'active',
@@ -1309,16 +1052,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 );
             });
 
-
         document
             .querySelectorAll('.wizard-step')
             .forEach(function (step) {
 
-                const number =
-                    parseInt(
-                        step.dataset.step,
-                        10
-                    );
+                const number = parseInt(
+                    step.dataset.step,
+                    10
+                );
 
                 step.classList.remove(
                     'active',
@@ -1334,7 +1075,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-
         if (progressFill) {
 
             progressFill.style.width =
@@ -1342,16 +1082,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
-    // ================================================================
-    // VALIDATION CLASSIFICATION
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATION
+    |--------------------------------------------------------------------------
+    */
 
     function requireField(field) {
 
-        if (!field) {
-            return true;
-        }
+        if (!field) return true;
 
         const valid =
             !field.disabled &&
@@ -1365,7 +1104,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return valid;
     }
 
-
     function validateStep1() {
 
         let valid = true;
@@ -1374,10 +1112,11 @@ document.addEventListener('DOMContentLoaded', function () {
             requireField(categorySelect) &&
             valid;
 
-
-        // ------------------------------------------------------------
-        // SUPÉRIEUR
-        // ------------------------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | SUPÉRIEUR
+        |--------------------------------------------------------------------------
+        */
 
         if (isHigher()) {
 
@@ -1398,10 +1137,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 valid;
         }
 
-
-        // ------------------------------------------------------------
-        // SECONDAIRE
-        // ------------------------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | SECONDAIRE
+        |--------------------------------------------------------------------------
+        */
 
         if (isSecondary()) {
 
@@ -1418,10 +1158,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 valid;
         }
 
-
-        // ------------------------------------------------------------
-        // PROFESSIONNEL
-        // ------------------------------------------------------------
+        /*
+        |--------------------------------------------------------------------------
+        | PROFESSIONNEL
+        |--------------------------------------------------------------------------
+        */
 
         if (isProfessional()) {
 
@@ -1429,9 +1170,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 requireField(formationSelect) &&
                 valid;
 
+            /*
+            |--------------------------------------------------------------------------
+            | ENS
+            |--------------------------------------------------------------------------
+            */
 
-            // ENS
-            if (isProfessionalProgramFormation()) {
+            if (isProfessionalENS()) {
 
                 valid =
                     requireField(programSelect) &&
@@ -1442,26 +1187,27 @@ document.addEventListener('DOMContentLoaded', function () {
                     valid;
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | ENSP / IDS / UIT
+            |--------------------------------------------------------------------------
+            */
 
-            // IDS / UIT
-            if (isProfessionalSpecializedFormation()) {
+            if (isProfessionalENSP() ||
+                isProfessionalIDS() ||
+                isProfessionalUIT()) {
 
                 valid =
                     requireField(specialiteSelect) &&
                     valid;
             }
 
+            /*
+            |--------------------------------------------------------------------------
+            | ENEP
+            |--------------------------------------------------------------------------
+            */
 
-            // ENSP / ENEP / ATE
-            if (isProfessionalDirectFormation()) {
-
-                valid =
-                    requireField(levelSelect) &&
-                    valid;
-            }
-
-
-            // Tous les parcours
             valid =
                 requireField(levelSelect) &&
                 valid;
@@ -1471,14 +1217,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 valid;
         }
 
-
         return valid;
     }
 
-
-    // ================================================================
-    // VALIDATION DOCUMENT
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | VALIDATION DOCUMENT
+    |--------------------------------------------------------------------------
+    */
 
     function validateStep2() {
 
@@ -1492,12 +1238,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         fields.forEach(function (field) {
 
-            if (!field) {
-                return;
-            }
+            if (!field) return;
 
-            const fieldValid =
-                Boolean(field.value);
+            const fieldValid = Boolean(field.value);
 
             field.classList.toggle(
                 'is-invalid',
@@ -1508,7 +1251,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 valid = false;
             }
         });
-
 
         if (
             accessType &&
@@ -1533,10 +1275,11 @@ document.addEventListener('DOMContentLoaded', function () {
         return valid;
     }
 
-
-    // ================================================================
-    // RÉCAPITULATIF
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | RÉCAPITULATIF
+    |--------------------------------------------------------------------------
+    */
 
     function escapeHtml(value) {
 
@@ -1547,7 +1290,6 @@ document.addEventListener('DOMContentLoaded', function () {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
-
 
     function getSelectedText(select) {
 
@@ -1563,259 +1305,192 @@ document.addEventListener('DOMContentLoaded', function () {
             : 'Non renseigné';
     }
 
-
     function buildSummary() {
 
-        if (!summary) {
-            return;
-        }
+        if (!summary) return;
 
-        const title =
-            document.getElementById('title');
-
-        const description =
-            document.getElementById('description');
-
-        const documentType =
-            document.getElementById('document_type_id');
-
+        const title = document.getElementById('title');
+        const description = document.getElementById('description');
+        const documentType = document.getElementById('document_type_id');
 
         let html = `
-            <div class="summary-section">
+<div class="summary-section">
+<h6>
+<i class="bi bi-diagram-3 me-2"></i>
+Classification
+</h6>
 
-                <h6>
-                    <i class="bi bi-diagram-3 me-2"></i>
-                    Classification
-                </h6>
+<div class="summary-grid">
 
-                <div class="summary-grid">
+<div class="summary-item">
+<span class="summary-label">Catégorie</span>
+<strong>
+${escapeHtml(getSelectedText(categorySelect))}
+</strong>
+</div>
+`;
 
-                    <div class="summary-item">
-                        <span class="summary-label">
-                            Catégorie
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                getSelectedText(categorySelect)
-                            )}
-                        </strong>
-                    </div>
-        `;
-
+        /*
+        |--------------------------------------------------------------------------
+        | SECONDAIRE
+        |--------------------------------------------------------------------------
+        */
 
         if (isSecondary()) {
 
             html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Formation
-                    </span>
+<div class="summary-item">
+<span class="summary-label">Formation</span>
+<strong>
+${escapeHtml(getSelectedText(formationSelect))}
+</strong>
+</div>
 
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(formationSelect)
-                        )}
-                    </strong>
-                </div>
-
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Niveau / Classe
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(levelSelect)
-                        )}
-                    </strong>
-                </div>
-            `;
+<div class="summary-item">
+<span class="summary-label">Niveau / Classe</span>
+<strong>
+${escapeHtml(getSelectedText(levelSelect))}
+</strong>
+</div>
+`;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | SUPÉRIEUR
+        |--------------------------------------------------------------------------
+        */
 
         if (isHigher()) {
 
             html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Domaine académique
-                    </span>
+<div class="summary-item">
+<span class="summary-label">Domaine académique</span>
+<strong>
+${escapeHtml(getSelectedText(academicDomainSelect))}
+</strong>
+</div>
 
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(
-                                academicDomainSelect
-                            )
-                        )}
-                    </strong>
-                </div>
+<div class="summary-item">
+<span class="summary-label">Filière</span>
+<strong>
+${escapeHtml(getSelectedText(filiereSelect))}
+</strong>
+</div>
 
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Filière
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(filiereSelect)
-                        )}
-                    </strong>
-                </div>
-
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Niveau
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(levelSelect)
-                        )}
-                    </strong>
-                </div>
-            `;
+<div class="summary-item">
+<span class="summary-label">Niveau</span>
+<strong>
+${escapeHtml(getSelectedText(levelSelect))}
+</strong>
+</div>
+`;
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | PROFESSIONNEL
+        |--------------------------------------------------------------------------
+        */
 
         if (isProfessional()) {
 
             html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Formation
-                    </span>
+<div class="summary-item">
+<span class="summary-label">Formation</span>
+<strong>
+${escapeHtml(getSelectedText(formationSelect))}
+</strong>
+</div>
+`;
 
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(formationSelect)
-                        )}
-                    </strong>
-                </div>
-            `;
-
-
-            if (isProfessionalProgramFormation()) {
+            if (isProfessionalENS()) {
 
                 html += `
-                    <div class="summary-item">
-                        <span class="summary-label">
-                            Programme
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                getSelectedText(programSelect)
-                            )}
-                        </strong>
-                    </div>
-                `;
+<div class="summary-item">
+<span class="summary-label">Programme</span>
+<strong>
+${escapeHtml(getSelectedText(programSelect))}
+</strong>
+</div>
+`;
             }
 
-
             if (
-                isProfessionalProgramFormation() ||
-                isProfessionalSpecializedFormation()
+                isProfessionalENS() ||
+                isProfessionalENSP() ||
+                isProfessionalIDS() ||
+                isProfessionalUIT()
             ) {
 
                 html += `
-                    <div class="summary-item">
-                        <span class="summary-label">
-                            Spécialité
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                getSelectedText(specialiteSelect)
-                            )}
-                        </strong>
-                    </div>
-                `;
+<div class="summary-item">
+<span class="summary-label">Spécialité</span>
+<strong>
+${escapeHtml(getSelectedText(specialiteSelect))}
+</strong>
+</div>
+`;
             }
 
-
             html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Niveau
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(levelSelect)
-                        )}
-                    </strong>
-                </div>
-            `;
+<div class="summary-item">
+<span class="summary-label">Niveau</span>
+<strong>
+${escapeHtml(getSelectedText(levelSelect))}
+</strong>
+</div>
+`;
         }
 
+        html += `
+<div class="summary-item">
+<span class="summary-label">Matière / Module</span>
+<strong>
+${escapeHtml(getSelectedText(subjectSelect))}
+</strong>
+</div>
+
+</div>
+</div>
+`;
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT
+        |--------------------------------------------------------------------------
+        */
 
         html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Matière / Module
-                    </span>
+<div class="summary-section">
+<h6>
+<i class="bi bi-file-earmark-text me-2"></i>
+Document
+</h6>
 
-                    <strong>
-                        ${escapeHtml(
-                            getSelectedText(subjectSelect)
-                        )}
-                    </strong>
-                </div>
+<div class="summary-grid">
 
-            </div>
-        </div>
-        `;
+<div class="summary-item summary-item-full">
+<span class="summary-label">Titre</span>
+<strong>
+${escapeHtml(title?.value || 'Non renseigné')}
+</strong>
+</div>
 
+<div class="summary-item">
+<span class="summary-label">Type</span>
+<strong>
+${escapeHtml(getSelectedText(documentType))}
+</strong>
+</div>
 
-        html += `
-            <div class="summary-section">
-
-                <h6>
-                    <i class="bi bi-file-earmark-text me-2"></i>
-                    Document
-                </h6>
-
-                <div class="summary-grid">
-
-                    <div class="summary-item summary-item-full">
-                        <span class="summary-label">
-                            Titre
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                title?.value ||
-                                'Non renseigné'
-                            )}
-                        </strong>
-                    </div>
-
-                    <div class="summary-item">
-                        <span class="summary-label">
-                            Type
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                getSelectedText(documentType)
-                            )}
-                        </strong>
-                    </div>
-
-                    <div class="summary-item">
-                        <span class="summary-label">
-                            Accès
-                        </span>
-
-                        <strong>
-                            ${escapeHtml(
-                                getSelectedText(accessType)
-                            )}
-                        </strong>
-                    </div>
-        `;
-
+<div class="summary-item">
+<span class="summary-label">Accès</span>
+<strong>
+${escapeHtml(getSelectedText(accessType))}
+</strong>
+</div>
+`;
 
         if (
             accessType &&
@@ -1823,26 +1498,19 @@ document.addEventListener('DOMContentLoaded', function () {
         ) {
 
             html += `
-                <div class="summary-item">
-                    <span class="summary-label">
-                        Prix
-                    </span>
-
-                    <strong>
-                        ${escapeHtml(
-                            priceInput?.value || '0'
-                        )} FCFA
-                    </strong>
-                </div>
-            `;
+<div class="summary-item">
+<span class="summary-label">Prix</span>
+<strong>
+${escapeHtml(priceInput?.value || '0')} FCFA
+</strong>
+</div>
+`;
         }
 
-
         html += `
-                </div>
-            </div>
-        `;
-
+</div>
+</div>
+`;
 
         if (
             description &&
@@ -1850,31 +1518,27 @@ document.addEventListener('DOMContentLoaded', function () {
         ) {
 
             html += `
-                <div class="summary-section">
+<div class="summary-section">
+<h6>
+<i class="bi bi-card-text me-2"></i>
+Description
+</h6>
 
-                    <h6>
-                        <i class="bi bi-card-text me-2"></i>
-                        Description
-                    </h6>
-
-                    <p class="summary-description">
-                        ${escapeHtml(
-                            description.value.trim()
-                        )}
-                    </p>
-
-                </div>
-            `;
+<p class="summary-description">
+${escapeHtml(description.value.trim())}
+</p>
+</div>
+`;
         }
-
 
         summary.innerHTML = html;
     }
 
-
-    // ================================================================
-    // NAVIGATION
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | NAVIGATION
+    |--------------------------------------------------------------------------
+    */
 
     window.nextStep = function (step) {
 
@@ -1890,7 +1554,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-
         if (step === 3) {
 
             if (!validateStep2()) {
@@ -1905,80 +1568,69 @@ document.addEventListener('DOMContentLoaded', function () {
             buildSummary();
         }
 
-
         currentStep = step;
-
         updateWizard();
     };
-
 
     window.previousStep = function (step) {
 
         currentStep = step;
-
         updateWizard();
     };
 
+    /*
+    |--------------------------------------------------------------------------
+    | SOUMISSION
+    |--------------------------------------------------------------------------
+    */
 
-    // ================================================================
-    // SOUMISSION
-    // ================================================================
+    form.addEventListener('submit', function (event) {
 
-    form.addEventListener(
-        'submit',
-        function (event) {
+        if (currentStep !== 3) {
 
-            if (currentStep !== 3) {
-
-                event.preventDefault();
-
-                return;
-            }
-
-
-            if (
-                confirmInformation &&
-                !confirmInformation.checked
-            ) {
-
-                event.preventDefault();
-
-                alert(
-                    'Veuillez confirmer que les informations saisies sont exactes.'
-                );
-
-                confirmInformation.focus();
-
-                return;
-            }
-
-
-            if (publishButton) {
-
-                publishButton.disabled = true;
-
-                publishButton.innerHTML = `
-                    <span
-                        class="spinner-border spinner-border-sm me-2"
-                        role="status"
-                        aria-hidden="true">
-                    </span>
-
-                    Publication en cours...
-                `;
-            }
+            event.preventDefault();
+            return;
         }
-    );
 
+        if (
+            confirmInformation &&
+            !confirmInformation.checked
+        ) {
 
-    // ================================================================
-    // SUPPRESSION DES ERREURS
-    // ================================================================
+            event.preventDefault();
+
+            alert(
+                'Veuillez confirmer que les informations saisies sont exactes.'
+            );
+
+            confirmInformation.focus();
+
+            return;
+        }
+
+        if (publishButton) {
+
+            publishButton.disabled = true;
+
+            publishButton.innerHTML = `
+<span
+class="spinner-border spinner-border-sm me-2"
+role="status"
+aria-hidden="true">
+</span>
+Publication en cours...
+`;
+        }
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUPPRESSION DES ERREURS
+    |--------------------------------------------------------------------------
+    */
 
     form
-        .querySelectorAll(
-            'input, select, textarea'
-        )
+        .querySelectorAll('input, select, textarea')
         .forEach(function (field) {
 
             field.addEventListener(
@@ -1996,15 +1648,14 @@ document.addEventListener('DOMContentLoaded', function () {
             );
         });
 
-
-    // ================================================================
-    // INITIALISATION
-    // ================================================================
+    /*
+    |--------------------------------------------------------------------------
+    | INITIALISATION
+    |--------------------------------------------------------------------------
+    */
 
     hideAllClassificationContainers();
-
     updatePriceVisibility();
-
     updateWizard();
 
     console.log(

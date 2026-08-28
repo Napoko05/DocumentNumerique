@@ -106,50 +106,31 @@ Route::post('/logout', [LoginController::class, 'logout'])
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::prefix('journaliste')
+    ->name('journaliste.')
+    ->middleware(['auth:staff', 'role:journalist'])
+    ->controller(JournalistController::class)
+    ->group(function () {
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROFIL DU JOURNALISTE
-    |--------------------------------------------------------------------------
-    */
+        Route::get('/dashboard', 'dashboard')
+            ->name('dashboard');
 
-    // Affichage du profil
-    Route::get('/profil', [
-        JournalistController::class,
-        'profile'
-    ])->name('profil');
-
-    // Modification du profil
-    Route::put('/profil', [
-        JournalistController::class,
-        'updateProfile'
-    ])->name('profile.update');
-
-    // Formulaire d'édition
-    Route::get('/profil/edit', [
-        JournalistController::class,
-        'edit'
-    ])->name('profile.edit');
-
-    // Suppression du compte
-    Route::delete('/profil', [
-        JournalistController::class,
-        'destroy'
-    ])->name('profile.destroy');
+        Route::get('/users', 'users')
+            ->name('users');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | MOT DE PASSE
-    |--------------------------------------------------------------------------
-    */
+        Route::get('/documents', 'documents')
+            ->name('documents');
 
-    Route::put('/profil/password', [
-        JournalistController::class,
-        'updatePassword'
-    ])->name('journaliste.password.update');
-});
+
+        Route::get('/statistiques', 'statistiques')
+            ->name('statistiques');
+
+
+        Route::get('/profil', 'profil')
+            ->name('profil');
+    });
+
 /*
 |--------------------------------------------------------------------------
 | ADMINISTRATION
@@ -227,6 +208,25 @@ Route::prefix('admin')
             ->name('users.deactivate');
 
 
+        Route::get(
+            '/staff/journalistes/{journaliste}/edit',
+            [StaffController::class, 'edit']
+        )->name('staff.journalistes.edit');
+
+        Route::put(
+            '/staff/journalistes/{journaliste}',
+            [StaffController::class, 'update']
+        )->name('staff.journalistes.update');
+
+        Route::put(
+            '/staff/journalistes/{journaliste}/password',
+            [StaffController::class, 'updatePassword']
+        )->name('staff.journalistes.password.update');
+
+        Route::delete(
+            '/staff/journalistes/{journaliste}',
+            [StaffController::class, 'destroy']
+        )->name('staff.journalistes.destroy');
         /*
         |--------------------------------------------------------------------------
         | RÔLES
@@ -362,7 +362,6 @@ Route::prefix('admin/superieur')
         | MODULES
         |--------------------------------------------------------------------------
         */
-
         Route::get('/modules', [SuperieurSubjectController::class, 'index'])
             ->name('modules.index');
 
@@ -389,13 +388,43 @@ Route::prefix('admin/superieur')
         )->name('modules.destroy');
     });
 
+/*====================================
+      profil personnel journaliste
+    */
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::get('/profil', [
+        JournalistController::class,
+        'profile'
+    ])->name('profil');
+
+    Route::get('/profil/edit', [
+        JournalistController::class,
+        'edit'
+    ])->name('profile.edit');
+
+    Route::put('/profil', [
+        JournalistController::class,
+        'updateProfile'
+    ])->name('profile.update');
+
+    Route::put('/profil/password', [
+        JournalistController::class,
+        'updatePassword'
+    ])->name('journaliste.password.update');
+
+    Route::delete('/profil', [
+        JournalistController::class,
+        'destroy'
+    ])->name('profile.destroy');
+});
 
 /*
 |--------------------------------------------------------------------------
 | ESPACE JOURNALISTE
 |--------------------------------------------------------------------------
 */
-
 Route::prefix('journaliste')
     ->name('journaliste.')
     ->middleware([
@@ -501,13 +530,6 @@ Route::prefix('journaliste')
             [DocumentController::class, 'destroy']
         )->name('documents.destroy');
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | JOURNALISTE
-        |--------------------------------------------------------------------------
-        */
-
         Route::get(
             '/statistiques',
             [JournalistController::class, 'statistics']
@@ -523,18 +545,7 @@ Route::prefix('journaliste')
             [JournalistController::class, 'payments']
         )->name('paiements');
 
-        Route::get(
-            '/profil',
-            [JournalistController::class, 'profile']
-        )->name('profil');
-
-        Route::get(
-            '/users',
-            [JournalistController::class, 'users']
-        )->name('users');
-
         /*
-/*
 |--------------------------------------------------------------------------
 | AJAX — FORMATIONS
 |--------------------------------------------------------------------------
@@ -612,25 +623,50 @@ Route::prefix('journaliste')
 | AJAX — PROFESSIONNEL
 |--------------------------------------------------------------------------
 |
+| ENS
 | Formation
 |    ↓
-| ├── ENSP / ENEP / ATE
-| │      ↓
-| │    Niveau
-| │
-| ├── IDS / UIT
-| │      ↓
-| │    Spécialité
-| │      ↓
-| │    Niveau
-| │
-| └── ENS
-|        ↓
-|      Programme
-|        ↓
-|      Spécialité
-|        ↓
-|      Niveau
+| Programme
+|    ↓
+| Spécialité
+|    ↓
+| Niveau
+|    ↓
+| Module
+|
+| IDS
+| Formation
+|    ↓
+| Spécialité
+|    ↓
+| Niveau
+|    ↓
+| Module
+|
+| ENSP
+| Formation
+|    ↓
+| Spécialité
+|    ↓
+| Niveau
+|    ↓
+| Module
+|
+| UIT
+| Formation
+|    ↓
+| Spécialité
+|    ↓
+| Niveau
+|    ↓
+| Module
+|
+| ENEP
+| Formation
+|    ↓
+| Niveau
+|    ↓
+| Module
 |
 */
 
@@ -640,7 +676,7 @@ Route::prefix('journaliste')
 | PROFESSIONNEL — FORMATION → NIVEAU
 |--------------------------------------------------------------------------
 |
-| ENSP / ENEP / ATE
+| UNIQUEMENT ENEP
 |
 */
 
@@ -655,7 +691,9 @@ Route::prefix('journaliste')
 | PROFESSIONNEL — FORMATION → SPÉCIALITÉ
 |--------------------------------------------------------------------------
 |
-| IDS / UIT
+| IDS
+| ENSP
+| UIT
 |
 */
 
@@ -670,7 +708,7 @@ Route::prefix('journaliste')
 | PROFESSIONNEL — FORMATION → PROGRAMME
 |--------------------------------------------------------------------------
 |
-| ENS
+| UNIQUEMENT ENS
 |
 */
 
@@ -685,7 +723,7 @@ Route::prefix('journaliste')
 | PROFESSIONNEL — PROGRAMME → SPÉCIALITÉ
 |--------------------------------------------------------------------------
 |
-| ENS
+| UNIQUEMENT ENS
 |
 */
 
@@ -702,6 +740,7 @@ Route::prefix('journaliste')
 |
 | ENS
 | IDS
+| ENSP
 | UIT
 |
 */
@@ -722,9 +761,14 @@ Route::prefix('journaliste')
 | Matière / Module
 |
 | Commun à :
+|
 | - Secondaire
 | - Supérieur
-| - Professionnel
+| - ENS
+| - IDS
+| - ENSP
+| - UIT
+| - ENEP
 |
 */
 
@@ -738,7 +782,6 @@ Route::prefix('journaliste')
 | DOCUMENTS PUBLICS
 |--------------------------------------------------------------------------
 */
-
 Route::get('/documents', [PublicDocumentController::class, 'index'])
     ->name('documents.index');
 
@@ -773,6 +816,15 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 | VITRINE — ENSEIGNEMENT SECONDAIRE GÉNÉRAL
 |--------------------------------------------------------------------------
+|
+| Classe
+|    ↓
+| Matière
+|    ↓
+| Type de document
+|    ↓
+| Documents
+|
 */
 
 Route::prefix('secondaire/general')
@@ -798,6 +850,15 @@ Route::prefix('secondaire/general')
 |--------------------------------------------------------------------------
 | VITRINE — ENSEIGNEMENT SECONDAIRE TECHNIQUE
 |--------------------------------------------------------------------------
+|
+| Classe
+|    ↓
+| Matière
+|    ↓
+| Type de document
+|    ↓
+| Documents
+|
 */
 
 Route::prefix('secondaire/technique')
@@ -823,6 +884,17 @@ Route::prefix('secondaire/technique')
 |--------------------------------------------------------------------------
 | VITRINE — ENSEIGNEMENT SUPÉRIEUR
 |--------------------------------------------------------------------------
+|
+| Domaine académique
+|    ↓
+| Filière
+|    ↓
+| Niveau
+|    ↓
+| Type de document
+|    ↓
+| Documents
+|
 */
 
 Route::prefix('superieur')
@@ -830,102 +902,219 @@ Route::prefix('superieur')
     ->controller(VitrineSuperieurController::class)
     ->group(function () {
 
+        // Domaines académiques
         Route::get('/', 'domaines')
             ->name('domaines');
 
+        // Domaine → Filières
         Route::get('/{domaineSlug}', 'filieres')
             ->name('filieres');
 
+        // Domaine → Filière → Niveaux
         Route::get(
             '/{domaineSlug}/{filiereSlug}',
             'niveaux'
         )->name('niveaux');
 
+        // Domaine → Filière → Niveau → Types
         Route::get(
             '/{domaineSlug}/{filiereSlug}/{niveauSlug}',
             'typeDocuments'
         )->name('type_doc');
 
+        // Domaine → Filière → Niveau → Type → Documents
         Route::get(
             '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{typeSlug}',
             'documents'
         )->name('documents');
     });
-
-
 /*
 |--------------------------------------------------------------------------
 | VITRINE — ENSEIGNEMENT PROFESSIONNEL
 |--------------------------------------------------------------------------
+|
+| ENEP :
+| Formation → Niveau → Module/Matière → Type → Documents
+|
+| ENSP / IDS / UIT :
+| Formation → Spécialité → Niveau → Module/Matière → Type → Documents
+|
+| ENS :
+| Formation → Programme → Spécialité → Niveau → Type → Documents
+|
 */
-
 Route::prefix('professionnel')
     ->name('vitrine.professionnel.')
-    ->controller(VitrineProfessionnelController::class)
     ->group(function () {
 
-        Route::get('/', 'formations')
-            ->name('formations');
+        /*
+        |--------------------------------------------------------------------------
+        | FORMATIONS
+        |--------------------------------------------------------------------------
 
-        Route::get('/{formationSlug}', 'niveaux')
-            ->name('niveaux');
+        | Page générale des formations professionnelles
+        |
+        | /professionnel
+        */
+        Route::get('/', [
+            VitrineProfessionnelController::class,
+            'formations'
+        ])->name('formations');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ENEP
+        | Formation → Niveau → Module → Type → Documents → Document
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/{formationSlug}/niveaux', [
+            VitrineProfessionnelController::class,
+            'niveaux'
+        ])->name('formation.niveaux');
+
+
+        Route::get('/{formationSlug}/{niveauSlug}/modules', [
+            VitrineProfessionnelController::class,
+            'modules'
+        ])->name('enep.modules');
+
+
+        Route::get('/{formationSlug}/{niveauSlug}/module/{moduleSlug}', [
+            VitrineProfessionnelController::class,
+            'typeDocumentsModule'
+        ])->name('enep.type_doc');
+
+
+        Route::get('/{formationSlug}/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}', [
+            VitrineProfessionnelController::class,
+            'documentsModule'
+        ])->name('enep.documents');
+
 
         Route::get(
-            '/{formationSlug}/{niveauSlug}',
-            'typeDocuments'
-        )->name('type_doc');
+            '/{formationSlug}/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}/document/{documentSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'showDocumentModule'
+            ]
+        )->name('enep.show');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ENSP / IDS / UIT
+        | Formation → Spécialité → Niveau → Module → Type → Documents
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/{formationSlug}/specialites', [
+            VitrineProfessionnelController::class,
+            'specialitesFormation'
+        ])->name('specialites');
+
+
+        Route::get('/{formationSlug}/specialite/{specialiteSlug}/niveaux', [
+            VitrineProfessionnelController::class,
+            'niveauxSpecialite'
+        ])->name('specialite.niveaux');
+
 
         Route::get(
-            '/{formationSlug}/{niveauSlug}/{typeSlug}',
-            'documents'
-        )->name('documents');
-    });
+            '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/modules',
+            [
+                VitrineProfessionnelController::class,
+                'modulesSpecialite'
+            ]
+        )->name('specialite.modules');
 
-
-/*
-|--------------------------------------------------------------------------
-| VITRINE — ENS
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('ens')
-    ->name('vitrine.ens.')
-    ->controller(VitrineProfessionnelController::class)
-    ->group(function () {
-
-        Route::get('/', 'programmes')
-            ->name('programmes');
 
         Route::get(
-            '/{programmeSlug}',
+            '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'typeDocumentsSpecialiteModule'
+            ]
+        )->name('specialite.type_doc');
+
+
+        Route::get(
+            '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'documentsSpecialiteModule'
+            ]
+        )->name('specialite.documents');
+
+
+        Route::get(
+            '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}/document/{documentSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'showDocumentSpecialiteModule'
+            ]
+        )->name('specialite.show');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ENS
+        | Formation → Programme → Spécialité → Niveau → Module → Type
+        |--------------------------------------------------------------------------
+        */
+
+        Route::get('/ens/programmes', [
+            VitrineProfessionnelController::class,
+            'programmes'
+        ])->name('ens.programmes');
+
+
+        Route::get('/ens/programme/{programmeSlug}/specialites', [
+            VitrineProfessionnelController::class,
             'specialites'
-        )->name('specialites');
+        ])->name('ens.specialites');
 
-        Route::get(
-            '/{programmeSlug}/{specialiteSlug}',
+
+        Route::get('/ens/programme/{programmeSlug}/specialite/{specialiteSlug}/niveaux', [
+            VitrineProfessionnelController::class,
             'niveauxEns'
-        )->name('niveaux');
+        ])->name('ens.niveaux');
+
 
         Route::get(
-            '/{programmeSlug}/{specialiteSlug}/{niveauSlug}',
-            'typeDocumentsEns'
-        )->name('type_doc');
+            '/ens/programme/{programmeSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/modules',
+            [
+                VitrineProfessionnelController::class,
+                'modulesEns'
+            ]
+        )->name('ens.modules');
+
 
         Route::get(
-            '/{programmeSlug}/{specialiteSlug}/{niveauSlug}/{typeSlug}',
-            'documentsEns'
-        )->name('documents');
+            '/ens/programme/{programmeSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'typeDocumentsEnsModule'
+            ]
+        )->name('ens.type_doc');
+
+
+        Route::get(
+            '/ens/programme/{programmeSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'documentsEnsModule'
+            ]
+        )->name('ens.documents');
+
+
+        Route::get(
+            '/ens/programme/{programmeSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}/document/{documentSlug}',
+            [
+                VitrineProfessionnelController::class,
+                'showDocumentEnsModule'
+            ]
+        )->name('ens.show');
+
     });
-
-
-/*
-|--------------------------------------------------------------------------
-| AUTH ROUTES SUPPLÉMENTAIRES
-|--------------------------------------------------------------------------
-|
-| À conserver seulement si auth.php contient des routes nécessaires
-| comme password reset, email verification, etc.
-|
-*/
-
-// require __DIR__ . '/auth.php';

@@ -1,0 +1,267 @@
+/* =========================================================
+   PAGE NIVEAUX - ENSEIGNEMENT SUPÉRIEUR
+   ========================================================= */
+
+.superieur-niveaux-page{
+    min-height:100vh;
+    padding:56px 20px 40px;
+    background:linear-gradient(to bottom,#eff6ff,#f8fafc);
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.superieur-niveaux-header{
+    max-width:1150px;
+    margin:0 auto 48px;
+    text-align:center;
+}
+
+.superieur-niveaux-title{
+    margin:0;
+    color:#1f2937;
+    font-size:2.25rem;
+    font-weight:800;
+    line-height:1.2;
+}
+
+.superieur-niveaux-subtitle{
+    margin:10px 0 0;
+    color:#6b7280;
+    font-size:1rem;
+}
+
+
+/* =========================================================
+   GRILLE
+   ========================================================= */
+
+.superieur-niveaux-grid{
+    max-width:1100px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+}
+
+
+/* =========================================================
+   CARTE NIVEAU
+   ========================================================= */
+
+.superieur-niveau-card{
+    display:block;
+    padding:30px 22px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    text-decoration:none;
+    box-shadow:0 5px 15px rgba(15,23,42,.07);
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+.superieur-niveau-card:hover{
+    transform:translateY(-6px);
+    border-color:#2563eb;
+    box-shadow:0 14px 30px rgba(15,23,42,.13);
+}
+
+
+/* =========================================================
+   ICÔNE
+   ========================================================= */
+
+.superieur-niveau-icon{
+    width:68px;
+    height:68px;
+    margin:0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    background:#dbeafe;
+    font-size:32px;
+    transition:transform .25s ease,background .25s ease;
+}
+
+.superieur-niveau-card:hover .superieur-niveau-icon{
+    transform:scale(1.1);
+    background:#bfdbfe;
+}
+
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.superieur-niveau-content{
+    margin-top:20px;
+    text-align:center;
+}
+
+.superieur-niveau-name{
+    margin:0;
+    color:#1f2937;
+    font-size:1.1rem;
+    font-weight:700;
+    transition:color .25s ease;
+}
+
+.superieur-niveau-card:hover .superieur-niveau-name{
+    color:#2563eb;
+}
+
+.superieur-niveau-description{
+    margin:8px 0 0;
+    color:#6b7280;
+    font-size:.9rem;
+}
+
+.superieur-niveau-count{
+    margin:12px 0 0;
+    color:#2563eb;
+    font-size:.8rem;
+    font-weight:600;
+}
+
+
+/* =========================================================
+   AUCUN NIVEAU
+   ========================================================= */
+
+.superieur-niveaux-empty{
+    grid-column:1 / -1;
+    padding:50px 25px;
+    text-align:center;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    box-shadow:0 5px 15px rgba(15,23,42,.07);
+}
+
+.superieur-niveaux-empty-icon{
+    margin-bottom:12px;
+    font-size:48px;
+}
+
+.superieur-niveaux-empty h3{
+    margin:0;
+    color:#374151;
+    font-size:1.2rem;
+    font-weight:700;
+}
+
+.superieur-niveaux-empty p{
+    margin:8px 0 0;
+    color:#6b7280;
+    font-size:.9rem;
+}
+
+
+/* =========================================================
+   BOUTON RETOUR
+   ========================================================= */
+
+.superieur-niveaux-back{
+    max-width:1100px;
+    margin:32px auto 0;
+}
+
+.superieur-niveaux-back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding:12px 20px;
+    color:#2563eb;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    text-decoration:none;
+    font-size:.95rem;
+    font-weight:600;
+    box-shadow:0 4px 12px rgba(15,23,42,.06);
+    transition:
+        background .25s ease,
+        color .25s ease,
+        box-shadow .25s ease,
+        transform .25s ease;
+}
+
+.superieur-niveaux-back-btn:hover{
+    color:#1d4ed8;
+    background:#eff6ff;
+    border-color:#bfdbfe;
+    box-shadow:0 8px 18px rgba(15,23,42,.1);
+    transform:translateY(-2px);
+}
+
+.superieur-niveaux-back-btn span{
+    font-size:1.1rem;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media(max-width:992px){
+
+    .superieur-niveaux-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+}
+
+
+@media(max-width:768px){
+
+    .superieur-niveaux-page{
+        padding:45px 16px 35px;
+    }
+
+    .superieur-niveaux-title{
+        font-size:1.9rem;
+    }
+
+    .superieur-niveaux-grid{
+        grid-template-columns:repeat(2,1fr);
+        gap:18px;
+    }
+
+    .superieur-niveau-card{
+        padding:25px 16px;
+    }
+
+}
+
+
+@media(max-width:480px){
+
+    .superieur-niveaux-title{
+        font-size:1.6rem;
+    }
+
+    .superieur-niveaux-subtitle{
+        font-size:.9rem;
+    }
+
+    .superieur-niveaux-grid{
+        grid-template-columns:1fr;
+        gap:16px;
+    }
+
+    .superieur-niveau-card{
+        padding:24px 18px;
+    }
+
+    .superieur-niveaux-back-btn{
+        width:100%;
+        justify-content:center;
+    }
+
+}

@@ -2,129 +2,98 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="superieur-niveaux-page">
 
+    {{-- HEADER --}}
+    <div class="superieur-niveaux-header">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
-
-        <h1 class="text-4xl font-extrabold text-gray-800">
-
+        <h1 class="superieur-niveaux-title">
             🎓 {{ $filiere->name }}
-
         </h1>
 
-
-        <p class="text-gray-500 mt-2">
-
+        <p class="superieur-niveaux-subtitle">
             Choisissez votre niveau d'étude.
-
         </p>
 
     </div>
 
 
-
-    <!-- NIVEAUX -->
-    <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-
+    {{-- NIVEAUX --}}
+    <div class="superieur-niveaux-grid">
 
         @forelse($niveaux as $niveau)
 
-
-        <a href="{{ route('vitrine.superieur.type_doc', [
+            <a href="{{ route('vitrine.superieur.type_doc', [
                 'domaineSlug' => $domaine->slug,
                 'filiereSlug' => $filiere->slug,
                 'niveauSlug' => $niveau->slug
             ]) }}"
-           
-           class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 hover:border-blue-500 hover:-translate-y-1">
+            class="superieur-niveau-card">
 
+                <div class="superieur-niveau-icon">
+                    🎓
+                </div>
 
-            <div class="text-5xl text-center group-hover:scale-110 transition">
+                <div class="superieur-niveau-content">
 
-                🎓
+                    <h3 class="superieur-niveau-name">
+                        {{ $niveau->name }}
+                    </h3>
 
-            </div>
+                    <p class="superieur-niveau-description">
+                        Accéder aux documents
+                    </p>
 
+                    @if(isset($niveau->documents_count))
 
+                        <p class="superieur-niveau-count">
+                            {{ $niveau->documents_count }} document(s)
+                        </p>
 
-            <div class="mt-5 text-center">
+                    @endif
 
+                </div>
 
-                <h3 class="font-bold text-gray-800 group-hover:text-blue-600">
-
-                    {{ $niveau->name }}
-
-                </h3>
-
-
-
-                <p class="text-sm text-gray-500 mt-2">
-
-                    Accéder aux documents
-
-                </p>
-
-
-
-                @if(isset($niveau->documents_count))
-
-                <p class="text-xs text-blue-500 mt-3">
-
-                    {{ $niveau->documents_count }} documents
-
-                </p>
-
-                @endif
-
-
-
-            </div>
-
-
-
-        </a>
-
+            </a>
 
         @empty
 
+            <div class="superieur-niveaux-empty">
 
-        <div class="col-span-full bg-white rounded-xl shadow p-10 text-center">
+                <div class="superieur-niveaux-empty-icon">
+                    📂
+                </div>
 
-            <div class="text-5xl mb-3">
-                📂
+                <h3>
+                    Aucun niveau disponible
+                </h3>
+
+                <p>
+                    Aucun niveau n'est enregistré pour cette filière.
+                </p>
+
             </div>
 
-            <h3 class="text-xl font-bold text-gray-700">
-                Aucun niveau disponible
-            </h3>
-
-            <p class="text-gray-500 mt-2">
-                Aucun niveau n'est enregistré pour cette filière.
-            </p>
-
-        </div>
-
-
         @endforelse
-
 
     </div>
 
 
+    {{-- RETOUR --}}
+    <div class="superieur-niveaux-back">
+
+        <a href="{{ route('vitrine.superieur.filieres', [
+            'domaineSlug' => $domaine->slug
+        ]) }}"
+        class="superieur-niveaux-back-btn">
+
+            <span>←</span>
+            Retour aux filières
+
+        </a>
+
+    </div>
+
 </div>
 
-
-<!-- BOUTON RETOUR -->
-<div class="max-w-6xl mx-auto mb-8">
-
-    <a href="{{ route('vitrine.superieur.domaines') }}"
-    class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-        ← Retour aux domaines
-
-    </a>
-
-</div>
 @endsection

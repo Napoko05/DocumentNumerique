@@ -12,7 +12,6 @@ return new class extends Migration
 
             $table->id();
 
-
             /*
             |--------------------------------------------------------------------------
             | FORMATION
@@ -20,7 +19,7 @@ return new class extends Migration
             |
             | Secondaire
             | Professionnel direct :
-            | ENSP / ENEP / ATE
+            | ENEP / ENSP / ATE
             |
             */
 
@@ -47,12 +46,34 @@ return new class extends Migration
 
             /*
             |--------------------------------------------------------------------------
+            | SECTION
+            |--------------------------------------------------------------------------
+            |
+            | Utilisée principalement pour le secondaire.
+            |
+            | Exemples :
+            | - general
+            | - technique
+            |
+            | Peut rester NULL pour :
+            | - supérieur
+            | - professionnel
+            |
+            */
+
+            $table->string('section')
+                ->nullable();
+
+
+            /*
+            |--------------------------------------------------------------------------
             | SPECIALITE
             |--------------------------------------------------------------------------
             |
-            | ENS
-            | IDS
-            | UIT
+            | Professionnel :
+            | - ENS
+            | - IDS
+            | - UIT
             |
             */
 
@@ -93,6 +114,8 @@ return new class extends Migration
 
             $table->index('specialite_id');
 
+            $table->index('section');
+
             $table->index('is_active');
 
 
@@ -100,6 +123,9 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             | UNICITÉ DU NIVEAU
             |--------------------------------------------------------------------------
+            |
+            | Un niveau est unique dans son contexte.
+            |
             */
 
             $table->unique(
@@ -107,12 +133,14 @@ return new class extends Migration
                     'formation_id',
                     'filiere_id',
                     'specialite_id',
+                    'section',
                     'slug'
                 ],
                 'levels_context_unique'
             );
         });
     }
+
 
     public function down(): void
     {

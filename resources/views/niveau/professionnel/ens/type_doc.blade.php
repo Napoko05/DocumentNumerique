@@ -2,156 +2,295 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="formation-page">
 
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
+    <section class="formation-hero">
 
+        <div class="container">
 
-        <h1 class="text-3xl font-extrabold text-gray-800">
+            <span class="formation-badge">
+                <i class="bi bi-folder-fill"></i>
+                TYPES DE DOCUMENTS
+            </span>
 
-            📚 Types de documents
+            <h1>
+                📚 {{ $module->name }}
+            </h1>
 
-        </h1>
-
-
-        <p class="text-gray-600 mt-3">
-
-            <span class="font-semibold">
+            <p>
+                {{ $formation->name }}
+                •
+                {{ $programme->name }}
+                •
                 {{ $specialite->name }}
-            </span>
-
-            •
-
-            <span>
+                •
                 {{ $niveau->name }}
-            </span>
+            </p>
 
-        </p>
+        </div>
 
-
-
-        <p class="text-gray-500 mt-2">
-
-            Choisissez le type de document.
-
-        </p>
+    </section>
 
 
-    </div>
+    {{-- =========================================================
+         CONTENU
+    ========================================================== --}}
 
+    <section class="formation-content">
 
+        <div class="container">
 
+            {{-- =================================================
+                 FIL D'ARIANE
+            ================================================== --}}
 
-    <!-- TYPES DOCUMENTS -->
+            <div class="formation-breadcrumb">
 
-    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <span>
+                    {{ $formation->name }}
+                </span>
 
+                <i class="bi bi-chevron-right"></i>
 
+                <span>
+                    {{ $programme->name }}
+                </span>
 
-        @foreach($types as $type)
+                <i class="bi bi-chevron-right"></i>
 
+                <span>
+                    {{ $specialite->name }}
+                </span>
 
+                <i class="bi bi-chevron-right"></i>
 
-        <a href="{{ route('vitrine.ens.documents',[
+                <span>
+                    {{ $niveau->name }}
+                </span>
 
-                'formationSlug'=>$formation->slug,
+                <i class="bi bi-chevron-right"></i>
 
-                'programmeSlug'=>$programme->slug,
-
-                'specialiteSlug'=>$specialite->slug,
-
-                'niveauSlug'=>$niveau->slug,
-                'formation'=>$formation->slug,
-
-                'programme'=>$programme->slug,
-
-                'specialite'=>$specialite->slug,
-
-                'niveau'=>$niveau->slug,
-
-                'typeSlug'=>$type->slug
-
-            ]) }}"
-
-
-            class="bg-white rounded-2xl shadow-md hover:shadow-xl
-        transition-all duration-300
-        p-6 border hover:border-green-500 text-center">
-
-
-
-            <div class="text-5xl">
-
-                @switch($type->slug)
-
-                @case('cours')
-                📚
-                @break
-
-                @case('td')
-                📝
-                @break
-
-                @case('tp')
-                🧪
-                @break
-
-                @case('examens')
-                📄
-                @break
-
-                @case('corriges')
-                ✅
-                @break
-
-                @case('memoires')
-                📕
-
-                @break
-
-                @default
-                📁
-
-                @endswitch
-
+                <strong>
+                    {{ $module->name }}
+                </strong>
 
             </div>
 
 
+            {{-- =================================================
+                 EN-TÊTE
+            ================================================== --}}
 
-            <div class="mt-4 font-bold text-gray-800">
+            <div class="section-heading">
 
-                {{ $type->name }}
+                <div>
+
+                    <span class="section-kicker">
+                        DOCUMENTS
+                    </span>
+
+                    <h2>
+                        Choisissez un type de document
+                    </h2>
+
+                </div>
+
+                <span class="class-count">
+
+                    {{ $types->count() }}
+
+                    type{{ $types->count() > 1 ? 's' : '' }}
+
+                </span>
 
             </div>
 
-        </a>
 
-        @endforeach
+            {{-- =================================================
+                 TYPES DE DOCUMENTS
+            ================================================== --}}
 
-    </div>
+            @if($types->isNotEmpty())
+
+                <div class="classes-grid">
+
+                    @foreach($types as $type)
+
+                        <a
+                            href="{{ route('vitrine.professionnel.ens.documents', [
+                                'formationSlug' => $formation->slug,
+                                'programmeSlug' => $programme->slug,
+                                'specialiteSlug' => $specialite->slug,
+                                'niveauSlug' => $niveau->slug,
+                                'moduleSlug' => $module->slug,
+                                'typeSlug' => $type->slug
+                            ]) }}"
+                            class="class-card"
+                        >
+
+                            {{-- CARD TOP --}}
+
+                            <div class="class-card-top">
+
+                                <div class="class-icon">
+
+                                    @switch($type->slug)
+
+                                        @case('cours')
+                                            📚
+                                            @break
+
+                                        @case('exercices')
+                                            📝
+                                            @break
+
+                                        @case('corriges')
+                                            ✅
+                                            @break
+
+                                        @case('sujets-dexamen')
+                                            📄
+                                            @break
+
+                                        @case('annales')
+                                            📚
+                                            @break
+
+                                        @case('travaux-pratiques')
+                                            🧪
+                                            @break
+
+                                        @case('rapports')
+                                            📘
+                                            @break
+
+                                        @case('memoires')
+                                            📕
+                                            @break
+
+                                        @case('theses')
+                                            🎓
+                                            @break
+
+                                        @case('articles-scientifiques')
+                                            📰
+                                            @break
+
+                                        @case('fiches-de-revision')
+                                            📝
+                                            @break
+
+                                        @case('concours')
+                                            🏆
+                                            @break
+
+                                        @default
+                                            📁
+
+                                    @endswitch
+
+                                </div>
+
+                                <div class="class-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+
+                            </div>
+
+
+                            {{-- CARD BODY --}}
+
+                            <div class="class-card-body">
+
+                                <h3>
+                                    {{ $type->name }}
+                                </h3>
+
+                                <p>
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    Documents de {{ $module->name }}
+                                </p>
+
+                            </div>
+
+
+                            {{-- CARD FOOTER --}}
+
+                            <div class="class-card-footer">
+
+                                <span>
+                                    Voir les documents
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                {{-- =================================================
+                     EMPTY STATE
+                ================================================== --}}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun type de document disponible
+                    </h3>
+
+                    <p>
+                        Aucun document publié n'est actuellement
+                        disponible pour le module
+                        <strong>{{ $module->name }}</strong>.
+                    </p>
+
+                </div>
+
+            @endif
+
+
+            {{-- =================================================
+                 RETOUR AUX MODULES
+            ================================================== --}}
+
+            <div class="doc-type-back-container">
+
+                <a
+                    href="{{ route('vitrine.professionnel.ens.modules', [
+                        'formationSlug' => $formation->slug,
+                        'programmeSlug' => $programme->slug,
+                        'specialiteSlug' => $specialite->slug,
+                        'niveauSlug' => $niveau->slug
+                    ]) }}"
+                    class="doc-type-back-btn"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Retour aux modules
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
 </div>
-<!-- BOUTON RETOUR -->
-<div class="max-w-6xl mx-auto mb-8">
 
-    <a href="{{ route('vitrine.ens.niveaux', [
-        'formation'=>$formation->slug,
-
-                'programmeSlug'=>$programme->slug,
-
-                'specialiteSlug'=>$specialite->slug,
-
-                'niveauSlug'=>$niveau->slug,
-
-        
-    ]) }}"
-    class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-        ← Retour
-
-    </a>
-
-</div>
 @endsection

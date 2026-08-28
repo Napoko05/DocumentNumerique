@@ -2,187 +2,248 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="formation-page">
 
+    <section class="formation-hero">
+        <div class="container">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
+            <span class="formation-badge">
+                <i class="bi bi-file-earmark-text"></i>
+                DOCUMENTS
+            </span>
 
+            <h1>
+                {{ $documentType->name }}
+            </h1>
 
-        <h1 class="text-3xl font-extrabold text-gray-800">
-
-            📚 Documents {{ $formation->name }}
-
-        </h1>
-
-
-        <p class="text-gray-600 mt-3">
-
-
-            <span class="font-semibold">
+            <p>
+                {{ $formation->name }}
+                •
                 {{ $programme->name }}
-            </span>
-
-
-            •
-
-
-            <span class="font-semibold">
+                •
                 {{ $specialite->name }}
-            </span>
-
-
-            •
-
-
-            <span>
+                •
                 {{ $niveau->name }}
-            </span>
-
-
-        </p>
-
-
-        <p class="text-gray-500 mt-2">
-
-            Choisissez le type de document.
-
-        </p>
-
-
-    </div>
-
-
-
-
-
-    <!-- TYPES DOCUMENTS -->
-
-    <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-
-
-        @forelse($documents as $document)
-
-
-        <a href="{{ route('vitrine.ens.documents',[
-
-                'formation'=>$formation->slug,
-
-                'program'=>$program->slug,
-
-                'specialite'=>$specialite->slug,
-
-                'niveau'=>$niveau->slug,
-
-                'type'=>$type->slug
-
-            ]) }}"
-
-
-            class="bg-white rounded-2xl shadow-md hover:shadow-xl
-        transition-all duration-300
-        p-6 border hover:border-green-500 text-center">
-
-
-
-            <div class="text-5xl">
-
-
-                @switch($type->slug)
-
-
-                @case('cours')
-                📚
-                @break
-
-
-                @case('td')
-                📝
-                @break
-
-
-                @case('tp')
-                🧪
-                @break
-
-
-                @case('examens')
-                📄
-                @break
-
-
-                @case('corriges')
-                ✅
-                @break
-
-
-                @case('memoires')
-                📕
-
-                @break
-
-
-                @case('rapports')
-                📘
-
-                @break
-
-
-                @case('sujets')
-                🎯
-
-                @break
-
-
-                @default
-
-                📁
-
-                @endswitch
-            </div>
-
-            <div class="mt-4 font-bold text-gray-800">
-
-                {{ $type->name }}
-
-            </div>
-
-            <p class="text-sm text-gray-500 mt-2">
-
-                Accéder aux documents
-
+                •
+                {{ $module->name }}
             </p>
-        </a>
-        @empty
-        <div class="col-span-full text-center text-gray-500">
 
-            Aucun type de document disponible.
+        </div>
+    </section>
+
+
+    <section class="formation-content">
+
+        <div class="container">
+
+            {{-- FIL D'ARIANE --}}
+
+            <div class="formation-breadcrumb">
+
+                <span>{{ $formation->name }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>{{ $programme->name }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>{{ $specialite->name }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>{{ $niveau->name }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <span>{{ $module->name }}</span>
+
+                <i class="bi bi-chevron-right"></i>
+
+                <strong>{{ $documentType->name }}</strong>
+
+            </div>
+
+
+            {{-- EN-TÊTE --}}
+
+            <div class="section-heading">
+
+                <div>
+
+                    <span class="section-kicker">
+                        DOCUMENTS PÉDAGOGIQUES
+                    </span>
+
+                    <h2>
+                        {{ $documentType->name }}
+                    </h2>
+
+                    <p class="section-description">
+                        Documents disponibles pour le module
+                        <strong>{{ $module->name }}</strong>.
+                    </p>
+
+                </div>
+
+                <span class="class-count">
+
+                    {{ $documents->total() }}
+
+                    document{{ $documents->total() > 1 ? 's' : '' }}
+
+                </span>
+
+            </div>
+
+
+            {{-- DOCUMENTS --}}
+
+            @if($documents->isNotEmpty())
+
+                <div class="classes-grid">
+
+                    @foreach($documents as $document)
+
+                        <a
+                            href="{{ route('vitrine.professionnel.ens.show', [
+                                'programmeSlug' => $programme->slug,
+                                'specialiteSlug' => $specialite->slug,
+                                'niveauSlug' => $niveau->slug,
+                                'moduleSlug' => $module->slug,
+                                'typeSlug' => $documentType->slug,
+                                'documentSlug' => $document->slug
+                            ]) }}"
+                            class="class-card"
+                        >
+
+                            <div class="class-card-top">
+
+                                <div class="class-icon">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </div>
+
+                                <div class="class-arrow">
+                                    <i class="bi bi-arrow-up-right"></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="class-card-body">
+
+                                <h3>
+                                    {{ $document->title }}
+                                </h3>
+
+                                @if($document->description)
+
+                                    <p>
+                                        {{ \Illuminate\Support\Str::limit(
+                                            $document->description,
+                                            120
+                                        ) }}
+                                    </p>
+
+                                @else
+
+                                    <p>
+                                        <i class="bi bi-book"></i>
+                                        {{ $module->name }}
+                                    </p>
+
+                                @endif
+
+                            </div>
+
+
+                            <div class="class-card-footer">
+
+                                <span>
+
+                                    <i class="bi bi-file-earmark-pdf"></i>
+
+                                    {{ strtoupper($document->file_extension ?? 'PDF') }}
+
+                                    <span class="mx-1">•</span>
+
+                                    <i class="bi bi-eye"></i>
+
+                                    {{ $document->views }}
+
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    @endforeach
+
+                </div>
+
+
+                {{-- PAGINATION --}}
+
+                <div class="documents-pagination">
+
+                    {{ $documents->links() }}
+
+                </div>
+
+            @else
+
+                {{-- EMPTY STATE --}}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun document disponible
+                    </h3>
+
+                    <p>
+                        Aucun document publié n'est actuellement
+                        disponible pour le module
+                        <strong>{{ $module->name }}</strong>
+                        dans cette catégorie.
+                    </p>
+
+                </div>
+
+            @endif
+
+
+            {{-- RETOUR AUX TYPES --}}
+
+            <div class="doc-type-back-container">
+
+                <a
+                    href="{{ route('vitrine.professionnel.ens.type_doc', [
+                        'formationSlug' => $formation->slug,
+                        'programmeSlug' => $programme->slug,
+                        'specialiteSlug' => $specialite->slug,
+                        'niveauSlug' => $niveau->slug,
+                        'moduleSlug' => $module->slug
+                    ]) }}"
+                    class="doc-type-back-btn"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    Retour aux types de documents
+
+                </a>
+
+            </div>
 
         </div>
 
-        @endforelse
-
-    </div>
-</div>
-<!-- BOUTON RETOUR -->
-<div class="max-w-6xl mx-auto mb-8">
-
-    <a href="{{ route('vitrine.ens.type_doc', [
-      'formation'=>$formation->slug,
-
-                'programmeSlug'=>$programme->slug,
-
-                'specialiteSlug'=>$specialite->slug,
-
-                'niveauSlug'=>$niveau->slug,
-
-                'type'=>$type->slug
-    ]) }}"
-        class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-        ← Retour
-
-    </a>
+    </section>
 
 </div>
 

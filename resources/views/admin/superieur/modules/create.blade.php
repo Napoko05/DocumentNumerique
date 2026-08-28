@@ -13,37 +13,29 @@
             <div class="card shadow-sm">
 
                 <div class="card-header">
-
                     <h5 class="mb-0">
-
                         Ajouter un module
-
                     </h5>
-
                 </div>
-
 
                 <div class="card-body">
 
                     <form
-                        action="{{ route(
-                            'admin.superieur.modules.store'
-                        ) }}"
+                        action="{{ route('admin.superieur.modules.store') }}"
                         method="POST"
                     >
 
                         @csrf
 
-
                         {{-- DOMAINE --}}
                         <div class="mb-3">
 
-                            <label class="form-label">
-
+                            <label
+                                for="academic_domain_id"
+                                class="form-label"
+                            >
                                 Domaine académique
-
                             </label>
-
 
                             <select
                                 id="academic_domain_id"
@@ -51,24 +43,15 @@
                             >
 
                                 <option value="">
-
                                     Sélectionner un domaine
-
                                 </option>
 
-
-                                @foreach(
-                                    $domaines
-                                    as
-                                    $domaine
-                                )
+                                @foreach($domaines as $domaine)
 
                                     <option
                                         value="{{ $domaine->id }}"
                                     >
-
                                         {{ $domaine->name }}
-
                                     </option>
 
                                 @endforeach
@@ -78,15 +61,15 @@
                         </div>
 
 
-                        {{-- FILIERE --}}
+                        {{-- FILIÈRE --}}
                         <div class="mb-3">
 
-                            <label class="form-label">
-
+                            <label
+                                for="filiere_id"
+                                class="form-label"
+                            >
                                 Filière
-
                             </label>
-
 
                             <select
                                 id="filiere_id"
@@ -96,37 +79,21 @@
                             >
 
                                 <option value="">
-
                                     Sélectionner une filière
-
                                 </option>
 
+                                @foreach($domaines as $domaine)
 
-                                @foreach(
-                                    $domaines
-                                    as
-                                    $domaine
-                                )
-
-                                    @foreach(
-                                        $domaine->filieres
-                                        as
-                                        $filiere
-                                    )
+                                    @foreach($domaine->filieres as $filiere)
 
                                         <option
                                             value="{{ $filiere->id }}"
                                             data-domaine="{{ $domaine->id }}"
-                                            {{ old(
-                                                'filiere_id'
-                                            ) == $filiere->id
-                                                ? 'selected'
-                                                : ''
-                                            }}
+                                            @selected(
+                                                old('filiere_id') == $filiere->id
+                                            )
                                         >
-
                                             {{ $filiere->name }}
-
                                         </option>
 
                                     @endforeach
@@ -135,15 +102,10 @@
 
                             </select>
 
-
                             @error('filiere_id')
-
                                 <div class="text-danger">
-
                                     {{ $message }}
-
                                 </div>
-
                             @enderror
 
                         </div>
@@ -152,12 +114,12 @@
                         {{-- NIVEAU --}}
                         <div class="mb-3">
 
-                            <label class="form-label">
-
+                            <label
+                                for="level_id"
+                                class="form-label"
+                            >
                                 Niveau
-
                             </label>
-
 
                             <select
                                 id="level_id"
@@ -167,43 +129,23 @@
                             >
 
                                 <option value="">
-
                                     Sélectionner un niveau
-
                                 </option>
 
+                                @foreach($domaines as $domaine)
 
-                                @foreach(
-                                    $domaines
-                                    as
-                                    $domaine
-                                )
+                                    @foreach($domaine->filieres as $filiere)
 
-                                    @foreach(
-                                        $domaine->filieres
-                                        as
-                                        $filiere
-                                    )
-
-                                        @foreach(
-                                            $filiere->levels
-                                            as
-                                            $level
-                                        )
+                                        @foreach($filiere->levels as $level)
 
                                             <option
                                                 value="{{ $level->id }}"
                                                 data-filiere="{{ $filiere->id }}"
-                                                {{ old(
-                                                    'level_id'
-                                                ) == $level->id
-                                                    ? 'selected'
-                                                    : ''
-                                                }}
+                                                @selected(
+                                                    old('level_id') == $level->id
+                                                )
                                             >
-
                                                 {{ $level->name }}
-
                                             </option>
 
                                         @endforeach
@@ -214,15 +156,10 @@
 
                             </select>
 
-
                             @error('level_id')
-
                                 <div class="text-danger">
-
                                     {{ $message }}
-
                                 </div>
-
                             @enderror
 
                         </div>
@@ -231,14 +168,15 @@
                         {{-- MODULE --}}
                         <div class="mb-3">
 
-                            <label class="form-label">
-
+                            <label
+                                for="name"
+                                class="form-label"
+                            >
                                 Nom du module
-
                             </label>
 
-
                             <input
+                                id="name"
                                 type="text"
                                 name="name"
                                 class="form-control"
@@ -247,40 +185,43 @@
                                 required
                             >
 
-
                             @error('name')
-
                                 <div class="text-danger">
-
                                     {{ $message }}
-
                                 </div>
-
                             @enderror
 
                         </div>
 
 
-                        {{-- ORDRE --}}
+                        {{-- POSITION --}}
                         <div class="mb-4">
 
-                            <label class="form-label">
-
+                            <label
+                                for="position"
+                                class="form-label"
+                            >
                                 Ordre d'affichage
-
                             </label>
 
-
                             <input
+                                id="position"
                                 type="number"
-                                name="order"
+                                name="position"
                                 min="0"
                                 class="form-control"
-                                value="{{ old(
-                                    'order',
-                                    0
-                                ) }}"
+                                value="{{ old('position', 0) }}"
                             >
+
+                            @error('position')
+                                <div class="text-danger">
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
+                            <small class="text-muted">
+                                Définit l'ordre d'affichage du module dans le niveau.
+                            </small>
 
                         </div>
 
@@ -292,21 +233,14 @@
                                 type="submit"
                                 class="btn btn-primary"
                             >
-
                                 Enregistrer
-
                             </button>
 
-
                             <a
-                                href="{{ route(
-                                    'admin.superieur.modules.index'
-                                ) }}"
+                                href="{{ route('admin.superieur.modules.index') }}"
                                 class="btn btn-secondary"
                             >
-
                                 Annuler
-
                             </a>
 
                         </div>
@@ -326,97 +260,90 @@
 
 <script>
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+document.addEventListener('DOMContentLoaded', function () {
 
-        const domaine = document.getElementById(
-            'academic_domain_id'
-        );
+    const domaine = document.getElementById('academic_domain_id');
+    const filiere = document.getElementById('filiere_id');
+    const level = document.getElementById('level_id');
 
-        const filiere = document.getElementById(
-            'filiere_id'
-        );
+    function filtrerFilieres() {
 
-        const level = document.getElementById(
-            'level_id'
-        );
+        const domaineId = domaine.value;
 
+        Array.from(filiere.options).forEach(function (option) {
 
-        function filtrerFilieres()
-        {
-            const domaineId = domaine.value;
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
 
-            Array.from(
-                filiere.options
-            ).forEach(
-                option => {
+            option.hidden =
+                option.dataset.domaine !== domaineId;
 
-                    if(
-                        !option.value
-                    ){
-                        option.hidden = false;
+        });
 
-                        return;
-                    }
+        filiere.value = '';
+        level.value = '';
 
-                    option.hidden =
-                        option.dataset.domaine
-                        !== domaineId;
+        Array.from(level.options).forEach(function (option) {
 
-                }
-            );
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
 
-            filiere.value = '';
+            option.hidden = true;
 
-            level.value = '';
-
-        }
-
-
-        function filtrerNiveaux()
-        {
-            const filiereId =
-                filiere.value;
-
-            Array.from(
-                level.options
-            ).forEach(
-                option => {
-
-                    if(
-                        !option.value
-                    ){
-                        option.hidden = false;
-
-                        return;
-                    }
-
-                    option.hidden =
-                        option.dataset.filiere
-                        !== filiereId;
-
-                }
-            );
-
-            level.value = '';
-
-        }
-
-
-        domaine.addEventListener(
-            'change',
-            filtrerFilieres
-        );
-
-
-        filiere.addEventListener(
-            'change',
-            filtrerNiveaux
-        );
+        });
 
     }
-);
+
+
+    function filtrerNiveaux() {
+
+        const filiereId = filiere.value;
+
+        Array.from(level.options).forEach(function (option) {
+
+            if (!option.value) {
+                option.hidden = false;
+                return;
+            }
+
+            option.hidden =
+                option.dataset.filiere !== filiereId;
+
+        });
+
+        level.value = '';
+
+    }
+
+
+    domaine.addEventListener(
+        'change',
+        filtrerFilieres
+    );
+
+
+    filiere.addEventListener(
+        'change',
+        filtrerNiveaux
+    );
+
+
+    /*
+     * Initialisation après validation
+     */
+    if (domaine.value) {
+        filtrerFilieres();
+    }
+
+    if (filiere.value) {
+        filtrerNiveaux();
+    }
+
+});
 
 </script>
 

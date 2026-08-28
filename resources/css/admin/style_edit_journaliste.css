@@ -1,0 +1,586 @@
+/* =========================================================
+   ADMIN — MODIFICATION JOURNALISTE
+   ========================================================= */
+
+:root{
+    --admin-primary:#0b2a4a;
+    --admin-primary-dark:#081f36;
+    --admin-primary-light:#eaf2f9;
+    --admin-accent:#f58220;
+    --admin-success:#198754;
+    --admin-danger:#dc3545;
+
+    --admin-bg:#f5f7fa;
+    --admin-card:#ffffff;
+    --admin-border:#e1e6ec;
+    --admin-border-dark:#cbd3dc;
+
+    --admin-text:#263238;
+    --admin-text-light:#687581;
+    --admin-muted:#8a96a3;
+
+    --admin-radius:14px;
+    --admin-radius-sm:9px;
+
+    --admin-shadow:0 8px 30px rgba(11,42,74,.07);
+    --admin-shadow-hover:0 12px 35px rgba(11,42,74,.11);
+
+    --admin-transition:.22s ease;
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.admin-page{
+    width:100%;
+    max-width:1280px;
+    margin:0 auto;
+    padding:32px 34px 60px;
+    color:var(--admin-text);
+}
+
+
+/* =========================================================
+   EN-TÊTE
+   ========================================================= */
+
+.admin-page-header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:30px;
+    margin-bottom:30px;
+    padding-bottom:25px;
+    border-bottom:1px solid var(--admin-border);
+}
+
+.admin-page-header > div{
+    min-width:0;
+}
+
+.admin-page-kicker{
+    display:inline-flex;
+    align-items:center;
+    margin-bottom:8px;
+    color:var(--admin-accent);
+    font-size:11px;
+    font-weight:800;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+}
+
+.admin-page-header h1{
+    margin:0;
+    color:var(--admin-primary);
+    font-size:30px;
+    line-height:1.2;
+    font-weight:750;
+    letter-spacing:-.4px;
+}
+
+.admin-page-header p{
+    margin:9px 0 0;
+    color:var(--admin-text-light);
+    font-size:14px;
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
+
+.profile-section{
+    position:relative;
+    margin-bottom:26px;
+    overflow:hidden;
+    background:var(--admin-card);
+    border:1px solid var(--admin-border);
+    border-radius:var(--admin-radius);
+    box-shadow:var(--admin-shadow);
+    transition:
+        box-shadow var(--admin-transition),
+        transform var(--admin-transition);
+}
+
+.profile-section:hover{
+    box-shadow:var(--admin-shadow-hover);
+}
+
+
+/* =========================================================
+   EN-TÊTE DE FORMULAIRE
+   ========================================================= */
+
+.profile-form-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    min-height:105px;
+    padding:25px 30px;
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #f9fbfd 100%
+        );
+    border-bottom:1px solid var(--admin-border);
+}
+
+.profile-form-header > div{
+    position:relative;
+    padding-left:17px;
+}
+
+.profile-form-header > div::before{
+    content:"";
+    position:absolute;
+    top:2px;
+    bottom:2px;
+    left:0;
+    width:4px;
+    border-radius:4px;
+    background:var(--admin-accent);
+}
+
+.profile-section-label{
+    display:block;
+    margin-bottom:6px;
+    color:var(--admin-accent);
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+
+.profile-form-header h3{
+    margin:0;
+    color:var(--admin-primary);
+    font-size:19px;
+    line-height:1.35;
+    font-weight:700;
+}
+
+.profile-form-header p{
+    margin:6px 0 0;
+    color:var(--admin-text-light);
+    font-size:13px;
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   FORMULAIRE
+   ========================================================= */
+
+.profile-form{
+    padding:30px;
+}
+
+.profile-form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:23px 25px;
+}
+
+.profile-form-grid-single{
+    grid-template-columns:minmax(0,700px);
+}
+
+
+/* =========================================================
+   CHAMP
+   ========================================================= */
+
+.profile-field{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+.profile-field label{
+    display:block;
+    margin-bottom:8px;
+    color:#35424e;
+    font-size:13px;
+    font-weight:650;
+    line-height:1.4;
+}
+
+.profile-field label .required{
+    margin-left:2px;
+    color:var(--admin-danger);
+    font-weight:800;
+}
+
+
+/* =========================================================
+   INPUTS / SELECT
+   ========================================================= */
+
+.profile-field input,
+.profile-field select{
+    width:100%;
+    min-height:46px;
+    box-sizing:border-box;
+
+    padding:11px 13px;
+
+    color:var(--admin-text);
+    background:#fff;
+
+    border:1px solid var(--admin-border-dark);
+    border-radius:var(--admin-radius-sm);
+
+    outline:none;
+
+    font-family:inherit;
+    font-size:14px;
+
+    transition:
+        border-color var(--admin-transition),
+        box-shadow var(--admin-transition),
+        background var(--admin-transition);
+}
+
+.profile-field input::placeholder{
+    color:#a5afb8;
+}
+
+.profile-field input:hover,
+.profile-field select:hover{
+    border-color:#aeb9c4;
+}
+
+.profile-field input:focus,
+.profile-field select:focus{
+    border-color:var(--admin-primary);
+    box-shadow:
+        0 0 0 3px rgba(11,42,74,.10);
+    background:#fff;
+}
+
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.profile-field select{
+    cursor:pointer;
+    appearance:auto;
+}
+
+
+/* =========================================================
+   CHAMPS READONLY
+   ========================================================= */
+
+.profile-input-readonly{
+    color:#65727e !important;
+    background:#f1f4f7 !important;
+    border-color:#dce2e8 !important;
+    cursor:not-allowed;
+}
+
+.profile-input-readonly:focus{
+    box-shadow:none !important;
+    border-color:#dce2e8 !important;
+}
+
+
+/* =========================================================
+   AIDE
+   ========================================================= */
+
+.profile-help{
+    display:block;
+    margin-top:7px;
+    color:var(--admin-muted);
+    font-size:11.5px;
+    line-height:1.45;
+}
+
+
+/* =========================================================
+   ERREURS
+   ========================================================= */
+
+.profile-field input.is-invalid,
+.profile-field select.is-invalid{
+    border-color:var(--admin-danger);
+    background:#fffafa;
+}
+
+.profile-field input.is-invalid:focus,
+.profile-field select.is-invalid:focus{
+    border-color:var(--admin-danger);
+    box-shadow:
+        0 0 0 3px rgba(220,53,69,.10);
+}
+
+.field-error{
+    display:block;
+    margin-top:7px;
+    color:var(--admin-danger);
+    font-size:11.5px;
+    font-weight:550;
+    line-height:1.45;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.profile-form-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:11px;
+
+    margin-top:30px;
+    padding-top:22px;
+
+    border-top:1px solid var(--admin-border);
+}
+
+
+/* =========================================================
+   BOUTONS
+   ========================================================= */
+
+.profile-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    min-height:43px;
+    padding:10px 18px;
+
+    border:1px solid transparent;
+    border-radius:var(--admin-radius-sm);
+
+    font-family:inherit;
+    font-size:13px;
+    font-weight:650;
+    line-height:1;
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:
+        background var(--admin-transition),
+        border-color var(--admin-transition),
+        color var(--admin-transition),
+        box-shadow var(--admin-transition),
+        transform var(--admin-transition);
+}
+
+.profile-btn:hover{
+    transform:translateY(-1px);
+}
+
+.profile-btn:active{
+    transform:translateY(0);
+}
+
+
+/* =========================================================
+   BOUTON PRINCIPAL
+   ========================================================= */
+
+.profile-btn-primary{
+    color:#fff;
+    background:var(--admin-primary);
+    border-color:var(--admin-primary);
+
+    box-shadow:0 4px 12px rgba(11,42,74,.16);
+}
+
+.profile-btn-primary:hover{
+    color:#fff;
+    background:var(--admin-primary-dark);
+    border-color:var(--admin-primary-dark);
+    box-shadow:0 6px 16px rgba(11,42,74,.22);
+}
+
+
+/* =========================================================
+   BOUTON SECONDAIRE
+   ========================================================= */
+
+.profile-btn-secondary{
+    color:#4e5c68;
+    background:#fff;
+    border-color:var(--admin-border-dark);
+}
+
+.profile-btn-secondary:hover{
+    color:var(--admin-primary);
+    background:#f7f9fb;
+    border-color:#aeb9c4;
+}
+
+
+/* =========================================================
+   SECTION MOT DE PASSE
+   ========================================================= */
+
+.profile-section:last-child{
+    margin-bottom:0;
+}
+
+.profile-section:last-child .profile-form-header{
+    background:
+        linear-gradient(
+            135deg,
+            #fffdf9 0%,
+            #ffffff 100%
+        );
+}
+
+.profile-section:last-child .profile-form-header > div::before{
+    background:var(--admin-accent);
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+   ========================================================= */
+
+.profile-btn:focus-visible,
+.profile-field input:focus-visible,
+.profile-field select:focus-visible{
+    outline:3px solid rgba(245,130,32,.22);
+    outline-offset:2px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLETTE
+   ========================================================= */
+
+@media (max-width:900px){
+
+    .admin-page{
+        padding:26px 22px 45px;
+    }
+
+    .admin-page-header{
+        align-items:flex-start;
+        flex-direction:column;
+        gap:18px;
+    }
+
+    .profile-form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .profile-form-grid-single{
+        grid-template-columns:1fr;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width:600px){
+
+    .admin-page{
+        padding:20px 14px 35px;
+    }
+
+    .admin-page-header{
+        margin-bottom:20px;
+        padding-bottom:20px;
+    }
+
+    .admin-page-header h1{
+        font-size:24px;
+    }
+
+    .admin-page-header p{
+        font-size:13px;
+    }
+
+    .admin-page-header .profile-btn{
+        width:100%;
+    }
+
+    .profile-section{
+        margin-bottom:18px;
+        border-radius:11px;
+    }
+
+    .profile-form-header{
+        min-height:auto;
+        padding:21px 20px;
+    }
+
+    .profile-form-header h3{
+        font-size:17px;
+    }
+
+    .profile-form-header p{
+        font-size:12.5px;
+    }
+
+    .profile-form{
+        padding:20px;
+    }
+
+    .profile-form-grid{
+        gap:18px;
+    }
+
+    .profile-form-actions{
+        flex-direction:column-reverse;
+        align-items:stretch;
+        margin-top:24px;
+        padding-top:18px;
+    }
+
+    .profile-form-actions .profile-btn{
+        width:100%;
+    }
+
+}
+
+
+/* =========================================================
+   PETITS ÉCRANS
+   ========================================================= */
+
+@media (max-width:400px){
+
+    .admin-page{
+        padding-left:10px;
+        padding-right:10px;
+    }
+
+    .profile-form{
+        padding:17px;
+    }
+
+    .profile-form-header{
+        padding:18px;
+    }
+
+    .profile-field input,
+    .profile-field select{
+        min-height:44px;
+        font-size:13px;
+    }
+
+    .profile-btn{
+        min-height:42px;
+        font-size:12.5px;
+    }
+
+}

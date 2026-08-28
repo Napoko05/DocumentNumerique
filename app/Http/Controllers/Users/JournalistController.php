@@ -11,17 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class JournalistController extends Controller
 {
-    /**
-     * --------------------------------------------------------------------------
-     * CONSTRUCTEUR
-     * --------------------------------------------------------------------------
-     *
-     * Protection supplémentaire des actions du journaliste.
-     *
-     * Les routes possèdent déjà ces middlewares, mais les conserver ici
-     * permet de protéger le contrôleur même si une route est modifiée
-     * ultérieurement.
-     */
+    
     public function __construct()
     {
         $this->middleware([
@@ -41,18 +31,6 @@ class JournalistController extends Controller
         return Auth::guard('staff')->user();
     }
 
-
-    /**
-     * --------------------------------------------------------------------------
-     * DOCUMENTS DU JOURNALISTE
-     * --------------------------------------------------------------------------
-     *
-     * IMPORTANT :
-     * Toutes les statistiques utilisent cette requête.
-     *
-     * Un journaliste ne peut donc pas récupérer les documents
-     * d'un autre journaliste.
-     */
     private function myDocuments()
     {
         $staff = $this->staff();
@@ -83,12 +61,6 @@ class JournalistController extends Controller
             });
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | TABLEAU DE BORD
-    |--------------------------------------------------------------------------
-    */
 
     public function dashboard()
     {
@@ -150,13 +122,6 @@ class JournalistController extends Controller
             ->limit(10)
             ->get();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | REVENUS
-        |--------------------------------------------------------------------------
-        */
-
         $payments = $this->myPayments();
 
         $revenue = (clone $payments)
@@ -165,24 +130,7 @@ class JournalistController extends Controller
         $totalPayments = (clone $payments)
             ->count();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | TÉLÉCHARGEMENTS
-        |--------------------------------------------------------------------------
-        |
-        | Pour le moment aucune colonne downloads n'est utilisée.
-        |
-        */
-
         $totalDownloads = 0;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VUE
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'dashboard.journaliste_dashboard',
@@ -219,12 +167,6 @@ class JournalistController extends Controller
     {
         $documents = $this->myDocuments();
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATISTIQUES
-        |--------------------------------------------------------------------------
-        */
-
         $totalDocuments = (clone $documents)
             ->count();
 
@@ -256,12 +198,6 @@ class JournalistController extends Controller
             ->sum('views');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | VUES PAR DOCUMENT
-        |--------------------------------------------------------------------------
-        */
-
         $viewsByDocument = (clone $documents)
             ->select([
                 'id',
@@ -270,13 +206,6 @@ class JournalistController extends Controller
             ])
             ->orderByDesc('views')
             ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VUE
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'dashboard.journaliste_statistics',
@@ -308,12 +237,6 @@ class JournalistController extends Controller
     {
         $paymentsQuery = $this->myPayments();
 
-        /*
-        |--------------------------------------------------------------------------
-        | PAIEMENTS
-        |--------------------------------------------------------------------------
-        */
-
         $payments = (clone $paymentsQuery)
             ->with('document')
             ->latest()
@@ -330,21 +253,8 @@ class JournalistController extends Controller
             ->sum('amount');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | NOMBRE DE PAIEMENTS
-        |--------------------------------------------------------------------------
-        */
-
         $totalPayments = (clone $paymentsQuery)
             ->count();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | VUE
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'dashboard.journaliste_revenues',
@@ -356,12 +266,6 @@ class JournalistController extends Controller
         );
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | PAIEMENTS
-    |--------------------------------------------------------------------------
-    */
 
     public function payments()
     {
@@ -388,55 +292,101 @@ class JournalistController extends Controller
         );
     }
 
+    public function editProfil(User $journaliste)
+{
+    abort_unless($journaliste->hasRole('journaliste'), 404);
 
-    /*
-    |--------------------------------------------------------------------------
-    | PROFIL
-    |--------------------------------------------------------------------------
-    */
+    return view(
+        'admin.staff.journalistes.edit',
+        compact('journaliste')
+    );
+}
 
-    public function profile()
-    {
-        $staff = $this->staff();
-          
+public function updateProfil(Request $request, User $journaliste)
+{
+    abort_unless($journaliste->hasRole('journaliste'), 404);
 
+    $validated = $request->validate([
+        'nom' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+        'prenom' => [
+            'required',
+            'string',
+            'max:255',
+        ],
+        'sexe' => [
+            'required',
+            'in:Masculin,Féminin',
+        ],
+        'email' => [
+            'required',
+            'email',
+            'max:255',
+            'unique:users,email,' . $journaliste->id,
+        ],
+        'tel' => [
+            'nullable',
+            'string',
+            'max:30',
+        ],
+        'date_naissance' => [
+            'nullable',
+            'date',
+        ],
+    ]);
 
-        return view(
-            'profile.index',
-            compact('staff')
+    $journaliste->update($validated);
+
+    return redirect()
+        ->route(
+            'admin.staff.journalistes.editProfil',
+            $journaliste
+        )
+        ->with(
+            'success',
+            'Les informations du journaliste ont été modifiées avec succès.'
         );
-    }
+}
 
+public function editPassword(User $journaliste)
+{
+    abort_unless($journaliste->hasRole('journaliste'), 404);
 
-    /*
-    |--------------------------------------------------------------------------
-    | UTILISATEURS
-    |--------------------------------------------------------------------------
-    */
+    return view(
+        'admin.staff.journalistes.password',
+        compact('journaliste')
+    );
+}
 
-    public function users()
-    {
-        /*
-        |--------------------------------------------------------------------------
-        | IMPORTANT
-        |--------------------------------------------------------------------------
-        |
-        | Cette méthode correspond à ta route :
-        |
-        | GET /journaliste/users
-        |
-        | Si un journaliste ne doit PAS voir tous les utilisateurs,
-        | il faudra ajouter une règle métier spécifique ici.
-        |
-        */
+public function updatePassword(Request $request, User $journaliste)
+{
+    abort_unless($journaliste->hasRole('journaliste'), 404);
 
-        $users = User::query()
-            ->latest()
-            ->paginate(15);
+    $validated = $request->validate([
+        'password' => [
+            'required',
+            'string',
+            'min:8',
+            'confirmed',
+        ],
+    ]);
 
-        return view(
-            'dashboard.journaliste_users',
-            compact('users')
+    $journaliste->update([
+        'password' => Hash::make($validated['password']),
+    ]);
+
+    return redirect()
+        ->route(
+            'admin.staff.journalistes.editPassword',
+            $journaliste
+        )
+        ->with(
+            'success',
+            'Le mot de passe du journaliste a été modifié avec succès.'
         );
-    }
+}
+
 }

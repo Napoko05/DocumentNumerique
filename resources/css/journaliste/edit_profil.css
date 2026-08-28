@@ -1,0 +1,423 @@
+/* =========================================================
+   PAGE MODIFICATION JOURNALISTE
+========================================================= */
+
+.admin-page{
+    width:100%;
+    max-width:1200px;
+    margin:0 auto;
+    padding:32px;
+    box-sizing:border-box;
+}
+
+/* =========================================================
+   EN-TÊTE
+========================================================= */
+
+.admin-page-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:28px;
+}
+
+.admin-page-kicker,
+.admin-section-label{
+    display:inline-block;
+    margin-bottom:8px;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#f58220;
+}
+
+.admin-page-header h1{
+    margin:0 0 8px;
+    color:#0b2a4a;
+    font-size:30px;
+    font-weight:700;
+    line-height:1.2;
+}
+
+.admin-page-header p{
+    margin:0;
+    color:#6b7280;
+    font-size:15px;
+    line-height:1.6;
+}
+
+/* =========================================================
+   CARTE PROFIL
+========================================================= */
+
+.admin-profile-card{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    margin-bottom:24px;
+    padding:24px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    box-shadow:0 4px 16px rgba(15,23,42,.05);
+}
+
+.admin-profile-header{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    min-width:0;
+}
+
+.admin-profile-avatar{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:64px;
+    height:64px;
+    flex:0 0 64px;
+    border-radius:50%;
+    background:#0b4da2;
+    color:#fff;
+    font-size:24px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.admin-profile-header h2{
+    margin:0 0 5px;
+    color:#172033;
+    font-size:20px;
+    font-weight:700;
+}
+
+.admin-profile-header p{
+    margin:0 0 8px;
+    color:#6b7280;
+    font-size:14px;
+}
+
+.admin-profile-role{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 10px;
+    border-radius:20px;
+    background:#eef4fb;
+    color:#0b4da2;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* =========================================================
+   ACTIONS PROFIL
+========================================================= */
+
+.admin-profile-actions{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+}
+
+/* =========================================================
+   CARTE FORMULAIRE
+========================================================= */
+
+.admin-edit-card{
+    width:100%;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    box-shadow:0 4px 16px rgba(15,23,42,.05);
+    overflow:hidden;
+}
+
+.admin-edit-header{
+    padding:24px 28px;
+    border-bottom:1px solid #e5e7eb;
+    background:#fafbfc;
+}
+
+.admin-edit-header h2{
+    margin:0 0 6px;
+    color:#172033;
+    font-size:20px;
+    font-weight:700;
+}
+
+.admin-edit-header p{
+    margin:0;
+    color:#6b7280;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* =========================================================
+   FORMULAIRE
+========================================================= */
+
+.admin-form{
+    padding:28px;
+}
+
+.admin-form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:22px;
+}
+
+.admin-form-field{
+    min-width:0;
+}
+
+.admin-form-field label{
+    display:block;
+    margin-bottom:8px;
+    color:#273449;
+    font-size:14px;
+    font-weight:600;
+}
+
+.admin-form-field label span{
+    color:#d32f2f;
+}
+
+.admin-form-field input,
+.admin-form-field select{
+    width:100%;
+    height:46px;
+    padding:0 14px;
+    box-sizing:border-box;
+    border:1px solid #d7dce3;
+    border-radius:8px;
+    background:#fff;
+    color:#1f2937;
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+    transition:border-color .2s ease,box-shadow .2s ease;
+}
+
+.admin-form-field input:focus,
+.admin-form-field select:focus{
+    border-color:#0b4da2;
+    box-shadow:0 0 0 3px rgba(11,77,162,.10);
+}
+
+.admin-form-field input::placeholder{
+    color:#9ca3af;
+}
+
+.admin-form-field input.is-invalid,
+.admin-form-field select.is-invalid{
+    border-color:#d32f2f;
+}
+
+.admin-field-error{
+    display:block;
+    margin-top:6px;
+    color:#d32f2f;
+    font-size:12px;
+}
+
+.admin-form-help{
+    display:block;
+    margin-top:6px;
+    color:#6b7280;
+    font-size:12px;
+}
+
+/* =========================================================
+   ACTIONS FORMULAIRE
+========================================================= */
+
+.admin-form-actions{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:12px;
+    margin-top:30px;
+    padding-top:22px;
+    border-top:1px solid #e5e7eb;
+}
+
+/* =========================================================
+   BOUTONS
+========================================================= */
+
+.admin-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:42px;
+    padding:0 18px;
+    border:1px solid transparent;
+    border-radius:8px;
+    text-decoration:none;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    line-height:1;
+    cursor:pointer;
+    transition:all .2s ease;
+    box-sizing:border-box;
+}
+
+.admin-btn-primary{
+    background:#0b4da2;
+    border-color:#0b4da2;
+    color:#fff;
+}
+
+.admin-btn-primary:hover{
+    background:#083b7d;
+    border-color:#083b7d;
+    color:#fff;
+}
+
+.admin-btn-secondary{
+    background:#fff;
+    border-color:#d7dce3;
+    color:#374151;
+}
+
+.admin-btn-secondary:hover{
+    background:#f5f6f8;
+    border-color:#c5cad2;
+    color:#172033;
+}
+
+.admin-btn-warning{
+    background:#f58220;
+    border-color:#f58220;
+    color:#fff;
+}
+
+.admin-btn-warning:hover{
+    background:#d9680c;
+    border-color:#d9680c;
+    color:#fff;
+}
+
+/* =========================================================
+   ALERTES
+========================================================= */
+
+.admin-alert{
+    margin-bottom:24px;
+    padding:14px 16px;
+    border-radius:8px;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.admin-alert-success{
+    background:#ecfdf3;
+    border:1px solid #bbf7d0;
+    color:#166534;
+}
+
+.admin-alert-danger{
+    background:#fef2f2;
+    border:1px solid #fecaca;
+    color:#b91c1c;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width:900px){
+
+    .admin-page{
+        padding:24px;
+    }
+
+    .admin-profile-card{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+    .admin-profile-actions{
+        width:100%;
+    }
+
+    .admin-profile-actions .admin-btn{
+        flex:1;
+    }
+}
+
+@media (max-width:700px){
+
+    .admin-page{
+        padding:18px;
+    }
+
+    .admin-page-header{
+        flex-direction:column;
+        margin-bottom:20px;
+    }
+
+    .admin-page-header h1{
+        font-size:25px;
+    }
+
+    .admin-page-header > .admin-btn{
+        width:100%;
+    }
+
+    .admin-profile-card{
+        padding:18px;
+    }
+
+    .admin-profile-header{
+        align-items:flex-start;
+    }
+
+    .admin-profile-avatar{
+        width:52px;
+        height:52px;
+        flex-basis:52px;
+        font-size:20px;
+    }
+
+    .admin-form-grid{
+        grid-template-columns:1fr;
+        gap:18px;
+    }
+
+    .admin-edit-header,
+    .admin-form{
+        padding:20px;
+    }
+
+    .admin-form-actions{
+        flex-direction:column-reverse;
+    }
+
+    .admin-form-actions .admin-btn{
+        width:100%;
+    }
+}
+
+@media (max-width:480px){
+
+    .admin-page{
+        padding:14px;
+    }
+
+    .admin-profile-actions{
+        flex-direction:column;
+    }
+
+    .admin-profile-actions .admin-btn{
+        width:100%;
+    }
+
+    .admin-profile-header h2{
+        font-size:18px;
+    }
+}

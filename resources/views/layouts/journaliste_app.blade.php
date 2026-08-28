@@ -56,6 +56,8 @@
     'resources/css/journaliste/document_edit.css' ,
     'resources/css/journaliste/document_index.css',
      'resources/css/journaliste/journale_statistique.css',
+     'resources/css/journaliste/edit_profil.css',
+     'resources/css/journaliste/password.css',
     
     ])
 

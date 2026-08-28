@@ -1,0 +1,301 @@
+/* =========================================================
+   PAGE DOMAINES — ENSEIGNEMENT SUPÉRIEUR
+   ========================================================= */
+
+.superieur-domaines-page {
+    min-height: 100vh;
+    padding: 56px 20px;
+
+    background: linear-gradient(
+        to bottom,
+        #eff6ff 0%,
+        #f8fafc 100%
+    );
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.superieur-domaines-header {
+    max-width: 1150px;
+    margin: 0 auto 48px;
+
+    text-align: center;
+}
+
+.superieur-domaines-header h1 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 36px;
+    font-weight: 800;
+
+    line-height: 1.3;
+}
+
+.superieur-domaines-header p {
+    margin: 10px 0 0;
+
+    color: #6b7280;
+
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   GRID
+   ========================================================= */
+
+.superieur-domaines-grid {
+    max-width: 1050px;
+
+    margin: 0 auto;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 28px;
+}
+
+
+/* =========================================================
+   CARTE DOMAINE
+   ========================================================= */
+
+.superieur-domaine-card {
+    min-height: 250px;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 35px 25px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 20px;
+
+    text-decoration: none;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.08);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.superieur-domaine-card:hover {
+    transform: translateY(-7px);
+
+    border-color: #3b82f6;
+
+    box-shadow:
+        0 16px 32px rgba(15, 23, 42, 0.14);
+}
+
+
+/* =========================================================
+   ICÔNE
+   ========================================================= */
+
+.superieur-domaine-icon {
+    width: 82px;
+    height: 82px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #dbeafe;
+
+    font-size: 43px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease;
+}
+
+
+.superieur-domaine-card:hover
+.superieur-domaine-icon {
+    transform: scale(1.1);
+
+    background: #bfdbfe;
+}
+
+
+/* =========================================================
+   CONTENU
+   ========================================================= */
+
+.superieur-domaine-content {
+    margin-top: 22px;
+
+    text-align: center;
+}
+
+
+.superieur-domaine-content h3 {
+    margin: 0;
+
+    color: #1f2937;
+
+    font-size: 21px;
+    font-weight: 700;
+
+    line-height: 1.4;
+
+    transition: color 0.25s ease;
+}
+
+
+.superieur-domaine-card:hover
+.superieur-domaine-content h3 {
+    color: #2563eb;
+}
+
+
+.superieur-domaine-content p {
+    margin: 10px 0 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   ÉTAT VIDE
+   ========================================================= */
+
+.superieur-domaines-empty {
+    grid-column: 1 / -1;
+
+    max-width: 600px;
+
+    margin: 0 auto;
+
+    padding: 50px 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    box-shadow:
+        0 5px 15px rgba(15, 23, 42, 0.08);
+}
+
+
+.superieur-domaines-empty-icon {
+    font-size: 45px;
+
+    margin-bottom: 15px;
+}
+
+
+.superieur-domaines-empty h3 {
+    margin: 0;
+
+    color: #374151;
+
+    font-size: 19px;
+}
+
+
+.superieur-domaines-empty p {
+    margin: 8px 0 0;
+
+    color: #6b7280;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   TABLETTE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .superieur-domaines-grid {
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 22px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .superieur-domaines-page {
+        padding: 40px 15px;
+    }
+
+
+    .superieur-domaines-header {
+        margin-bottom: 32px;
+    }
+
+
+    .superieur-domaines-header h1 {
+        font-size: 27px;
+    }
+
+
+    .superieur-domaines-header p {
+        font-size: 14px;
+    }
+
+
+    .superieur-domaines-grid {
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+    }
+
+
+    .superieur-domaine-card {
+        min-height: 220px;
+
+        padding: 30px 20px;
+    }
+
+
+    .superieur-domaine-icon {
+        width: 70px;
+        height: 70px;
+
+        font-size: 36px;
+    }
+
+
+    .superieur-domaine-content h3 {
+        font-size: 19px;
+    }
+
+}

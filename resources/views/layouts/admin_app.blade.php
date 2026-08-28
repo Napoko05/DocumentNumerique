@@ -41,6 +41,7 @@
 
         'resources/css/admin/style_list_user.css',
         'resources/css/admin/style_agent.css',
+        'resources/css/admin/style_edit_journaliste.css',
         'resources/css/admin/style_ajout_matiere.css',
         'resources/css/admin/create_matieres.css',
     ])

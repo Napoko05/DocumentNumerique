@@ -34,8 +34,7 @@
 
             <a
                 href="{{ route('journaliste.documents.create') }}"
-                class="documents-btn documents-btn-primary"
-            >
+                class="documents-btn documents-btn-primary">
                 <span>＋</span>
                 Nouveau document
             </a>
@@ -49,34 +48,34 @@
 
         @if(session('success'))
 
-            <div class="documents-alert documents-alert-success">
+        <div class="documents-alert documents-alert-success">
 
-                <span class="documents-alert-icon">
-                    ✓
-                </span>
+            <span class="documents-alert-icon">
+                ✓
+            </span>
 
-                <div>
-                    {{ session('success') }}
-                </div>
-
+            <div>
+                {{ session('success') }}
             </div>
+
+        </div>
 
         @endif
 
 
         @if(session('error'))
 
-            <div class="documents-alert documents-alert-danger">
+        <div class="documents-alert documents-alert-danger">
 
-                <span class="documents-alert-icon">
-                    !
-                </span>
+            <span class="documents-alert-icon">
+                !
+            </span>
 
-                <div>
-                    {{ session('error') }}
-                </div>
-
+            <div>
+                {{ session('error') }}
             </div>
+
+        </div>
 
         @endif
 
@@ -173,305 +172,280 @@
 
                         @forelse($documents as $document)
 
-                            <tr>
+                        <tr>
 
-                                {{-- DOCUMENT --}}
+                            {{-- DOCUMENT --}}
 
-                                <td class="documents-title-cell">
+                            <td class="documents-title-cell">
 
-                                    <div class="documents-title-wrapper">
+                                <div class="documents-title-wrapper">
 
-                                        <div class="documents-file-icon">
-                                            📄
+                                    <div class="documents-file-icon">
+                                        📄
+                                    </div>
+
+                                    <div class="documents-title-content">
+
+                                        <div class="documents-title">
+
+                                            {{ $document->title }}
+
                                         </div>
 
-                                        <div class="documents-title-content">
 
-                                            <div class="documents-title">
+                                        @if($document->documentType)
 
-                                                {{ $document->title }}
+                                        <div class="documents-type">
 
-                                            </div>
+                                            {{ $document->documentType->name }}
+
+                                        </div>
+
+                                        @endif
 
 
-                                            @if($document->documentType)
+                                        {{-- STATUT --}}
 
-                                                <div class="documents-type">
+                                        <div class="documents-status">
 
-                                                    {{ $document->documentType->name }}
+                                            @if($document->status === 'published')
 
-                                                </div>
+                                            <span class="documents-status-badge documents-status-published">
+                                                ✓ Publié
+                                            </span>
+
+                                            @elseif($document->status === 'pending')
+
+                                            <span class="documents-status-badge documents-status-pending">
+                                                ⏳ En attente
+                                            </span>
+
+                                            @elseif($document->status === 'rejected')
+
+                                            <span class="documents-status-badge documents-status-rejected">
+                                                ✕ Rejeté
+                                            </span>
+
+                                            @else
+
+                                            <span class="documents-status-badge documents-status-draft">
+                                                📝 Brouillon
+                                            </span>
 
                                             @endif
 
-
-                                            {{-- STATUT --}}
-
-                                            <div class="documents-status">
-
-                                                @if($document->status === 'published')
-
-                                                    <span class="documents-status-badge documents-status-published">
-                                                        ✓ Publié
-                                                    </span>
-
-                                                @elseif($document->status === 'pending')
-
-                                                    <span class="documents-status-badge documents-status-pending">
-                                                        ⏳ En attente
-                                                    </span>
-
-                                                @elseif($document->status === 'rejected')
-
-                                                    <span class="documents-status-badge documents-status-rejected">
-                                                        ✕ Rejeté
-                                                    </span>
-
-                                                @else
-
-                                                    <span class="documents-status-badge documents-status-draft">
-                                                        📝 Brouillon
-                                                    </span>
-
-                                                @endif
-
-                                            </div>
-
                                         </div>
 
                                     </div>
 
-                                </td>
+                                </div>
 
+                            </td>
 
-                                {{-- FORMATION --}}
 
-                                <td class="documents-data-cell">
+                            {{-- FORMATION --}}
 
-                                    {{ $document->formation?->name ?? '—' }}
+                            <td class="documents-data-cell">
 
-                                </td>
+                                {{ $document->formation?->name ?? '—' }}
 
+                            </td>
 
-                                {{-- FILIERE --}}
 
-                                <td class="documents-data-cell">
+                            {{-- FILIERE --}}
 
-                                    {{ $document->filiere?->name ?? '—' }}
+                            <td class="documents-data-cell">
 
-                                </td>
+                                {{ $document->filiere?->name ?? '—' }}
 
+                            </td>
 
-                                {{-- NIVEAU --}}
 
-                                <td class="documents-data-cell">
+                            {{-- NIVEAU --}}
 
-                                    {{ $document->level?->name ?? '—' }}
+                            <td class="documents-data-cell">
 
-                                </td>
+                                {{ $document->level?->name ?? '—' }}
 
+                            </td>
 
-                                {{-- MATIERE --}}
 
-                                <td class="documents-data-cell">
+                            {{-- MATIERE --}}
 
-                                    {{ $document->subject?->name ?? '—' }}
+                            <td class="documents-data-cell">
 
-                                </td>
+                                {{ $document->subject?->name ?? '—' }}
 
+                            </td>
 
-                                {{-- ACCÈS --}}
 
-                                <td>
+                            {{-- ACCÈS --}}
 
-                                    @if($document->access_type === 'free')
+                            <td class="documents-access-cell">
 
-                                        <span class="documents-access documents-access-free">
+                                @if($document->access_type === 'free')
 
-                                            <span class="documents-access-dot"></span>
+                                <span class="documents-access documents-access-free">
+                                    <span class="documents-access-dot"></span>
+                                    Gratuit
+                                </span>
 
-                                            Gratuit
+                                @else
 
-                                        </span>
+                                <span class="documents-access documents-access-premium">
+                                    <span class="documents-access-dot"></span>
+                                    Premium
+                                </span>
 
-                                    @else
+                                @endif
 
-                                        <span class="documents-access documents-access-premium">
+                            </td>
 
-                                            <span class="documents-access-dot"></span>
 
-                                            Premium
+                            {{-- PRIX --}}
 
-                                        </span>
+                            <td class="documents-price-cell">
 
-                                    @endif
+                                @if($document->access_type === 'premium' && $document->price)
 
-                                </td>
+                                <span class="documents-price">
+                                    {{ number_format((float) $document->price, 0, ',', ' ') }}
+                                    <small>FCFA</small>
+                                </span>
 
+                                @endif
 
-                                {{-- PRIX --}}
+                            </td>
 
-                                <td class="documents-price">
 
-                                    @if(
-                                        $document->access_type === 'premium'
-                                        && $document->price
-                                    )
+                            {{-- VUES --}}
 
-                                        {{ number_format(
-                                            (float) $document->price,
-                                            0,
-                                            ',',
-                                            ' '
-                                        ) }}
+                            <td class="documents-views">
 
-                                        <small>FCFA</small>
+                                <span>
+                                    👁
+                                </span>
 
-                                    @else
+                                {{ $document->views ?? 0 }}
 
-                                        <span class="documents-empty">
-                                            —
-                                        </span>
+                            </td>
 
-                                    @endif
 
-                                </td>
+                            {{-- ACTIONS --}}
 
+                            <td>
 
-                                {{-- VUES --}}
+                                <div class="documents-actions">
 
-                                <td class="documents-views">
 
-                                    <span>
-                                        👁
-                                    </span>
-
-                                    {{ $document->views ?? 0 }}
-
-                                </td>
-
-
-                                {{-- ACTIONS --}}
-
-                                <td>
-
-                                    <div class="documents-actions">
-
-
-                                        {{-- VOIR --}}
-
-                                        <a
-                                            href="{{ route(
-                                                'journaliste.documents.show',
-                                                $document
-                                            ) }}"
-                                            class="documents-action documents-action-view"
-                                            title="Voir le document"
-                                        >
-
-                                            👁
-
-                                            <span>
-                                                Voir
-                                            </span>
-
-                                        </a>
-
-
-                                        {{-- MODIFIER --}}
-
-                                        <a
-                                            href="{{ route(
-                                                'journaliste.documents.edit',
-                                                $document
-                                            ) }}"
-                                            class="documents-action documents-action-edit"
-                                            title="Modifier le document"
-                                        >
-
-                                            ✏
-
-                                            <span>
-                                                Modifier
-                                            </span>
-
-                                        </a>
-
-
-                                        {{-- SUPPRIMER --}}
-
-                                        <form
-                                            action="{{ route(
-                                                'journaliste.documents.destroy',
-                                                $document
-                                            ) }}"
-                                            method="POST"
-                                            class="documents-delete-form"
-                                            onsubmit="return confirm(
-                                                'Voulez-vous vraiment supprimer ce document ?'
-                                            );"
-                                        >
-
-                                            @csrf
-
-                                            @method('DELETE')
-
-
-                                            <button
-                                                type="submit"
-                                                class="documents-action documents-action-delete"
-                                                title="Supprimer le document"
-                                            >
-
-                                                🗑
-
-                                                <span>
-                                                    Supprimer
-                                                </span>
-
-                                            </button>
-
-                                        </form>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-                        @empty
-
-                            <tr>
-
-                                <td
-                                    colspan="9"
-                                    class="documents-empty-row"
-                                >
-
-                                    <div class="documents-empty-icon">
-                                        📂
-                                    </div>
-
-                                    <h3>
-                                        Aucun document trouvé
-                                    </h3>
-
-                                    <p>
-                                        Vous n'avez encore créé aucun document.
-                                    </p>
+                                    {{-- VOIR --}}
 
                                     <a
                                         href="{{ route(
-                                            'journaliste.documents.create'
-                                        ) }}"
-                                        class="documents-empty-btn"
-                                    >
-                                        ＋ Créer mon premier document
+                                                'journaliste.documents.show',
+                                                $document
+                                            ) }}"
+                                        class="documents-action documents-action-view"
+                                        title="Voir le document">
+
+                                        👁
+
+                                        <span>
+                                            Voir
+                                        </span>
+
                                     </a>
 
-                                </td>
 
-                            </tr>
+                                    {{-- MODIFIER --}}
+
+                                    <a
+                                        href="{{ route(
+                                                'journaliste.documents.edit',
+                                                $document
+                                            ) }}"
+                                        class="documents-action documents-action-edit"
+                                        title="Modifier le document">
+
+                                        ✏
+
+                                        <span>
+                                            Modifier
+                                        </span>
+
+                                    </a>
+
+
+                                    {{-- SUPPRIMER --}}
+
+                                    <form
+                                        action="{{ route(
+                                                'journaliste.documents.destroy',
+                                                $document
+                                            ) }}"
+                                        method="POST"
+                                        class="documents-delete-form"
+                                        onsubmit="return confirm(
+                                                'Voulez-vous vraiment supprimer ce document ?'
+                                            );">
+
+                                        @csrf
+
+                                        @method('DELETE')
+
+
+                                        <button
+                                            type="submit"
+                                            class="documents-action documents-action-delete"
+                                            title="Supprimer le document">
+
+                                            🗑
+
+                                            <span>
+                                                Supprimer
+                                            </span>
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        @empty
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="documents-empty-row">
+
+                                <div class="documents-empty-icon">
+                                    📂
+                                </div>
+
+                                <h3>
+                                    Aucun document trouvé
+                                </h3>
+
+                                <p>
+                                    Vous n'avez encore créé aucun document.
+                                </p>
+
+                                <a
+                                    href="{{ route(
+                                            'journaliste.documents.create'
+                                        ) }}"
+                                    class="documents-empty-btn">
+                                    ＋ Créer mon premier document
+                                </a>
+
+                            </td>
+
+                        </tr>
 
                         @endforelse
 
@@ -488,11 +462,11 @@
 
             @if($documents->hasPages())
 
-                <div class="documents-pagination">
+            <div class="documents-pagination">
 
-                    {{ $documents->links() }}
+                {{ $documents->links() }}
 
-                </div>
+            </div>
 
             @endif
 
@@ -501,5 +475,6 @@
     </div>
 
 </div>
+
 
 @endsection

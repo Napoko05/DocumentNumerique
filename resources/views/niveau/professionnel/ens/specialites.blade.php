@@ -2,218 +2,282 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="formation-page">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
+    <section class="formation-hero">
 
-        <h1 class="text-4xl font-extrabold text-gray-800">
-            {{ $formation->icon }} {{ $formation->name }}
-        </h1>
+        <div class="container">
 
-        <p class="text-gray-500 mt-2">
-            Choisissez votre programme de formation.
-        </p>
+            <div class="formation-badge">
+                <i class="bi bi-mortarboard-fill"></i>
+                SPÉCIALITÉS DE FORMATION
+            </div>
 
-    </div>
+            <h1>
+                {{ $programme->icon ?? '🎓' }}
+                {{ $programme->name }}
+            </h1>
 
-    @php
+            <p>
+                {{ $programme->description
+                    ?? 'Choisissez votre spécialité de formation.' }}
+            </p>
 
-    $programs = [];
+        </div>
 
-    /*
-    |--------------------------------------------------------------------------
-    | ENS
-    |--------------------------------------------------------------------------
-    */
-    if ($formation->slug == 'ens') {
-
-        $programs = [
-
-            [
-                'name' => 'CAPES',
-                'slug' => 'capes',
-                'icon' => '🎓',
-                'desc' => 'Certificat d’Aptitude au Professorat de l’Enseignement Secondaire'
-            ],
-
-            [
-                'name' => 'CAPCEG',
-                'slug' => 'capceg',
-                'icon' => '📚',
-                'desc' => 'Certificat d’Aptitude au Professorat des Collèges d’Enseignement Général'
-            ],
-
-            [
-                'name' => 'Inspectorat',
-                'slug' => 'inspectorat',
-                'icon' => '📝',
-                'desc' => 'Formation des inspecteurs'
-            ],
-
-        ];
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ENSP
-    |--------------------------------------------------------------------------
-    */
-    elseif ($formation->slug == 'ensp') {
-
-        $programs = [
-
-            [
-                'name' => 'Formation Professionnelle',
-                'slug' => 'formation-professionnelle',
-                'icon' => '🏥',
-                'desc' => 'Formation professionnelle de santé'
-            ]
-
-        ];
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | IDS
-    |--------------------------------------------------------------------------
-    */
-    elseif ($formation->slug == 'ids') {
-
-        $programs = [
-
-            [
-                'name' => 'Maths-PC',
-                'slug' => 'maths-pc',
-                'icon' => '📐',
-                'desc' => 'Mathématiques - Physique Chimie'
-            ],
-
-            [
-                'name' => 'Maths-SVT',
-                'slug' => 'maths-svt',
-                'icon' => '🧬',
-                'desc' => 'Mathématiques - Sciences de la Vie et de la Terre'
-            ],
-
-        ];
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ENEP
-    |--------------------------------------------------------------------------
-    */
-    elseif ($formation->slug == 'enep') {
-
-        $programs = [
-
-            [
-                'name' => 'Formation des Instituteurs',
-                'slug' => 'instituteurs',
-                'icon' => '👨‍🏫',
-                'desc' => 'Formation des enseignants du primaire'
-            ]
-
-        ];
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ATE
-    |--------------------------------------------------------------------------
-    */
-    elseif ($formation->slug == 'ate') {
-
-        $programs = [
-
-            [
-                'name' => 'ATE',
-                'slug' => 'ate',
-                'icon' => '⚙️',
-                'desc' => 'Autres formations professionnelles'
-            ]
-
-        ];
-
-    }
-
-    @endphp
+    </section>
 
 
-    <!-- PROGRAMMES -->
+    <section class="formation-content">
 
-    <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="container">
 
-        @forelse($specialites as $specialite)
+            <div class="section-heading">
 
-            <a href="{{ route('vitrine.ens.niveaux', [
-                'formationSlug' => $formation->slug,
-                'programmeSlug' => $programme->slug,
-                'specialiteSlug' => $specialite->slug,
-            ]) }}"
-            class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 p-8 border border-gray-100 hover:border-green-500 hover:-translate-y-1">
+                <div>
 
-                <div class="text-6xl text-center group-hover:scale-110 transition">
-                    {{ $specialite['icon'] }}
-                </div>
+                    <span class="section-kicker">
+                        SPÉCIALITÉS
+                    </span>
 
-                <div class="mt-5 text-center">
-
-                    <h2 class="font-bold text-gray-800 text-lg group-hover:text-green-600">
-                        {{ $specialite['name'] }}
+                    <h2>
+                        Choisissez votre spécialité
                     </h2>
 
-                    <p class="text-sm text-gray-500 mt-3">
-                        {{ $specialite['desc'] }}
+                </div>
+
+                <span class="class-count">
+
+                    {{ $specialites->count() }}
+
+                    spécialité{{ $specialites->count() > 1 ? 's' : '' }}
+
+                </span>
+
+            </div>
+
+
+            @if($specialites->isNotEmpty())
+
+                <div class="classes-grid">
+
+                    @foreach($specialites as $specialite)
+
+                        <a
+                            href="{{ route('vitrine.professionnel.ens.niveaux', [
+                                'formationSlug' => $formation->slug,
+                                'programmeSlug' => $programme->slug,
+                                'specialiteSlug' => $specialite->slug
+                            ]) }}"
+                            class="class-card"
+                        >
+
+                            <div class="class-card-top">
+
+                                <div class="class-icon">
+                                    {{ $specialite->icon ?? '📚' }}
+                                </div>
+
+                                <div class="class-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="class-card-body">
+
+                                <h3>
+                                    {{ $specialite->name }}
+                                </h3>
+
+                                <p>
+
+                                    <i class="bi bi-bookmark-fill"></i>
+
+                                    Spécialité de formation
+
+                                </p>
+
+                            </div>
+
+
+                            <div class="class-card-footer">
+
+                                <span>
+                                    Voir les niveaux
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    @endforeach
+
+                </div>
+
+
+                {{-- MOBILE --}}
+
+                <div
+                    id="ensSpecialitesCarousel"
+                    class="carousel slide classes-carousel"
+                    data-bs-ride="false"
+                >
+
+                    <div class="carousel-inner">
+
+                        @foreach($specialites as $index => $specialite)
+
+                            <div
+                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                            >
+
+                                <div class="mobile-class-card">
+
+                                    <a
+                                        href="{{ route('vitrine.professionnel.ens.niveaux', [
+                                            'formationSlug' => $formation->slug,
+                                            'programmeSlug' => $programme->slug,
+                                            'specialiteSlug' => $specialite->slug
+                                        ]) }}"
+                                        class="class-card"
+                                    >
+
+                                        <div class="class-card-top">
+
+                                            <div class="class-icon">
+                                                {{ $specialite->icon ?? '📚' }}
+                                            </div>
+
+                                            <div class="class-arrow">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="class-card-body">
+
+                                            <h3>
+                                                {{ $specialite->name }}
+                                            </h3>
+
+                                            <p>
+
+                                                <i class="bi bi-bookmark-fill"></i>
+
+                                                Spécialité de formation
+
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="class-card-footer">
+
+                                            <span>
+                                                Voir les niveaux
+                                            </span>
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+
+                    @if($specialites->count() > 1)
+
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#ensSpecialitesCarousel"
+                            data-bs-slide="prev"
+                        >
+
+                            <span class="carousel-control-prev-icon"></span>
+
+                            <span class="visually-hidden">
+                                Précédent
+                            </span>
+
+                        </button>
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#ensSpecialitesCarousel"
+                            data-bs-slide="next"
+                        >
+
+                            <span class="carousel-control-next-icon"></span>
+
+                            <span class="visually-hidden">
+                                Suivant
+                            </span>
+
+                        </button>
+
+                    @endif
+
+                </div>
+
+
+            @else
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucune spécialité disponible
+                    </h3>
+
+                    <p>
+                        Aucune spécialité n'est actuellement disponible
+                        pour ce programme.
                     </p>
 
                 </div>
 
-            </a>
+            @endif
 
-        @empty
 
-            <div class="col-span-full bg-white rounded-2xl shadow-sm p-10 text-center">
+            {{-- RETOUR --}}
 
-                <div class="text-5xl mb-4">
-                    📚
-                </div>
+            <div class="doc-type-back-container">
 
-                <h2 class="text-xl font-bold text-gray-700">
-                    Aucun specialités disponible
-                </h2>
+                <a
+                    href="{{ route('vitrine.professionnel.ens.programmes', [
+                        'formationSlug' => $formation->slug
+                    ]) }}"
+                    class="doc-type-back-btn"
+                >
 
-                <p class="text-gray-500 mt-2">
-                    Aucun specialité n'est disponible pour cette formation.
-                </p>
+                    <i class="bi bi-arrow-left"></i>
+
+                    Retour aux programmes
+
+                </a>
 
             </div>
 
-        @endforelse
+        </div>
 
-    </div>
-
-    <!-- BOUTON RETOUR -->
-
-    <div class="max-w-6xl mx-auto mt-10">
-
-        <a href="{{ route('vitrine.ens.programmes', [
-            'formationSlug' => $formation->slug,
-            'programmeSlug' => $programme->slug,
-           
-        ]) }}"
-        class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-            ← Retour
-
-        </a>
-
-    </div>
+    </section>
 
 </div>
 

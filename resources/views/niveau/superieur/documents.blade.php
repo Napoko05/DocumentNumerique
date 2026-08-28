@@ -2,144 +2,135 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="document-list-page">
 
+    {{-- HEADER --}}
+    <div class="document-list-header">
 
-    <!-- HEADER -->
-    <div class="max-w-6xl mx-auto text-center mb-12">
-
-
-        <h1 class="text-3xl font-extrabold text-gray-800">
-
+        <h1>
             📄 {{ $type->name }}
-
         </h1>
 
-
-
-        <p class="text-gray-500 mt-2">
-
+        <p>
             Filière :
-            <span class="font-semibold">
+            <span>
                 {{ $filiere->name }}
             </span>
 
             •
 
             Niveau :
-            <span class="font-semibold">
+            <span>
                 {{ $niveau->name }}
             </span>
-
         </p>
-
 
     </div>
 
 
-
-
-    <!-- DOCUMENTS GRID -->
-    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-6">
-
-
+    {{-- DOCUMENTS --}}
+    <div class="document-list-grid">
 
         @forelse($documents as $document)
 
+            <div class="document-list-card">
+
+                <div class="document-list-card-header">
+
+                    <h3>
+                        {{ $document->title }}
+                    </h3>
+
+                    <span>
+                        📄
+                    </span>
+
+                </div>
 
 
-        <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition p-6 border">
+                <p class="document-list-description">
+
+                    {{ Str::limit(
+                        $document->description ?? 'Ressource pédagogique disponible',
+                        100
+                    ) }}
+
+                </p>
 
 
+                <div class="document-list-meta">
 
-            <div class="flex items-center justify-between">
+                    @if($document->published_at)
+
+                        <span>
+                            📅 {{ $document->published_at->format('d/m/Y') }}
+                        </span>
+
+                    @endif
+
+                </div>
 
 
-                <h3 class="font-bold text-gray-800">
-
-                    {{ $document->title }}
-
-                </h3>
-
-
-
-                <span class="text-blue-500 text-xl">
-
-                    📄
-
-                </span>
-
+                <a
+                    href="#"
+                    class="document-list-open-btn"
+                >
+                    📖 Ouvrir
+                </a>
 
             </div>
 
-
-
-
-            <p class="text-sm text-gray-500 mt-3">
-
-
-                {{ Str::limit(
-                    $document->description ?? 'Ressource pédagogique disponible',
-                    80
-                ) }}
-
-
-            </p>
-
-
-
-            <button class="mt-5 w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-2 rounded-xl hover:opacity-90 transition">
-
-                📖 Ouvrir
-
-            </button>
-
-
-
-        </div>
-
-
-
         @empty
 
+            <div class="document-list-empty">
 
-        <div class="col-span-full text-center text-gray-500">
+                <div class="document-list-empty-icon">
+                    📂
+                </div>
 
-            Aucun document disponible pour cette catégorie.
+                <h3>
+                    Aucun document disponible
+                </h3>
 
-        </div>
+                <p>
+                    Aucun document n'est actuellement disponible
+                    pour cette catégorie.
+                </p>
 
+            </div>
 
         @endforelse
 
-
-
     </div>
 
 
+    {{-- PAGINATION --}}
+    @if($documents->hasPages())
 
-    <!-- PAGINATION -->
+        <div class="document-list-pagination">
 
-    <div class="max-w-6xl mx-auto mt-8">
+            {{ $documents->links() }}
 
-        {{ $documents->links() }}
+        </div>
+
+    @endif
+
+
+    {{-- RETOUR --}}
+    <div class="document-list-back-container">
+
+        <a
+            href="{{ route('vitrine.superieur.type_doc', [
+                'domaineSlug' => $domaine->slug,
+                'filiereSlug' => $filiere->slug,
+                'niveauSlug' => $niveau->slug
+            ]) }}"
+            class="document-list-back-btn"
+        >
+            ← Retour aux types de documents
+        </a>
 
     </div>
-
-</div>
-<!-- BOUTON RETOUR -->
-<div class="max-w-6xl mx-auto mb-8">
-
-    <a href="{{ route('vitrine.superieur.type_doc', [
-        'domaineSlug' => $domaine->slug,
-        'filiereSlug' => $filiere->slug,
-        'niveauSlug' => $niveau->slug
-    ]) }}"
-    class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-xl shadow hover:shadow-lg hover:bg-blue-50 transition">
-
-        ← Retour aux types de documents
-
-    </a>
 
 </div>
 
