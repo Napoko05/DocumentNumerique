@@ -826,108 +826,93 @@ Route::middleware('auth')->group(function () {
 | Documents
 |
 */
-
-Route::prefix('secondaire/general')
-    ->name('vitrine.secondaire.general.')
-    ->controller(VitrineSecondaireController::class)
+Route::prefix('secondaire')
+    ->name('vitrine.secondaire.')
     ->group(function () {
 
-        Route::get('/', 'classes')
-            ->name('classes');
+        Route::get('/', [
+            VitrineSecondaireController::class,
+            'index'
+        ])->name('index');
 
-        Route::get('/{classe}', 'matieres')
-            ->name('matieres');
+        Route::get('/{formation:slug}', [
+            VitrineSecondaireController::class,
+            'formation'
+        ])->name('formation');
 
-        Route::get('/{classe}/{matiere}', 'typeDocuments')
-            ->name('type_doc');
+        Route::get('/{formation:slug}/{niveau:slug}', [
+            VitrineSecondaireController::class,
+            'niveau'
+        ])->name('niveau');
 
-        Route::get('/{classe}/{matiere}/{type}', 'documents')
-            ->name('documents');
+        Route::get('/{formation:slug}/{niveau:slug}/{matiere:slug}', [
+            VitrineSecondaireController::class,
+            'subject'
+        ])->name('subject');
+
+        Route::get('/{formation:slug}/{niveau:slug}/{matiere:slug}/document/{slug}', [
+            VitrineSecondaireController::class,
+            'document'
+        ])->name('document');
     });
-
-
+    
 /*
 |--------------------------------------------------------------------------
-| VITRINE — ENSEIGNEMENT SECONDAIRE TECHNIQUE
+| SUPÉRIEUR
+| Domaine → Formation → Filière → Spécialité → Niveau
+| → Module/Matière → Documents → Document
 |--------------------------------------------------------------------------
-|
-| Classe
-|    ↓
-| Matière
-|    ↓
-| Type de document
-|    ↓
-| Documents
-|
 */
-
-Route::prefix('secondaire/technique')
-    ->name('vitrine.secondaire.technique.')
-    ->controller(VitrineTechniqueController::class)
-    ->group(function () {
-
-        Route::get('/', 'classes')
-            ->name('classes');
-
-        Route::get('/{classe}', 'matieres')
-            ->name('matieres');
-
-        Route::get('/{classe}/{matiere}', 'typeDocuments')
-            ->name('type_doc');
-
-        Route::get('/{classe}/{matiere}/{type}', 'documents')
-            ->name('documents');
-    });
-
-
-/*
-|--------------------------------------------------------------------------
-| VITRINE — ENSEIGNEMENT SUPÉRIEUR
-|--------------------------------------------------------------------------
-|
-| Domaine académique
-|    ↓
-| Filière
-|    ↓
-| Niveau
-|    ↓
-| Type de document
-|    ↓
-| Documents
-|
-*/
-
 Route::prefix('superieur')
     ->name('vitrine.superieur.')
-    ->controller(VitrineSuperieurController::class)
     ->group(function () {
 
-        // Domaines académiques
-        Route::get('/', 'domaines')
-            ->name('domaines');
+        Route::get('/', [
+            VitrineSuperieurController::class,
+            'domaines'
+        ])->name('domaines');
 
-        // Domaine → Filières
-        Route::get('/{domaineSlug}', 'filieres')
-            ->name('filieres');
-
-        // Domaine → Filière → Niveaux
         Route::get(
-            '/{domaineSlug}/{filiereSlug}',
-            'niveaux'
+            '/{domaineSlug}/filieres',
+            [
+                VitrineSuperieurController::class,
+                'filieres'
+            ]
+        )->name('filieres');
+
+        Route::get(
+            '/{domaineSlug}/{filiereSlug}/niveaux',
+            [
+                VitrineSuperieurController::class,
+                'niveaux'
+            ]
         )->name('niveaux');
 
-        // Domaine → Filière → Niveau → Types
         Route::get(
-            '/{domaineSlug}/{filiereSlug}/{niveauSlug}',
-            'typeDocuments'
-        )->name('type_doc');
+            '/{domaineSlug}/{filiereSlug}/{niveauSlug}/modules',
+            [
+                VitrineSuperieurController::class,
+                'modules'
+            ]
+        )->name('modules');
 
-        // Domaine → Filière → Niveau → Type → Documents
         Route::get(
-            '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{typeSlug}',
-            'documents'
+            '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{subjectSlug}/documents',
+            [
+                VitrineSuperieurController::class,
+                'documents'
+            ]
         )->name('documents');
+
+        Route::get(
+            '/{domaineSlug}/{filiereSlug}/{niveauSlug}/{subjectSlug}/document/{documentSlug}',
+            [
+                VitrineSuperieurController::class,
+                'show'
+            ]
+        )->name('show');
     });
+
 /*
 |--------------------------------------------------------------------------
 | VITRINE — ENSEIGNEMENT PROFESSIONNEL
@@ -960,32 +945,26 @@ Route::prefix('professionnel')
             VitrineProfessionnelController::class,
             'formations'
         ])->name('formations');
-
-
         /*
         |--------------------------------------------------------------------------
         | ENEP
         | Formation → Niveau → Module → Type → Documents → Document
         |--------------------------------------------------------------------------
         */
-
         Route::get('/{formationSlug}/niveaux', [
             VitrineProfessionnelController::class,
             'niveaux'
         ])->name('formation.niveaux');
-
 
         Route::get('/{formationSlug}/{niveauSlug}/modules', [
             VitrineProfessionnelController::class,
             'modules'
         ])->name('enep.modules');
 
-
         Route::get('/{formationSlug}/{niveauSlug}/module/{moduleSlug}', [
             VitrineProfessionnelController::class,
             'typeDocumentsModule'
         ])->name('enep.type_doc');
-
 
         Route::get('/{formationSlug}/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}', [
             VitrineProfessionnelController::class,
@@ -1116,5 +1095,4 @@ Route::prefix('professionnel')
                 'showDocumentEnsModule'
             ]
         )->name('ens.show');
-
     });

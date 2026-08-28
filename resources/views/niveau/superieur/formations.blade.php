@@ -2,84 +2,309 @@
 
 @section('content')
 
-<div class="min-h-screen bg-gradient-to-b from-blue-50 to-gray-50 py-14 px-4">
+<div class="superieur-page">
 
+<section class="superieur-hero">
+    <div class="container">
 
-    <div class="max-w-6xl mx-auto text-center mb-12">
+        <span class="superieur-badge">
+            <i class="bi bi-building-fill"></i>
+            FORMATIONS SUPÉRIEURES
+        </span>
 
-        <h1 class="text-4xl font-extrabold text-gray-800">
+        <h1>
+            @if(!empty($domaine->icon))
+                {{ $domaine->icon }}
+            @else
+                <i class="bi bi-mortarboard-fill"></i>
+            @endif
 
-            🎓 {{ $domaine->name }}
-
+            {{ $domaine->name }}
         </h1>
 
-        <p class="text-gray-500 mt-2">
-            Choisissez votre formation.
+        <p>
+            Choisissez une formation académique.
         </p>
 
     </div>
+</section>
 
+<section class="superieur-content">
 
+    <div class="container">
 
-    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="section-heading">
 
+            <div>
+                <span class="section-kicker">
+                    FORMATIONS
+                </span>
 
-        @forelse($formations as $formation)
+                <h2>
+                    Choisissez votre formation
+                </h2>
+            </div>
 
+            <span class="class-count">
+                {{ $formations->count() }}
+                formation{{ $formations->count() > 1 ? 's' : '' }}
+            </span>
 
-        <a href="{{ route('vitrine.superieur.filieres',[
+        </div>
 
-            'domaineSlug'=>$domaine->slug,
+        @if($formations->isNotEmpty())
 
-            'formationSlug'=>$formation->slug
+            <div class="superieur-grid">
 
-        ]) }}"
+                @foreach($formations as $formation)
 
-        class="bg-white rounded-2xl shadow-md hover:shadow-xl
-        transition p-8 border hover:border-blue-500">
+                    <a
+                        href="{{ route(
+                            'vitrine.superieur.filieres',
+                            [
+                                'domaineSlug' => $domaine->slug,
+                                'formationSlug' => $formation->slug
+                            ]
+                        ) }}"
+                        class="superieur-card"
+                    >
 
+                        <div class="superieur-card-top">
 
-            <div class="text-5xl text-center">
+                            <div class="superieur-icon">
 
-                {{ $formation->icon ?? '🎓' }}
+                                @if(!empty($formation->icon))
+                                    {{ $formation->icon }}
+                                @else
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                @endif
+
+                            </div>
+
+                            <div class="superieur-arrow">
+                                <i class="bi bi-arrow-right"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="superieur-card-body">
+
+                            <h3>
+                                {{ $formation->name }}
+                            </h3>
+
+                            @if(!empty($formation->description))
+
+                                <p class="superieur-description">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    {{ $formation->description }}
+                                </p>
+
+                            @else
+
+                                <p>
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                    Formation académique
+                                </p>
+
+                            @endif
+
+                        </div>
+
+                        <div class="superieur-card-footer">
+
+                            <span>
+                                Voir les filières
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
 
             </div>
 
 
-            <h2 class="text-center mt-5 font-bold text-xl">
+            {{-- =====================================================
+                 CAROUSEL MOBILE
+                 ===================================================== --}}
 
-                {{ $formation->name }}
+            <div
+                id="superieurFormationsCarousel"
+                class="carousel slide superieur-carousel"
+                data-bs-ride="false"
+            >
 
-            </h2>
+                <div class="carousel-inner">
+
+                    @foreach($formations as $index => $formation)
+
+                        <div
+                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                        >
+
+                            <div class="superieur-carousel-item">
+
+                                <a
+                                    href="{{ route(
+                                        'vitrine.superieur.filieres',
+                                        [
+                                            'domaineSlug' => $domaine->slug,
+                                            'formationSlug' => $formation->slug
+                                        ]
+                                    ) }}"
+                                    class="superieur-card superieur-mobile-card"
+                                >
+
+                                    <div class="superieur-card-top">
+
+                                        <div class="superieur-icon">
+
+                                            @if(!empty($formation->icon))
+                                                {{ $formation->icon }}
+                                            @else
+                                                <i class="bi bi-mortarboard-fill"></i>
+                                            @endif
+
+                                        </div>
+
+                                        <div class="superieur-arrow">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="superieur-card-body">
+
+                                        <h3>
+                                            {{ $formation->name }}
+                                        </h3>
+
+                                        @if(!empty($formation->description))
+
+                                            <p class="superieur-description">
+                                                <i class="bi bi-info-circle-fill"></i>
+                                                {{ $formation->description }}
+                                            </p>
+
+                                        @else
+
+                                            <p>
+                                                <i class="bi bi-mortarboard-fill"></i>
+                                                Formation académique
+                                            </p>
+
+                                        @endif
+
+                                    </div>
+
+                                    <div class="superieur-card-footer">
+
+                                        <span>
+                                            Voir les filières
+                                        </span>
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+                @if($formations->count() > 1)
+
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#superieurFormationsCarousel"
+                        data-bs-slide="prev"
+                    >
+
+                        <span
+                            class="carousel-control-prev-icon"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span class="visually-hidden">
+                            Précédent
+                        </span>
+
+                    </button>
+
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#superieurFormationsCarousel"
+                        data-bs-slide="next"
+                    >
+
+                        <span
+                            class="carousel-control-next-icon"
+                            aria-hidden="true"
+                        ></span>
+
+                        <span class="visually-hidden">
+                            Suivant
+                        </span>
+
+                    </button>
+
+                @endif
+
+            </div>
+
+        @else
+
+            <div class="superieur-empty">
+
+                <div class="superieur-empty-icon">
+                    <i class="bi bi-folder-x"></i>
+                </div>
+
+                <h3>
+                    Aucune formation disponible
+                </h3>
+
+                <p>
+                    Aucune formation n'est actuellement disponible
+                    dans ce domaine.
+                </p>
+
+            </div>
+
+        @endif
 
 
-            <p class="text-center text-sm text-gray-500 mt-3">
+        {{-- =========================================================
+             RETOUR
+             ========================================================= --}}
 
-                {{ $formation->documents_count }} document(s)
+        <div class="doc-type-back-container">
 
-            </p>
-
-
-        </a>
-
-
-        @empty
-
-
-        <div class="col-span-full bg-white rounded-xl shadow p-10 text-center">
-
-            Aucune formation disponible.
+            <a
+                href="{{ route('vitrine.superieur.domaines') }}"
+                class="doc-type-back-btn"
+            >
+                <i class="bi bi-arrow-left"></i>
+                Retour aux domaines
+            </a>
 
         </div>
 
-
-        @endforelse
-
-
     </div>
 
+</section>
 
 </div>
-
 
 @endsection

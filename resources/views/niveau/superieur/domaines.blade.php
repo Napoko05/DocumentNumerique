@@ -6,33 +6,26 @@
 
 
 <section class="superieur-hero">
-
     <div class="container">
 
         <span class="superieur-badge">
-            <i class="bi bi-file-earmark-text-fill"></i>
-            DOCUMENTS
+            <i class="bi bi-mortarboard-fill"></i>
+            ENSEIGNEMENT SUPÉRIEUR
         </span>
 
         <h1>
-            {{ $subject->name }}
+            🎓 Domaines académiques
         </h1>
 
         <p>
-            {{ $domaine->name }}
-            •
-            {{ $filiere->name }}
-            •
-            {{ $niveau->name }}
+            Explorez les domaines académiques de l'enseignement supérieur.
         </p>
 
     </div>
-
 </section>
 
 
 <section class="superieur-content">
-
     <div class="container">
 
         <div class="section-heading">
@@ -40,41 +33,37 @@
             <div>
 
                 <span class="section-kicker">
-                    RESSOURCES PÉDAGOGIQUES
+                    PARCOURS ACADÉMIQUE
                 </span>
 
                 <h2>
-                    Documents disponibles
+                    Choisissez un domaine
                 </h2>
 
             </div>
 
             <span class="class-count">
 
-                {{ $documents->count() }}
+                {{ $domaines->count() }}
 
-                document{{ $documents->count() > 1 ? 's' : '' }}
+                domaine{{ $domaines->count() > 1 ? 's' : '' }}
 
             </span>
 
         </div>
 
 
-        @if($documents->isNotEmpty())
+        @if($domaines->isNotEmpty())
 
             <div class="superieur-grid">
 
-                @foreach($documents as $document)
+                @foreach($domaines as $domaine)
 
                     <a
                         href="{{ route(
-                            'vitrine.superieur.show',
+                            'vitrine.superieur.filieres',
                             [
-                                'domaineSlug' => $domaine->slug,
-                                'filiereSlug' => $filiere->slug,
-                                'niveauSlug' => $niveau->slug,
-                                'subjectSlug' => $subject->slug,
-                                'documentSlug' => $document->slug
+                                'domaineSlug' => $domaine->slug
                             ]
                         ) }}"
                         class="superieur-card"
@@ -83,7 +72,13 @@
                         <div class="superieur-card-top">
 
                             <div class="superieur-icon">
-                                <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                                @if(!empty($domaine->icon))
+                                    {{ $domaine->icon }}
+                                @else
+                                    <i class="bi bi-mortarboard-fill"></i>
+                                @endif
+
                             </div>
 
                             <div class="superieur-arrow">
@@ -96,18 +91,18 @@
                         <div class="superieur-card-body">
 
                             <h3>
-                                {{ $document->title }}
+                                {{ $domaine->name }}
                             </h3>
 
                             <p>
-                                <i class="bi bi-book-fill"></i>
-                                {{ $subject->name }}
+                                <i class="bi bi-diagram-3-fill"></i>
+                                Domaine académique
                             </p>
 
-                            @if(!empty($document->description))
+                            @if(!empty($domaine->description))
 
                                 <p class="superieur-description">
-                                    {{ $document->description }}
+                                    {{ $domaine->description }}
                                 </p>
 
                             @endif
@@ -118,7 +113,7 @@
                         <div class="superieur-card-footer">
 
                             <span>
-                                Consulter le document
+                                Voir les filières
                             </span>
 
                             <i class="bi bi-arrow-right"></i>
@@ -137,14 +132,14 @@
                  ===================================================== --}}
 
             <div
-                id="superieurDocumentsCarousel"
+                id="superieurDomainesCarousel"
                 class="carousel slide superieur-carousel"
                 data-bs-ride="false"
             >
 
                 <div class="carousel-inner">
 
-                    @foreach($documents as $index => $document)
+                    @foreach($domaines as $index => $domaine)
 
                         <div
                             class="carousel-item {{ $index === 0 ? 'active' : '' }}"
@@ -154,13 +149,9 @@
 
                                 <a
                                     href="{{ route(
-                                        'vitrine.superieur.show',
+                                        'vitrine.superieur.filieres',
                                         [
-                                            'domaineSlug' => $domaine->slug,
-                                            'filiereSlug' => $filiere->slug,
-                                            'niveauSlug' => $niveau->slug,
-                                            'subjectSlug' => $subject->slug,
-                                            'documentSlug' => $document->slug
+                                            'domaineSlug' => $domaine->slug
                                         ]
                                     ) }}"
                                     class="superieur-card superieur-mobile-card"
@@ -169,7 +160,13 @@
                                     <div class="superieur-card-top">
 
                                         <div class="superieur-icon">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                                            @if(!empty($domaine->icon))
+                                                {{ $domaine->icon }}
+                                            @else
+                                                <i class="bi bi-mortarboard-fill"></i>
+                                            @endif
+
                                         </div>
 
                                         <div class="superieur-arrow">
@@ -182,18 +179,18 @@
                                     <div class="superieur-card-body">
 
                                         <h3>
-                                            {{ $document->title }}
+                                            {{ $domaine->name }}
                                         </h3>
 
                                         <p>
-                                            <i class="bi bi-book-fill"></i>
-                                            {{ $subject->name }}
+                                            <i class="bi bi-diagram-3-fill"></i>
+                                            Domaine académique
                                         </p>
 
-                                        @if(!empty($document->description))
+                                        @if(!empty($domaine->description))
 
                                             <p class="superieur-description">
-                                                {{ $document->description }}
+                                                {{ $domaine->description }}
                                             </p>
 
                                         @endif
@@ -204,7 +201,7 @@
                                     <div class="superieur-card-footer">
 
                                         <span>
-                                            Consulter le document
+                                            Voir les filières
                                         </span>
 
                                         <i class="bi bi-arrow-right"></i>
@@ -222,12 +219,12 @@
                 </div>
 
 
-                @if($documents->count() > 1)
+                @if($domaines->count() > 1)
 
                     <button
                         class="carousel-control-prev"
                         type="button"
-                        data-bs-target="#superieurDocumentsCarousel"
+                        data-bs-target="#superieurDomainesCarousel"
                         data-bs-slide="prev"
                     >
 
@@ -246,7 +243,7 @@
                     <button
                         class="carousel-control-next"
                         type="button"
-                        data-bs-target="#superieurDocumentsCarousel"
+                        data-bs-target="#superieurDomainesCarousel"
                         data-bs-slide="next"
                     >
 
@@ -265,54 +262,30 @@
 
             </div>
 
+
         @else
 
             <div class="superieur-empty">
 
                 <div class="superieur-empty-icon">
-                    <i class="bi bi-file-earmark-x"></i>
+                    <i class="bi bi-folder-x"></i>
                 </div>
 
                 <h3>
-                    Aucun document disponible
+                    Aucun domaine disponible
                 </h3>
 
                 <p>
-                    Aucun document publié n'est actuellement disponible
-                    pour la matière
-                    <strong>{{ $subject->name }}</strong>.
+                    Aucun domaine académique n'est actuellement disponible.
                 </p>
 
             </div>
 
         @endif
 
-
-        <div class="superieur-back-container">
-
-            <a
-                href="{{ route(
-                    'vitrine.superieur.modules',
-                    [
-                        'domaineSlug' => $domaine->slug,
-                        'filiereSlug' => $filiere->slug,
-                        'niveauSlug' => $niveau->slug
-                    ]
-                ) }}"
-                class="superieur-back-btn"
-            >
-
-                <i class="bi bi-arrow-left"></i>
-
-                Retour aux modules
-
-            </a>
-
-        </div>
-
     </div>
-
 </section>
+
 
 </div>
 

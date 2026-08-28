@@ -4,18 +4,16 @@
 
 <div class="superieur-page">
 
-
 <section class="superieur-hero">
-
     <div class="container">
 
         <span class="superieur-badge">
-            <i class="bi bi-file-earmark-text-fill"></i>
-            DOCUMENTS
+            <i class="bi bi-book-fill"></i>
+            MODULES / MATIÈRES
         </span>
 
         <h1>
-            {{ $subject->name }}
+            {{ $niveau->name }}
         </h1>
 
         <p>
@@ -23,16 +21,14 @@
             •
             {{ $filiere->name }}
             •
-            {{ $niveau->name }}
+            Choisissez un module ou une matière.
         </p>
 
     </div>
-
 </section>
 
 
 <section class="superieur-content">
-
     <div class="container">
 
         <div class="section-heading">
@@ -40,41 +36,37 @@
             <div>
 
                 <span class="section-kicker">
-                    RESSOURCES PÉDAGOGIQUES
+                    PARCOURS ACADÉMIQUE
                 </span>
 
                 <h2>
-                    Documents disponibles
+                    Modules / Matières
                 </h2>
 
             </div>
 
             <span class="class-count">
-
-                {{ $documents->count() }}
-
-                document{{ $documents->count() > 1 ? 's' : '' }}
-
+                {{ $subjects->count() }}
+                matière{{ $subjects->count() > 1 ? 's' : '' }}
             </span>
 
         </div>
 
 
-        @if($documents->isNotEmpty())
+        @if($subjects->isNotEmpty())
 
             <div class="superieur-grid">
 
-                @foreach($documents as $document)
+                @foreach($subjects as $subject)
 
                     <a
                         href="{{ route(
-                            'vitrine.superieur.show',
+                            'vitrine.superieur.documents',
                             [
                                 'domaineSlug' => $domaine->slug,
                                 'filiereSlug' => $filiere->slug,
                                 'niveauSlug' => $niveau->slug,
-                                'subjectSlug' => $subject->slug,
-                                'documentSlug' => $document->slug
+                                'subjectSlug' => $subject->slug
                             ]
                         ) }}"
                         class="superieur-card"
@@ -83,7 +75,13 @@
                         <div class="superieur-card-top">
 
                             <div class="superieur-icon">
-                                <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                                @if(!empty($subject->icon))
+                                    {{ $subject->icon }}
+                                @else
+                                    <i class="bi bi-book-fill"></i>
+                                @endif
+
                             </div>
 
                             <div class="superieur-arrow">
@@ -96,18 +94,18 @@
                         <div class="superieur-card-body">
 
                             <h3>
-                                {{ $document->title }}
+                                {{ $subject->name }}
                             </h3>
 
                             <p>
                                 <i class="bi bi-book-fill"></i>
-                                {{ $subject->name }}
+                                Module / Matière
                             </p>
 
-                            @if(!empty($document->description))
+                            @if(!empty($subject->description))
 
                                 <p class="superieur-description">
-                                    {{ $document->description }}
+                                    {{ $subject->description }}
                                 </p>
 
                             @endif
@@ -118,7 +116,7 @@
                         <div class="superieur-card-footer">
 
                             <span>
-                                Consulter le document
+                                Voir les documents
                             </span>
 
                             <i class="bi bi-arrow-right"></i>
@@ -132,19 +130,17 @@
             </div>
 
 
-            {{-- =====================================================
-                 CAROUSEL MOBILE
-                 ===================================================== --}}
+            {{-- CAROUSEL MOBILE --}}
 
             <div
-                id="superieurDocumentsCarousel"
+                id="superieurSubjectsCarousel"
                 class="carousel slide superieur-carousel"
                 data-bs-ride="false"
             >
 
                 <div class="carousel-inner">
 
-                    @foreach($documents as $index => $document)
+                    @foreach($subjects as $index => $subject)
 
                         <div
                             class="carousel-item {{ $index === 0 ? 'active' : '' }}"
@@ -154,13 +150,12 @@
 
                                 <a
                                     href="{{ route(
-                                        'vitrine.superieur.show',
+                                        'vitrine.superieur.documents',
                                         [
                                             'domaineSlug' => $domaine->slug,
                                             'filiereSlug' => $filiere->slug,
                                             'niveauSlug' => $niveau->slug,
-                                            'subjectSlug' => $subject->slug,
-                                            'documentSlug' => $document->slug
+                                            'subjectSlug' => $subject->slug
                                         ]
                                     ) }}"
                                     class="superieur-card superieur-mobile-card"
@@ -169,7 +164,13 @@
                                     <div class="superieur-card-top">
 
                                         <div class="superieur-icon">
-                                            <i class="bi bi-file-earmark-pdf-fill"></i>
+
+                                            @if(!empty($subject->icon))
+                                                {{ $subject->icon }}
+                                            @else
+                                                <i class="bi bi-book-fill"></i>
+                                            @endif
+
                                         </div>
 
                                         <div class="superieur-arrow">
@@ -182,18 +183,18 @@
                                     <div class="superieur-card-body">
 
                                         <h3>
-                                            {{ $document->title }}
+                                            {{ $subject->name }}
                                         </h3>
 
                                         <p>
                                             <i class="bi bi-book-fill"></i>
-                                            {{ $subject->name }}
+                                            Module / Matière
                                         </p>
 
-                                        @if(!empty($document->description))
+                                        @if(!empty($subject->description))
 
                                             <p class="superieur-description">
-                                                {{ $document->description }}
+                                                {{ $subject->description }}
                                             </p>
 
                                         @endif
@@ -204,7 +205,7 @@
                                     <div class="superieur-card-footer">
 
                                         <span>
-                                            Consulter le document
+                                            Voir les documents
                                         </span>
 
                                         <i class="bi bi-arrow-right"></i>
@@ -222,12 +223,12 @@
                 </div>
 
 
-                @if($documents->count() > 1)
+                @if($subjects->count() > 1)
 
                     <button
                         class="carousel-control-prev"
                         type="button"
-                        data-bs-target="#superieurDocumentsCarousel"
+                        data-bs-target="#superieurSubjectsCarousel"
                         data-bs-slide="prev"
                     >
 
@@ -246,7 +247,7 @@
                     <button
                         class="carousel-control-next"
                         type="button"
-                        data-bs-target="#superieurDocumentsCarousel"
+                        data-bs-target="#superieurSubjectsCarousel"
                         data-bs-slide="next"
                     >
 
@@ -270,17 +271,17 @@
             <div class="superieur-empty">
 
                 <div class="superieur-empty-icon">
-                    <i class="bi bi-file-earmark-x"></i>
+                    <i class="bi bi-folder-x"></i>
                 </div>
 
                 <h3>
-                    Aucun document disponible
+                    Aucun module disponible
                 </h3>
 
                 <p>
-                    Aucun document publié n'est actuellement disponible
-                    pour la matière
-                    <strong>{{ $subject->name }}</strong>.
+                    Aucun module ou matière n'est actuellement disponible
+                    pour le niveau
+                    <strong>{{ $niveau->name }}</strong>.
                 </p>
 
             </div>
@@ -292,11 +293,10 @@
 
             <a
                 href="{{ route(
-                    'vitrine.superieur.modules',
+                    'vitrine.superieur.niveaux',
                     [
                         'domaineSlug' => $domaine->slug,
-                        'filiereSlug' => $filiere->slug,
-                        'niveauSlug' => $niveau->slug
+                        'filiereSlug' => $filiere->slug
                     ]
                 ) }}"
                 class="superieur-back-btn"
@@ -304,15 +304,15 @@
 
                 <i class="bi bi-arrow-left"></i>
 
-                Retour aux modules
+                Retour aux niveaux
 
             </a>
 
         </div>
 
     </div>
-
 </section>
+
 
 </div>
 

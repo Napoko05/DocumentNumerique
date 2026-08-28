@@ -4,112 +4,143 @@ namespace App\Http\Controllers\Vitrine;
 
 use App\Http\Controllers\Controller;
 use App\Models\AcademicDomain;
+use App\Models\Document;
 use App\Models\Filiere;
 use App\Models\Level;
-use App\Models\Document;
-use App\Models\DocumentType;
+use App\Models\Subject;
+use App\Models\TeachingCategory;
 
 class VitrineSuperieurController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
-    | DOMAINES ACADÉMIQUES
+    | CATÉGORIE SUPÉRIEUR
+    |--------------------------------------------------------------------------
+    */
+
+    private function superiorCategory()
+    {
+        return TeachingCategory::query()
+            ->whereIn('slug', [
+                'superieur',
+                'higher',
+            ])
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOMAINE ACADÉMIQUE
+    |--------------------------------------------------------------------------
+    */
+
+    private function getDomaine($domaineSlug)
+    {
+        return AcademicDomain::query()
+            ->where('slug', $domaineSlug)
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | FILIÈRE
+    |--------------------------------------------------------------------------
+    */
+
+    private function getFiliere(
+        $domaine,
+        $filiereSlug
+    ) {
+        return Filiere::query()
+            ->where('slug', $filiereSlug)
+            ->where('academic_domain_id', $domaine->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | NIVEAU
+    |--------------------------------------------------------------------------
+    */
+
+    private function getNiveau(
+        $filiere,
+        $niveauSlug
+    ) {
+        return Level::query()
+            ->where('slug', $niveauSlug)
+            ->where('filiere_id', $filiere->id)
+            ->whereNull('formation_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | MODULE / MATIÈRE
+    |--------------------------------------------------------------------------
+    */
+
+    private function getSubject(
+        $niveau,
+        $subjectSlug
+    ) {
+        return Subject::query()
+            ->where('slug', $subjectSlug)
+            ->where('level_id', $niveau->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOMAINES
     |--------------------------------------------------------------------------
     |
-    | Supérieur
-    |     ↓
-    | Domaine académique
+    | /superieur
     |
     */
 
     public function domaines()
     {
-        $domaines = AcademicDomain::where(
-            'is_active',
-            true
-        )
-            ->orderBy('position')
+        $domaines = AcademicDomain::query()
+            ->where('is_active', true)
+            ->orderBy('name')
             ->get();
 
-        foreach ($domaines as $domaine) {
-
-            $domaine->documents_count = Document::where(
-                'academic_domain_id',
-                $domaine->id
-            )
-                ->where(
-                    'status',
-                    'published'
-                )
-                ->count();
-        }
-
         return view(
-            'niveau.superieur.domaine',
+            'niveau.superieur.domaines',
             compact('domaines')
         );
     }
-
 
     /*
     |--------------------------------------------------------------------------
     | FILIÈRES D'UN DOMAINE
     |--------------------------------------------------------------------------
     |
-    | Domaine
-    |     ↓
-    | Filière
+    | Domaine → Filière
     |
-    | Exemple :
-    |
-    | Sciences exactes
-    |     ↓
-    | Informatique
-    | Mathématiques
-    | Physique
+    | /superieur/{domaineSlug}/filieres
     |
     */
 
-    public function filieres(
-        string $domaineSlug
-    ) {
-        $domaine = AcademicDomain::where(
-            'slug',
-            $domaineSlug
-        )
+    public function filieres($domaineSlug)
+    {
+        $domaine = $this->getDomaine($domaineSlug);
+
+        $filieres = Filiere::query()
             ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
-
-        $filieres = Filiere::where(
-            'academic_domain_id',
-            $domaine->id
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->orderBy('name')
-            ->get();
-
-        foreach ($filieres as $filiere) {
-
-            $filiere->documents_count = Document::where(
                 'academic_domain_id',
                 $domaine->id
             )
-                ->where(
-                    'filiere_id',
-                    $filiere->id
-                )
-                ->where(
-                    'status',
-                    'published'
-                )
-                ->count();
-        }
+            ->where('is_active', true)
+            ->orderBy('name')
+            ->get();
 
         return view(
             'niveau.superieur.filieres',
@@ -120,79 +151,39 @@ class VitrineSuperieurController extends Controller
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | NIVEAUX D'UNE FILIÈRE
     |--------------------------------------------------------------------------
     |
-    | Domaine
-    |     ↓
-    | Filière
-    |     ↓
-    | Niveau
+    | Filière → Niveau
+    |
+    | /superieur/{domaineSlug}/{filiereSlug}/niveaux
     |
     */
 
     public function niveaux(
-        string $domaineSlug,
-        string $filiereSlug
+        $domaineSlug,
+        $filiereSlug
     ) {
-        $domaine = AcademicDomain::where(
-            'slug',
-            $domaineSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $domaine = $this->getDomaine($domaineSlug);
 
-        $filiere = Filiere::where(
-            'academic_domain_id',
-            $domaine->id
-        )
-            ->where(
-                'slug',
-                $filiereSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $filiere = $this->getFiliere(
+            $domaine,
+            $filiereSlug
+        );
 
-        $niveaux = Level::where(
-            'filiere_id',
-            $filiere->id
-        )
+        $niveaux = Level::query()
             ->where(
-                'is_active',
-                true
+                'filiere_id',
+                $filiere->id
             )
+            ->whereNull('formation_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
             ->orderBy('order')
+            ->orderBy('name')
             ->get();
-
-        foreach ($niveaux as $niveau) {
-
-            $niveau->documents_count = Document::where(
-                'academic_domain_id',
-                $domaine->id
-            )
-                ->where(
-                    'filiere_id',
-                    $filiere->id
-                )
-                ->where(
-                    'level_id',
-                    $niveau->id
-                )
-                ->where(
-                    'status',
-                    'published'
-                )
-                ->count();
-        }
 
         return view(
             'niveau.superieur.niveaux',
@@ -204,191 +195,96 @@ class VitrineSuperieurController extends Controller
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | TYPES DE DOCUMENTS
+    | MODULES / MATIÈRES
     |--------------------------------------------------------------------------
     |
-    | Domaine
-    |     ↓
-    | Filière
-    |     ↓
-    | Niveau
-    |     ↓
-    | Type de document
+    | Niveau → Module / Matière
+    |
+    | /superieur/{domaineSlug}/{filiereSlug}/{niveauSlug}/modules
     |
     */
 
-    public function typeDocuments(
-        string $domaineSlug,
-        string $filiereSlug,
-        string $niveauSlug
+    public function modules(
+        $domaineSlug,
+        $filiereSlug,
+        $niveauSlug
     ) {
-        $domaine = AcademicDomain::where(
-            'slug',
-            $domaineSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $domaine = $this->getDomaine($domaineSlug);
 
-        $filiere = Filiere::where(
-            'academic_domain_id',
-            $domaine->id
-        )
-            ->where(
-                'slug',
-                $filiereSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $filiere = $this->getFiliere(
+            $domaine,
+            $filiereSlug
+        );
 
-        $niveau = Level::where(
-            'filiere_id',
-            $filiere->id
-        )
-            ->where(
-                'slug',
-                $niveauSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $niveau = $this->getNiveau(
+            $filiere,
+            $niveauSlug
+        );
 
-        $types = DocumentType::where(
-            'is_active',
-            true
-        )
+        $subjects = Subject::query()
+            ->where(
+                'level_id',
+                $niveau->id
+            )
+            ->where('is_active', true)
+            ->orderBy('position')
             ->orderBy('name')
             ->get();
 
-        foreach ($types as $type) {
-
-            $type->documents_count = Document::where(
-                'academic_domain_id',
-                $domaine->id
-            )
-                ->where(
-                    'filiere_id',
-                    $filiere->id
-                )
-                ->where(
-                    'level_id',
-                    $niveau->id
-                )
-                ->where(
-                    'document_type_id',
-                    $type->id
-                )
-                ->where(
-                    'status',
-                    'published'
-                )
-                ->count();
-        }
-
         return view(
-            'niveau.superieur.type_doc',
+            'niveau.superieur.modules',
             compact(
                 'domaine',
                 'filiere',
                 'niveau',
-                'types'
+                'subjects'
             )
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
-    | DOCUMENTS
+    | DOCUMENTS D'UNE MATIÈRE
     |--------------------------------------------------------------------------
     |
-    | Domaine
-    |     ↓
-    | Filière
-    |     ↓
-    | Niveau
-    |     ↓
-    | Type de document
-    |     ↓
-    | Documents
+    | Matière → Documents
+    |
+    | /superieur/{domaineSlug}/{filiereSlug}/{niveauSlug}/{subjectSlug}/documents
     |
     */
 
     public function documents(
-        string $domaineSlug,
-        string $filiereSlug,
-        string $niveauSlug,
-        string $typeSlug
+        $domaineSlug,
+        $filiereSlug,
+        $niveauSlug,
+        $subjectSlug
     ) {
-        $domaine = AcademicDomain::where(
-            'slug',
-            $domaineSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $domaine = $this->getDomaine($domaineSlug);
 
-        $filiere = Filiere::where(
-            'academic_domain_id',
-            $domaine->id
-        )
-            ->where(
-                'slug',
-                $filiereSlug
-            )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
+        $filiere = $this->getFiliere(
+            $domaine,
+            $filiereSlug
+        );
 
-        $niveau = Level::where(
-            'filiere_id',
-            $filiere->id
-        )
+        $niveau = $this->getNiveau(
+            $filiere,
+            $niveauSlug
+        );
+
+        $subject = $this->getSubject(
+            $niveau,
+            $subjectSlug
+        );
+
+        $category = $this->superiorCategory();
+
+        $documents = Document::query()
             ->where(
-                'slug',
-                $niveauSlug
+                'teaching_category_id',
+                $category->id
             )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
-
-        $type = DocumentType::where(
-            'slug',
-            $typeSlug
-        )
-            ->where(
-                'is_active',
-                true
-            )
-            ->firstOrFail();
-
-        $documents = Document::with([
-
-            'staff',
-            'academicDomain',
-            'formation',
-            'filiere',
-            'level',
-            'documentType',
-            'ratings'
-
-        ])
             ->where(
                 'academic_domain_id',
                 $domaine->id
@@ -402,15 +298,20 @@ class VitrineSuperieurController extends Controller
                 $niveau->id
             )
             ->where(
-                'document_type_id',
-                $type->id
+                'subject_id',
+                $subject->id
             )
             ->where(
                 'status',
                 'published'
             )
-            ->latest()
-            ->paginate(12);
+            ->with([
+                'documentType',
+                'tags',
+            ])
+            ->latest('published_at')
+            ->latest('id')
+            ->get();
 
         return view(
             'niveau.superieur.documents',
@@ -418,8 +319,94 @@ class VitrineSuperieurController extends Controller
                 'domaine',
                 'filiere',
                 'niveau',
-                'type',
+                'subject',
                 'documents'
+            )
+        );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | DOCUMENT INDIVIDUEL
+    |--------------------------------------------------------------------------
+    |
+    | /superieur/{domaineSlug}/{filiereSlug}/{niveauSlug}/{subjectSlug}/document/{documentSlug}
+    |
+    */
+
+    public function show(
+        $domaineSlug,
+        $filiereSlug,
+        $niveauSlug,
+        $subjectSlug,
+        $documentSlug
+    ) {
+        $domaine = $this->getDomaine($domaineSlug);
+
+        $filiere = $this->getFiliere(
+            $domaine,
+            $filiereSlug
+        );
+
+        $niveau = $this->getNiveau(
+            $filiere,
+            $niveauSlug
+        );
+
+        $subject = $this->getSubject(
+            $niveau,
+            $subjectSlug
+        );
+
+        $category = $this->superiorCategory();
+
+        $document = Document::query()
+            ->where(
+                'slug',
+                $documentSlug
+            )
+            ->where(
+                'teaching_category_id',
+                $category->id
+            )
+            ->where(
+                'academic_domain_id',
+                $domaine->id
+            )
+            ->where(
+                'filiere_id',
+                $filiere->id
+            )
+            ->where(
+                'level_id',
+                $niveau->id
+            )
+            ->where(
+                'subject_id',
+                $subject->id
+            )
+            ->where(
+                'status',
+                'published'
+            )
+            ->with([
+                'formation',
+                'filiere',
+                'level',
+                'subject',
+                'documentType',
+                'tags',
+            ])
+            ->firstOrFail();
+
+        return view(
+            'niveau.superieur.show',
+            compact(
+                'domaine',
+                'filiere',
+                'niveau',
+                'subject',
+                'document'
             )
         );
     }

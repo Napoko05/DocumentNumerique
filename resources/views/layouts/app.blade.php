@@ -178,7 +178,7 @@
                         {{-- Secondaire général --}}
 
                         <a
-                            href="{{ route('vitrine.secondaire.general.classes') }}"
+                            href="{{ route('vitrine.secondaire.index') }}"
                             class="yaas-dropdown-item">
 
                             <span class="yaas-dropdown-icon blue">
@@ -188,11 +188,11 @@
                             <span>
 
                                 <strong>
-                                    Secondaire général
+                                    Enseignement Secondaire 
                                 </strong>
 
                                 <small>
-                                    6e à Terminale
+                                    general & technique
                                 </small>
 
                             </span>
@@ -201,29 +201,7 @@
 
 
 
-                        {{-- Secondaire technique --}}
-
-                        <a
-                            href="{{ route('vitrine.secondaire.technique.classes') }}"
-                            class="yaas-dropdown-item">
-
-                            <span class="yaas-dropdown-icon orange">
-                                ⚙
-                            </span>
-
-                            <span>
-
-                                <strong>
-                                    Secondaire technique
-                                </strong>
-
-                                <small>
-                                    BT · CAP · BEP
-                                </small>
-
-                            </span>
-
-                        </a>
+                     
 
 
 
@@ -250,9 +228,6 @@
                             </span>
 
                         </a>
-
-
-
                         {{-- Professionnel --}}
 
                         <a
@@ -320,37 +295,24 @@
                     {{ request()->routeIs('profile.*')
                         ? 'active'
                         : '' }}">
-
                     Profil
-
                 </a>
-
                 @endauth
-
             </nav>
-
-
-
             {{-- =====================================================
              ACTIONS DESKTOP
         ====================================================== --}}
 
             <div class="yaas-navbar-actions">
 
-
                 @auth
-
                 {{-- Profil rapide --}}
-
                 <a
                     href="{{ route('profile.edit') }}"
                     class="yaas-btn yaas-btn-outline">
 
                     Mon profil
-
                 </a>
-
-
                 {{-- Déconnexion --}}
 
                 <form
@@ -368,10 +330,7 @@
                     </button>
 
                 </form>
-
-
                 @else
-
 
                 {{-- Connexion --}}
 
@@ -453,12 +412,12 @@
                     </span>
 
 
-                    <a href="{{ route('vitrine.secondaire.general.classes') }}">
+                    <a href="{{ route('vitrine.secondaire.index') }}">
                         🎓 Secondaire général
                     </a>
 
 
-                    <a href="{{ route('vitrine.secondaire.technique.classes') }}">
+                    <a href="{{ route('vitrine.secondaire.index') }}">
                         ⚙ Secondaire technique
                     </a>
 
@@ -473,21 +432,13 @@
                     </a>
 
                 </div>
-
-
-
                 {{-- Documents --}}
-
                 <a
                     href="{{ route('documents.index') }}"
                     class="yaas-mobile-link">
 
                     Documents
-
                 </a>
-
-
-
                 {{-- À propos --}}
 
                 <a
@@ -495,10 +446,7 @@
                     class="yaas-mobile-link">
 
                     À propos
-
                 </a>
-
-
 
                 @auth
 
@@ -509,9 +457,7 @@
                     class="yaas-mobile-link">
 
                     Mon profil
-
                 </a>
-
 
                 {{-- Déconnexion --}}
 
@@ -530,8 +476,6 @@
                     </button>
 
                 </form>
-
-
                 @else
 
                 {{-- Connexion --}}
@@ -574,8 +518,6 @@
         @yield('content')
 
     </main>
-
-
 
     {{-- ============================================================
      FOOTER
@@ -621,19 +563,12 @@
                         </span>
 
                     </a>
-
-
                     <p>
-
                         Démocratiser l'accès au savoir scientifique
                         au Burkina Faso et au-delà.
-
                     </p>
 
                 </div>
-
-
-
                 {{-- =================================================
                  EXPLORER
             ================================================== --}}
@@ -643,17 +578,12 @@
                     <h4>
                         Explorer
                     </h4>
-
-
                     <a href="{{ route('home') }}">
                         Accueil
                     </a>
-
-
                     <a href="{{ route('documents.index') }}">
                         Bibliothèque
                     </a>
-
 
                     <a href="{{ route('home') }}#documents">
                         Publications
@@ -666,12 +596,9 @@
 
                 </div>
 
-
-
                 {{-- =================================================
                  RESSOURCES
             ================================================== --}}
-
                 <div>
 
                     <h4>
@@ -679,12 +606,12 @@
                     </h4>
 
 
-                    <a href="{{ route('vitrine.secondaire.general.classes') }}">
+                    <a href="{{ route('vitrine.secondaire.index') }}">
                         Secondaire général
                     </a>
 
 
-                    <a href="{{ route('vitrine.secondaire.technique.classes') }}">
+                    <a href="{{ route('vitrine.secondaire.index') }}">
                         Secondaire technique
                     </a>
 

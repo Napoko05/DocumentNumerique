@@ -4,329 +4,300 @@ namespace App\Http\Controllers\Vitrine;
 
 use App\Http\Controllers\Controller;
 use App\Models\Document;
-use App\Models\DocumentType;
 use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Subject;
+use App\Models\TeachingCategory;
+use Illuminate\Http\Request;
 
 class VitrineSecondaireController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | PAGE D'ACCUEIL SECONDAIRE
+    |--------------------------------------------------------------------------
+    */
 
-    /**
-     * Formation secondaire
-     */
-    protected function formation(): Formation
+    public function index()
     {
-        return Formation::where('slug', 'secondaire-general')
+        $category = TeachingCategory::query()
+            ->whereIn('slug', ['secondaire', 'secondary'])
             ->where('is_active', true)
             ->firstOrFail();
-    }
 
-
-
-    /**
-     * Liste des classes
-     */
-    public function classes()
-    {
-        $formation = $this->formation();
-
-
-        $classes = Level::where('formation_id', $formation->id)
-
-            // uniquement secondaire
-            ->whereNull('filiere_id')
-
+        $formations = Formation::query()
+            ->where('teaching_category_id', $category->id)
             ->where('is_active', true)
-
-            ->orderBy('order')
-
+            ->withCount([
+                'levels' => function ($query) {
+                    $query->where('is_active', true)
+                        ->whereNull('filiere_id')
+                        ->whereNull('specialite_id');
+                }
+            ])
+            ->orderBy('position')
+            ->orderBy('name')
             ->get();
 
+        return view(
+            'niveau.secondaire.index',
+            compact(
+                'category',
+                'formations'
+            )
+        );
+    }
 
+    /*
+    |--------------------------------------------------------------------------
+    | FORMATION
+    |--------------------------------------------------------------------------
+    | Secondaire
+    |
+    | Formation
+    |     ↓
+    | Niveau
+    |--------------------------------------------------------------------------
+    */
 
-        foreach ($classes as $classe) {
+    public function formation(string $formation)
+    {
+        $category = TeachingCategory::query()
+            ->whereIn('slug', ['secondaire', 'secondary'])
+            ->where('is_active', true)
+            ->firstOrFail();
 
-            $classe->documents_count = Document::where('formation_id', $formation->id)
+        $formationModel = Formation::query()
+            ->where('slug', $formation)
+            ->where('teaching_category_id', $category->id)
+            ->where('is_active', true)
+            ->firstOrFail();
 
-                ->where('level_id', $classe->id)
+        $levels = Level::query()
+            ->where('formation_id', $formationModel->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->withCount([
+                'subjects' => function ($query) {
+                    $query->where('is_active', true);
+                }
+            ])
+            ->orderBy('order')
+            ->orderBy('name')
+            ->get();
 
-                ->where('status', 'published')
+        return view(
+            'niveau.secondaire.formation',
+            compact(
+                'category',
+                'formationModel',
+                'levels'
+            )
+        );
+    }
 
-                ->count();
+    /*
+    |--------------------------------------------------------------------------
+    | NIVEAU
+    |--------------------------------------------------------------------------
+    | Formation
+    |     ↓
+    | Niveau
+    |     ↓
+    | Matière / Module
+    |--------------------------------------------------------------------------
+    */
 
-        }
+    public function niveau(
+        string $formation,
+        string $niveau
+    ) {
+        $category = TeachingCategory::query()
+            ->whereIn('slug', ['secondaire', 'secondary'])
+            ->where('is_active', true)
+            ->firstOrFail();
 
+        $formationModel = Formation::query()
+            ->where('slug', $formation)
+            ->where('teaching_category_id', $category->id)
+            ->where('is_active', true)
+            ->firstOrFail();
 
+        $level = Level::query()
+            ->where('slug', $niveau)
+            ->where('formation_id', $formationModel->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $subjects = Subject::query()
+            ->where('level_id', $level->id)
+            ->where('is_active', true)
+            ->withCount([
+                'documents' => function ($query) {
+                    $query->where('status', 'published');
+                }
+            ])
+            ->orderBy('position')
+            ->orderBy('name')
+            ->get();
 
         return view(
             'niveau.secondaire.classes',
             compact(
-                'formation',
-                'classes'
+                'category',
+                'formationModel',
+                'level',
+                'subjects'
             )
         );
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | MATIÈRE / MODULE
+    |--------------------------------------------------------------------------
+    | Formation
+    |     ↓
+    | Niveau
+    |     ↓
+    | Matière
+    |     ↓
+    | Documents
+    |--------------------------------------------------------------------------
+    */
 
-
-
-    /**
-     * Liste des matières d'une classe
-     */
-    public function matieres(string $classeSlug)
-    {
-
-        $formation = $this->formation();
-
-
-
-        $classe = Level::where('formation_id', $formation->id)
-
-            ->where('slug', $classeSlug)
-
+    public function subject(
+        string $formation,
+        string $niveau,
+        string $matiere
+    ) {
+        $category = TeachingCategory::query()
+            ->whereIn('slug', ['secondaire', 'secondary'])
             ->where('is_active', true)
-
             ->firstOrFail();
 
-
-
-
-        $matieres = Subject::where('level_id', $classe->id)
-
+        $formationModel = Formation::query()
+            ->where('slug', $formation)
+            ->where('teaching_category_id', $category->id)
             ->where('is_active', true)
+            ->firstOrFail();
 
-            ->orderBy('name')
-
-            ->get();
-
-
-
-
-        foreach ($matieres as $matiere) {
-
-
-            $matiere->documents_count = Document::where('formation_id', $formation->id)
-
-                ->where('level_id', $classe->id)
-
-                ->where('subject_id', $matiere->id)
-
-                ->where('status', 'published')
-
-                ->count();
-
-
-        }
-
-
-
-        return view(
-            'niveau.secondaire.matieres',
-            compact(
-                'formation',
-                'classe',
-                'matieres'
-            )
-        );
-
-    }
-
-
-
-
-
-    /**
-     * Types de documents d'une matière
-     */
-    public function typeDocuments(
-        string $classeSlug,
-        string $matiereSlug
-    )
-    {
-
-        $formation = $this->formation();
-
-
-
-
-        $classe = Level::where('formation_id', $formation->id)
-
-            ->where('slug', $classeSlug)
-
+        $level = Level::query()
+            ->where('slug', $niveau)
+            ->where('formation_id', $formationModel->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
             ->where('is_active', true)
-
             ->firstOrFail();
 
-
-
-
-
-        $matiere = Subject::where('level_id', $classe->id)
-
-            ->where('slug', $matiereSlug)
-
+        $subject = Subject::query()
+            ->where('slug', $matiere)
+            ->where('level_id', $level->id)
             ->where('is_active', true)
-
             ->firstOrFail();
 
-
-
-
-
-        $types = DocumentType::where('is_active', true)
-
-            ->whereHas('documents', function($query) use ($formation,$classe,$matiere){
-
-                $query
-
-                    ->where('formation_id',$formation->id)
-
-                    ->where('level_id',$classe->id)
-
-                    ->where('subject_id',$matiere->id)
-
-                    ->where('status','published');
-
-            })
-
-            ->orderBy('name')
-
-            ->get();
-
-
-
-
-
-
-        foreach ($types as $type) {
-
-
-            $type->documents_count = Document::where('formation_id',$formation->id)
-
-                ->where('level_id',$classe->id)
-
-                ->where('subject_id',$matiere->id)
-
-                ->where('document_type_id',$type->id)
-
-                ->where('status','published')
-
-                ->count();
-
-        }
-
-
-
-
-
-        return view(
-            'niveau.secondaire.type_doc',
-            compact(
-                'formation',
-                'classe',
-                'matiere',
-                'types'
-            )
-        );
-
-    }
-
-
-
-
-
-    /**
-     * Liste des documents
-     */
-    public function documents(
-        string $classeSlug,
-        string $matiereSlug,
-        string $typeSlug
-    )
-    {
-
-        $formation = $this->formation();
-
-
-
-
-        $classe = Level::where('formation_id',$formation->id)
-
-            ->where('slug',$classeSlug)
-
-            ->where('is_active',true)
-
-            ->firstOrFail();
-
-
-
-
-
-        $matiere = Subject::where('level_id',$classe->id)
-
-            ->where('slug',$matiereSlug)
-
-            ->where('is_active',true)
-
-            ->firstOrFail();
-
-
-
-
-
-        $type = DocumentType::where('slug',$typeSlug)
-
-            ->where('is_active',true)
-
-            ->firstOrFail();
-
-
-
-
-
-
-        $documents = Document::with([
-
-                'staff',
+        $documents = Document::query()
+            ->where('teaching_category_id', $category->id)
+            ->where('formation_id', $formationModel->id)
+            ->where('level_id', $level->id)
+            ->where('subject_id', $subject->id)
+            ->where('status', 'published')
+            ->with([
                 'formation',
                 'level',
                 'subject',
                 'documentType',
-                'ratings'
-
+                'tags',
             ])
-
-            ->where('formation_id',$formation->id)
-
-            ->where('level_id',$classe->id)
-
-            ->where('subject_id',$matiere->id)
-
-            ->where('document_type_id',$type->id)
-
-            ->where('status','published')
-
-            ->latest()
-
-            ->paginate(12);
-
-
-
-
-
+            ->latest('published_at')
+            ->latest('id')
+            ->get();
 
         return view(
             'niveau.secondaire.documents',
             compact(
-                'formation',
-                'classe',
-                'matiere',
-                'type',
+                'category',
+                'formationModel',
+                'level',
+                'subject',
                 'documents'
             )
         );
-
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | DOCUMENT
+    |--------------------------------------------------------------------------
+    | URL finale :
+    |
+    | /secondaire/{formation}/{niveau}/{matiere}/document/{slug}
+    |--------------------------------------------------------------------------
+    */
+
+    public function document(
+        string $formation,
+        string $niveau,
+        string $matiere,
+        string $slug
+    ) {
+        $category = TeachingCategory::query()
+            ->whereIn('slug', ['secondaire', 'secondary'])
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $formationModel = Formation::query()
+            ->where('slug', $formation)
+            ->where('teaching_category_id', $category->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $level = Level::query()
+            ->where('slug', $niveau)
+            ->where('formation_id', $formationModel->id)
+            ->whereNull('filiere_id')
+            ->whereNull('specialite_id')
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $subject = Subject::query()
+            ->where('slug', $matiere)
+            ->where('level_id', $level->id)
+            ->where('is_active', true)
+            ->firstOrFail();
+
+        $document = Document::query()
+            ->where('slug', $slug)
+            ->where('teaching_category_id', $category->id)
+            ->where('formation_id', $formationModel->id)
+            ->whereNull('academic_domain_id')
+            ->whereNull('filiere_id')
+            ->whereNull('program_id')
+            ->whereNull('specialite_id')
+            ->where('level_id', $level->id)
+            ->where('subject_id', $subject->id)
+            ->where('status', 'published')
+            ->with([
+                'formation',
+                'level',
+                'subject',
+                'documentType',
+                'tags',
+            ])
+            ->firstOrFail();
+
+        return view(
+            'niveau.secondaire.show',
+            compact(
+                'category',
+                'formationModel',
+                'level',
+                'subject',
+                'document'
+            )
+        );
+    }
 }

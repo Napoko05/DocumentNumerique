@@ -1,152 +1,192 @@
 @extends('layouts.app')
 
+@section('title', $subject->name)
+
 @section('content')
 
-<div class="matiere-page">
+<div class="vitrine-page">
+    <a
+        href="{{ route(
+        'vitrine.secondaire.niveau',
+        [
+            'formation' => $formationModel->slug,
+            'niveau' => $level->slug,
+        ]
+    ) }}"
+        class="vitrine-back">
+        <i class="bi bi-arrow-left"></i>
+        Retour à {{ $level->name }}
+    </a>
 
-    {{-- HEADER --}}
-    <div class="matiere-header">
+    <div class="breadcrumb-vitrine">
 
-        <div class="matiere-back">
-            <a
-                href="{{ route('vitrine.secondaire.general.classes', $classe->formation->slug) }}"
-                class="matiere-back-btn">
-                ← Précédent
-            </a>
-        </div>
+        <a href="{{ url('/') }}">
+            Accueil
+        </a>
 
-        <h1>
-            📚 Classe : {{ $classe->name }}
-        </h1>
+        <i class="bi bi-chevron-right"></i>
 
-        <p>
-            Choisissez une matière pour accéder aux ressources pédagogiques.
-        </p>
+        <span>
+            Secondaire
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <span>
+            {{ $formationModel->name }}
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <span>
+            {{ $level->name }}
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <strong>
+            {{ $subject->name }}
+        </strong>
 
     </div>
 
+    <div class="page-header">
 
-    {{-- MATIÈRES --}}
-    @if($matieres->count())
+        <div>
 
-    <div class="matiere-carousel-wrapper">
+            <span class="page-kicker">
+                RESSOURCES PÉDAGOGIQUES
+            </span>
 
-        <button
-            type="button"
-            class="matiere-carousel-btn matiere-carousel-prev"
-            aria-label="Matières précédentes">
-            ‹
-        </button>
+            <h1>
+                {{ $subject->name }}
+            </h1>
 
-
-        <div
-            class="matiere-carousel"
-            id="matiereCarousel">
-
-            @foreach($matieres as $matiere)
-
-            <a
-                href="{{ route(
-                            'vitrine.secondaire.general.type_doc',
-                            [$classe->slug, $matiere->slug]
-                        ) }}"
-                class="matiere-card">
-
-                <div class="matiere-card-icon">
-                    {{ $matiere->icon ?? '📚' }}
-                </div>
-
-                <h3>
-                    {{ $matiere->name }}
-                </h3>
-
-                <p>
-                    📄 {{ $matiere->documents_count }} document(s)
-                </p>
-
-            </a>
-
-            @endforeach
+            <p>
+                Documents disponibles pour
+                <strong>{{ $level->name }}</strong>.
+            </p>
 
         </div>
 
+        <span class="class-count">
 
-        <button
-            type="button"
-            class="matiere-carousel-btn matiere-carousel-next"
-            aria-label="Matières suivantes">
-            ›
-        </button>
+            {{ $documents->count() }}
+
+            document{{ $documents->count() > 1 ? 's' : '' }}
+
+        </span>
+
+    </div>
+
+    @if($documents->isNotEmpty())
+
+    <div class="superieur-grid">
+
+        @foreach($documents as $document)
+
+        <a
+            href="{{ route(
+                        'vitrine.secondaire.document',
+                        [
+                            'formation' => $formationModel->slug,
+                            'niveau' => $level->slug,
+                            'matiere' => $subject->slug,
+                            'slug' => $document->slug,
+                        ]
+                    ) }}"
+            class="superieur-card document-card">
+
+            <div class="superieur-card-icon">
+
+                @if($document->cover_image)
+
+                <img
+                    src="{{ asset('storage/' . $document->cover_image) }}"
+                    alt="{{ $document->title }}">
+
+                @else
+
+                <i class="bi bi-file-earmark-text"></i>
+
+                @endif
+
+            </div>
+
+            <div class="superieur-card-content">
+
+                <span class="card-kicker">
+
+                    {{ $document->documentType->name ?? 'DOCUMENT' }}
+
+                </span>
+
+                <h3>
+                    {{ $document->title }}
+                </h3>
+
+                @if($document->description)
+
+                <p>
+                    {{ Str::limit($document->description, 120) }}
+                </p>
+
+                @endif
+
+                <div class="document-meta">
+
+                    @if($document->access_type === 'premium')
+
+                    <span class="badge-premium">
+                        <i class="bi bi-lock-fill"></i>
+                        Premium
+                    </span>
+
+                    @else
+
+                    <span class="badge-free">
+                        <i class="bi bi-unlock-fill"></i>
+                        Gratuit
+                    </span>
+
+                    @endif
+
+                </div>
+
+            </div>
+
+            <div class="superieur-card-arrow">
+
+                <i class="bi bi-arrow-right"></i>
+
+            </div>
+
+        </a>
+
+        @endforeach
 
     </div>
 
     @else
 
-    <div class="matiere-empty">
+    <div class="empty-state">
 
-        <div class="matiere-empty-card">
-
-            <div class="matiere-empty-icon">
-                📚
-            </div>
-
-            <h3>
-                Aucune matière disponible.
-            </h3>
-
-            <p>
-                Cette classe ne contient actuellement aucune matière.
-            </p>
-
+        <div class="empty-icon">
+            <i class="bi bi-file-earmark-x"></i>
         </div>
+
+        <h3>
+            Aucun document disponible
+        </h3>
+
+        <p>
+            Aucun document publié n'est actuellement disponible pour cette matière.
+        </p>
 
     </div>
 
     @endif
 
 </div>
-
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        const carousel = document.getElementById('matiereCarousel');
-
-        const previousButton = document.querySelector(
-            '.matiere-carousel-prev'
-        );
-
-        const nextButton = document.querySelector(
-            '.matiere-carousel-next'
-        );
-
-        if (!carousel) {
-            return;
-        }
-
-        const scrollAmount = 300;
-
-
-        previousButton.addEventListener('click', function() {
-
-            carousel.scrollBy({
-                left: -scrollAmount,
-                behavior: 'smooth'
-            });
-
-        });
-
-
-        nextButton.addEventListener('click', function() {
-
-            carousel.scrollBy({
-                left: scrollAmount,
-                behavior: 'smooth'
-            });
-
-        });
-
-    });
-</script>
 
 @endsection

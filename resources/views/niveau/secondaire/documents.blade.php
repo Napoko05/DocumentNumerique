@@ -1,121 +1,178 @@
 @extends('layouts.app')
 
+@section('title', $subject->name)
+
 @section('content')
 
-<div class="document-list-page">
+<div class="vitrine-page">
 
-    {{-- HEADER --}}
-    <div class="document-list-header">
+    <a
+        href="{{ route(
+        'vitrine.secondaire.niveau',
+        [
+            'formation' => $formationModel->slug,
+            'niveau' => $level->slug,
+        ]
+    ) }}"
+        class="vitrine-back">
+        <i class="bi bi-arrow-left"></i>
+        Retour à {{ $level->name }}
+    </a>
 
-        <h1>
-            📄 {{ $type->name }} - {{ $matiere->name }}
-        </h1>
+    <div class="breadcrumb-vitrine">
+
+        <a href="{{ url('/') }}">
+            Accueil
+        </a>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <span>
+            Secondaire
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <span>
+            {{ $formationModel->name }}
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <span>
+            {{ $level->name }}
+        </span>
+
+        <i class="bi bi-chevron-right"></i>
+
+        <strong>
+            {{ $subject->name }}
+        </strong>
+
+    </div>
+
+    <div class="page-header">
+
+        <div>
+
+            <span class="page-kicker">
+                MATIÈRE
+            </span>
+
+            <h1>
+                {{ $subject->name }}
+            </h1>
+
+            <p>
+                Consultez les documents pédagogiques disponibles pour ce niveau.
+            </p>
+
+        </div>
+
+        <div class="class-count">
+
+            {{ $documents->count() }}
+
+            document{{ $documents->count() > 1 ? 's' : '' }}
+
+        </div>
+
+    </div>
+
+    @if($documents->count())
+
+    <div class="superieur-grid">
+
+        @foreach($documents as $document)
+
+        <a
+            href="{{ route(
+                    'vitrine.secondaire.document',
+                    [
+                        'formation' => $formationModel->slug,
+                        'niveau' => $level->slug,
+                        'matiere' => $subject->slug,
+                        'slug' => $document->slug,
+                    ]
+                ) }}"
+            class="superieur-card">
+
+            <div class="superieur-card-icon">
+
+                <i class="bi bi-file-earmark-text"></i>
+
+            </div>
+
+            <div class="superieur-card-content">
+
+                <span class="card-kicker">
+                    {{ $document->documentType->name ?? 'DOCUMENT' }}
+                </span>
+
+                <h3>
+                    {{ $document->title }}
+                </h3>
+
+                @if($document->description)
+
+                <p>
+                    {{ $document->description }}
+                </p>
+
+                @endif
+
+                <p>
+
+                    @if($document->access_type === 'premium')
+
+                    <i class="bi bi-lock-fill"></i>
+                    Premium
+
+                    @else
+
+                    <i class="bi bi-unlock-fill"></i>
+                    Gratuit
+
+                    @endif
+
+                </p>
+
+            </div>
+
+            <div class="superieur-card-arrow">
+
+                <i class="bi bi-arrow-right"></i>
+
+            </div>
+
+        </a>
+
+        @endforeach
+
+    </div>
+
+    @else
+
+    <div class="empty-state">
+
+        <div class="empty-icon">
+
+            <i class="bi bi-file-earmark-x"></i>
+
+        </div>
+
+        <h3>
+            Aucun document disponible
+        </h3>
 
         <p>
-            Classe :
-            <span>
-                {{ $classe->name }}
-            </span>
+            Aucun document publié n'est actuellement disponible
+            pour cette matière.
         </p>
 
     </div>
 
-
-    {{-- DOCUMENTS --}}
-    <div class="document-list-grid">
-
-        @forelse($documents as $document)
-
-            <div class="document-list-card">
-
-                {{-- EN-TÊTE --}}
-                <div class="document-list-card-header">
-
-                    <h3>
-                        {{ $document->title }}
-                    </h3>
-
-                    <span>
-                        📄
-                    </span>
-
-                </div>
-
-
-                {{-- DESCRIPTION --}}
-                <p class="document-list-description">
-
-                    {{ Str::limit(
-                        $document->description ?? 'Ressource pédagogique disponible',
-                        120
-                    ) }}
-
-                </p>
-
-
-                {{-- INFORMATIONS --}}
-                <div class="document-list-meta">
-
-                    <div>
-                        👤 {{ $document->staff->full_name ?? 'Inconnu' }}
-                    </div>
-
-                    <div>
-                        👁️ {{ number_format($document->views) }} vue(s)
-                    </div>
-
-                    <div>
-                        ⬇️ {{ number_format($document->downloads) }} téléchargement(s)
-                    </div>
-
-                </div>
-
-
-                {{-- OUVRIR --}}
-                <a
-                    href="{{ route('documents.show', $document->slug) }}"
-                    class="document-list-open-btn"
-                >
-                    📖 Ouvrir
-                </a>
-
-            </div>
-
-        @empty
-
-            <div class="document-list-empty">
-
-                <div class="document-list-empty-icon">
-                    📂
-                </div>
-
-                <h3>
-                    Aucun document disponible.
-                </h3>
-
-                <p>
-                    Aucun document n'est actuellement disponible
-                    pour cette catégorie.
-                </p>
-
-            </div>
-
-        @endforelse
-
-    </div>
-
-
-    {{-- PAGINATION --}}
-    @if($documents->hasPages())
-
-        <div class="document-list-pagination">
-
-            {{ $documents->links() }}
-
-        </div>
-
     @endif
-
 </div>
 
 @endsection
