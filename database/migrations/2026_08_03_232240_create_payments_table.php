@@ -6,14 +6,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
 
             $table->id();
-
-
 
             /*
             |--------------------------------------------------------------------------
@@ -25,11 +22,9 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-
-
             /*
             |--------------------------------------------------------------------------
-            | DOCUMENT PAYE
+            | DOCUMENT PAYÉ
             |--------------------------------------------------------------------------
             */
 
@@ -37,20 +32,16 @@ return new class extends Migration
                 ->constrained('documents')
                 ->cascadeOnDelete();
 
-
-
             /*
             |--------------------------------------------------------------------------
             | MONTANT
             |--------------------------------------------------------------------------
             */
 
-            $table->decimal('amount',10,2);
+            $table->decimal('amount', 10, 2);
 
             $table->string('currency')
                 ->default('FCFA');
-
-
 
             /*
             |--------------------------------------------------------------------------
@@ -61,16 +52,7 @@ return new class extends Migration
             $table->string('payment_method')
                 ->nullable();
 
-
-            /*
-            orange_money
-            moov_money
-            mtn_money
-            card
-            */
-
-
-
+           
             /*
             |--------------------------------------------------------------------------
             | TRANSACTION
@@ -80,11 +62,8 @@ return new class extends Migration
             $table->string('transaction_id')
                 ->nullable();
 
-
             $table->string('payment_reference')
                 ->nullable();
-
-
 
             /*
             |--------------------------------------------------------------------------
@@ -95,41 +74,42 @@ return new class extends Migration
             $table->string('status')
                 ->default('pending');
 
-
             /*
-            pending
-            paid
-            failed
-            cancelled
+            | pending
+            | paid
+            | failed
+            | cancelled
             */
-
-
 
             $table->text('failure_reason')
                 ->nullable();
 
-
-
             $table->timestamp('paid_at')
                 ->nullable();
 
-
+            /*
+            |--------------------------------------------------------------------------
+            | DATES
+            |--------------------------------------------------------------------------
+            */
 
             $table->timestamps();
 
-
+            /*
+            |--------------------------------------------------------------------------
+            | INDEX
+            |--------------------------------------------------------------------------
+            */
 
             $table->index('transaction_id');
-
             $table->index('payment_reference');
-
+            $table->index(['user_id', 'document_id']);
+            $table->index(['document_id', 'status']);
         });
     }
-
 
     public function down(): void
     {
         Schema::dropIfExists('payments');
     }
-
 };

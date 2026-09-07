@@ -75,20 +75,6 @@ class User extends Authenticatable
             ->exists();
     }
 
-    /**
-     * =========================
-     * 📄 DOCUMENTS ACHETÉS / CONSULTÉS
-     * =========================
-     */
-    public function documents()
-    {
-        return $this->belongsToMany(
-            Document::class,
-            'document_user',
-            'user_id',
-            'document_id'
-        )->withTimestamps();
-    }
 
     /**
      * =========================

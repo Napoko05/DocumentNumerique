@@ -21,7 +21,6 @@ use App\Http\Controllers\Paiements\PaymentController;
 use App\Http\Controllers\HomeController;
 
 use App\Http\Controllers\Vitrine\VitrineSecondaireController;
-use App\Http\Controllers\Vitrine\VitrineTechniqueController;
 use App\Http\Controllers\Vitrine\VitrineSuperieurController;
 use App\Http\Controllers\Vitrine\VitrineProfessionnelController;
 
@@ -792,25 +791,6 @@ Route::get('/documents/{document}/read', [PublicDocumentController::class, 'read
     ->name('documents.read');
 
 
-/*
-|--------------------------------------------------------------------------
-| PAIEMENTS
-|--------------------------------------------------------------------------
-*/
-
-Route::middleware('auth')->group(function () {
-
-    Route::get(
-        '/payments/{document}',
-        [PaymentController::class, 'create']
-    )->name('payments.create');
-
-    Route::post(
-        '/payments/{document}',
-        [PaymentController::class, 'store']
-    )->name('payments.store');
-});
-
 
 /*
 |--------------------------------------------------------------------------
@@ -971,7 +951,6 @@ Route::prefix('professionnel')
             'documentsModule'
         ])->name('enep.documents');
 
-
         Route::get(
             '/{formationSlug}/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}/document/{documentSlug}',
             [
@@ -980,25 +959,21 @@ Route::prefix('professionnel')
             ]
         )->name('enep.show');
 
-
         /*
         |--------------------------------------------------------------------------
         | ENSP / IDS / UIT
         | Formation → Spécialité → Niveau → Module → Type → Documents
         |--------------------------------------------------------------------------
         */
-
         Route::get('/{formationSlug}/specialites', [
             VitrineProfessionnelController::class,
             'specialitesFormation'
         ])->name('specialites');
 
-
         Route::get('/{formationSlug}/specialite/{specialiteSlug}/niveaux', [
             VitrineProfessionnelController::class,
             'niveauxSpecialite'
         ])->name('specialite.niveaux');
-
 
         Route::get(
             '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/modules',
@@ -1008,7 +983,6 @@ Route::prefix('professionnel')
             ]
         )->name('specialite.modules');
 
-
         Route::get(
             '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}',
             [
@@ -1016,7 +990,6 @@ Route::prefix('professionnel')
                 'typeDocumentsSpecialiteModule'
             ]
         )->name('specialite.type_doc');
-
 
         Route::get(
             '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}',
@@ -1026,7 +999,6 @@ Route::prefix('professionnel')
             ]
         )->name('specialite.documents');
 
-
         Route::get(
             '/{formationSlug}/specialite/{specialiteSlug}/niveau/{niveauSlug}/module/{moduleSlug}/type/{typeSlug}/document/{documentSlug}',
             [
@@ -1034,7 +1006,6 @@ Route::prefix('professionnel')
                 'showDocumentSpecialiteModule'
             ]
         )->name('specialite.show');
-
 
         /*
         |--------------------------------------------------------------------------
@@ -1095,4 +1066,92 @@ Route::prefix('professionnel')
                 'showDocumentEnsModule'
             ]
         )->name('ens.show');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| PAIEMENTS
+|--------------------------------------------------------------------------
+|
+| Documents premium
+|
+*/
+
+Route::middleware('auth')
+    ->prefix('paiements')
+    ->name('payments.')
+    ->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMULAIRE
+        |--------------------------------------------------------------------------
+        |
+        | GET /paiements/document/15
+        |
+        */
+
+        Route::get(
+            '/document/{document}',
+            [PaymentController::class, 'create']
+        )
+            ->name('create');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CRÉER LA TRANSACTION
+        |--------------------------------------------------------------------------
+        |
+        | POST /paiements/document/15
+        |
+        */
+
+        Route::post(
+            '/document/{document}',
+            [PaymentController::class, 'store']
+        )
+            ->name('store');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TRAITEMENT DU PAIEMENT
+        |--------------------------------------------------------------------------
+        |
+        */
+
+        Route::get(
+            '/{payment}/processing',
+            [PaymentController::class, 'processing']
+        )
+            ->name('processing');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUT
+        |--------------------------------------------------------------------------
+        |
+        */
+
+        Route::get(
+            '/{payment}/status',
+            [PaymentController::class, 'status']
+        )
+            ->name('status');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANNULATION
+        |--------------------------------------------------------------------------
+        */
+
+        Route::post(
+            '/{payment}/cancel',
+            [PaymentController::class, 'cancel']
+        )
+            ->name('cancel');
     });

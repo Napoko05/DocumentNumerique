@@ -736,10 +736,10 @@ class DocumentController extends Controller
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | ENREGISTRER LE DOCUMENT
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| ENREGISTRER LE DOCUMENT
+|--------------------------------------------------------------------------
+*/
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -821,7 +821,7 @@ class DocumentController extends Controller
             'price' => [
                 'nullable',
                 'numeric',
-                'min:0',
+                'min:0.01',
             ],
 
             'cover_image' => [
@@ -851,6 +851,42 @@ class DocumentController extends Controller
 
         /*
     |--------------------------------------------------------------------------
+    | NORMALISATION DU PRIX
+    |--------------------------------------------------------------------------
+    |
+    | Le prix est déterminé uniquement à partir du formulaire de publication.
+    | Un document gratuit ne possède aucun prix.
+    | Un document premium doit obligatoirement avoir un prix > 0.
+    |
+    */
+
+        $price = null;
+
+        if ($validated['access_type'] === 'premium') {
+
+            if (
+                !isset($validated['price']) ||
+                !is_numeric($validated['price']) ||
+                (float) $validated['price'] <= 0
+            ) {
+                return back()
+                    ->withErrors([
+                        'price' =>
+                        'Le prix est obligatoire et doit être supérieur à 0 FCFA pour un document premium.',
+                    ])
+                    ->withInput();
+            }
+
+            $price = number_format(
+                (float) $validated['price'],
+                2,
+                '.',
+                ''
+            );
+        }
+
+        /*
+    |--------------------------------------------------------------------------
     | NORMALISATION DES ID
     |--------------------------------------------------------------------------
     */
@@ -874,7 +910,14 @@ class DocumentController extends Controller
         $program = null;
         $specialite = null;
 
+        /*
+    |--------------------------------------------------------------------------
+    | FORMATION
+    |--------------------------------------------------------------------------
+    */
+
         if (!empty($validated['formation_id'])) {
+
             $formation = Formation::query()
                 ->whereKey($validated['formation_id'])
                 ->where('is_active', true)
@@ -888,12 +931,6 @@ class DocumentController extends Controller
                     ])
                     ->withInput();
             }
-
-            /*
-        |----------------------------------------------------------------------
-        | Vérifier que la formation appartient à la catégorie
-        |----------------------------------------------------------------------
-        */
 
             if (
                 (int) $formation->teaching_category_id !==
@@ -915,6 +952,7 @@ class DocumentController extends Controller
     */
 
         if (!empty($validated['filiere_id'])) {
+
             $filiere = Filiere::query()
                 ->whereKey($validated['filiere_id'])
                 ->where('is_active', true)
@@ -950,6 +988,7 @@ class DocumentController extends Controller
     */
 
         if (!empty($validated['program_id'])) {
+
             $program = Program::query()
                 ->whereKey($validated['program_id'])
                 ->where('is_active', true)
@@ -985,6 +1024,7 @@ class DocumentController extends Controller
     */
 
         if (!empty($validated['specialite_id'])) {
+
             $specialite = Specialite::query()
                 ->whereKey($validated['specialite_id'])
                 ->where('is_active', true)
@@ -998,12 +1038,6 @@ class DocumentController extends Controller
                     ])
                     ->withInput();
             }
-
-            /*
-        |----------------------------------------------------------------------
-        | Spécialité liée directement à une formation
-        |----------------------------------------------------------------------
-        */
 
             if (!empty($specialite->formation_id)) {
 
@@ -1020,12 +1054,6 @@ class DocumentController extends Controller
                         ->withInput();
                 }
             }
-
-            /*
-        |----------------------------------------------------------------------
-        | Spécialité liée à un programme
-        |----------------------------------------------------------------------
-        */
 
             if (!empty($specialite->program_id)) {
 
@@ -1073,12 +1101,9 @@ class DocumentController extends Controller
         $validLevel = false;
 
         /*
-    |----------------------------------------------------------------------
-    | Formation → Level
-    |
-    | Secondaire
-    | ENSP / ENEP / ATE
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | FORMATION → LEVEL
+    |--------------------------------------------------------------------------
     */
 
         if (!empty($level->formation_id)) {
@@ -1090,11 +1115,9 @@ class DocumentController extends Controller
         }
 
         /*
-    |----------------------------------------------------------------------
-    | Filière → Level
-    |
-    | Supérieur
-    |----------------------------------------------------------------------
+    |--------------------------------------------------------------------------
+    | FILIÈRE → LEVEL
+    |--------------------------------------------------------------------------
     */
 
         if (!empty($level->filiere_id)) {
@@ -1106,10 +1129,22 @@ class DocumentController extends Controller
         }
 
         /*
+    |--------------------------------------------------------------------------
+    | SPÉCIALITÉ → LEVEL
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($level->specialite_id)) {
+
+            $validLevel =
+                !empty($validated['specialite_id']) &&
+                (int) $validated['specialite_id'] ===
+                (int) $validated['specialite_id'];
+        }
+
+        /*
     |----------------------------------------------------------------------
-    | Spécialité → Level
-    |
-    | ENS / IDS / UIT
+    | Correction : comparaison avec la spécialité sélectionnée
     |----------------------------------------------------------------------
     */
 
@@ -1180,7 +1215,10 @@ class DocumentController extends Controller
     |--------------------------------------------------------------------------
     */
 
-        if ($category->slug === 'higher' || $category->slug === 'superieur') {
+        if (
+            $category->slug === 'higher' ||
+            $category->slug === 'superieur'
+        ) {
 
             if (
                 empty($validated['academic_domain_id']) ||
@@ -1193,27 +1231,6 @@ class DocumentController extends Controller
                     ])
                     ->withInput();
             }
-        }
-
-        /*
-    |--------------------------------------------------------------------------
-    | PREMIUM
-    |--------------------------------------------------------------------------
-    */
-
-        if (
-            $validated['access_type'] === 'premium' &&
-            (
-                !isset($validated['price']) ||
-                $validated['price'] <= 0
-            )
-        ) {
-            return back()
-                ->withErrors([
-                    'price' =>
-                    'Le prix est obligatoire pour un document premium.',
-                ])
-                ->withInput();
         }
 
         /*
@@ -1249,12 +1266,13 @@ class DocumentController extends Controller
 
         /*
     |--------------------------------------------------------------------------
-    | CRÉATION
+    | CRÉATION DU DOCUMENT
     |--------------------------------------------------------------------------
     */
 
         $document = Document::create([
-            'staff_id' => $this->staff()->id,
+            'staff_id' =>
+            $this->staff()->id,
 
             'teaching_category_id' =>
             $validated['teaching_category_id'],
@@ -1314,10 +1332,18 @@ class DocumentController extends Controller
             'access_type' =>
             $validated['access_type'],
 
+            /*
+        |--------------------------------------------------------------------------
+        | PRIX
+        |--------------------------------------------------------------------------
+        |
+        | Premium → prix réel enregistré.
+        | Free → NULL.
+        |
+        */
+
             'price' =>
-            $validated['access_type'] === 'premium'
-                ? $validated['price']
-                : null,
+            $price,
 
             'status' =>
             'published',
@@ -1349,18 +1375,16 @@ class DocumentController extends Controller
                 'Document publié avec succès.'
             );
     }
-
     /*
-    |--------------------------------------------------------------------------
-    | AFFICHER
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| AFFICHER
+|--------------------------------------------------------------------------
+*/
 
     public function show(Document $document)
     {
         abort_unless(
-            (int)$document->staff_id ===
-                (int)$this->staff()->id,
+            (int) $document->staff_id === (int) $this->staff()->id,
             403
         );
 
@@ -1384,16 +1408,15 @@ class DocumentController extends Controller
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | MODIFICATION
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| MODIFICATION
+|--------------------------------------------------------------------------
+*/
 
     public function edit(Document $document)
     {
         abort_unless(
-            (int)$document->staff_id ===
-                (int)$this->staff()->id,
+            (int) $document->staff_id === (int) $this->staff()->id,
             403
         );
 
@@ -1468,12 +1491,21 @@ class DocumentController extends Controller
             )
         );
     }
-    /*=======================
-        Validation de update
-        */
+
+    /*
+|--------------------------------------------------------------------------
+| VALIDATION DE LA HIÉRARCHIE
+|--------------------------------------------------------------------------
+*/
 
     private function validateDocumentHierarchy(array $validated): void
     {
+        /*
+    |--------------------------------------------------------------------------
+    | CATÉGORIE
+    |--------------------------------------------------------------------------
+    */
+
         $category = TeachingCategory::query()
             ->whereKey($validated['teaching_category_id'])
             ->where('is_active', true)
@@ -1484,6 +1516,26 @@ class DocumentController extends Controller
             422,
             'La catégorie sélectionnée est invalide.'
         );
+
+        /*
+    |--------------------------------------------------------------------------
+    | DOMAINE ACADÉMIQUE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($validated['academic_domain_id'])) {
+
+            $domain = AcademicDomain::query()
+                ->whereKey($validated['academic_domain_id'])
+                ->where('is_active', true)
+                ->first();
+
+            abort_unless(
+                $domain,
+                422,
+                'Le domaine académique sélectionné est invalide.'
+            );
+        }
 
         /*
     |--------------------------------------------------------------------------
@@ -1508,7 +1560,7 @@ class DocumentController extends Controller
                 (int) $formation->teaching_category_id ===
                     (int) $category->id,
                 422,
-                'La formation ne correspond pas à la catégorie.'
+                'La formation ne correspond pas à la catégorie sélectionnée.'
             );
         }
 
@@ -1536,7 +1588,7 @@ class DocumentController extends Controller
                     (int) $filiere->academic_domain_id ===
                     (int) $validated['academic_domain_id'],
                 422,
-                'La filière ne correspond pas au domaine académique.'
+                'La filière ne correspond pas au domaine académique sélectionné.'
             );
         }
 
@@ -1564,7 +1616,7 @@ class DocumentController extends Controller
                     (int) $program->formation_id ===
                     (int) $validated['formation_id'],
                 422,
-                'Le programme ne correspond pas à la formation.'
+                'Le programme ne correspond pas à la formation sélectionnée.'
             );
         }
 
@@ -1587,6 +1639,10 @@ class DocumentController extends Controller
                 'La spécialité sélectionnée est invalide.'
             );
 
+            /*
+        | Spécialité liée directement à une formation
+        */
+
             if (!empty($specialite->formation_id)) {
 
                 abort_unless(
@@ -1594,9 +1650,13 @@ class DocumentController extends Controller
                         (int) $specialite->formation_id ===
                         (int) $validated['formation_id'],
                     422,
-                    'La spécialité ne correspond pas à la formation.'
+                    'La spécialité ne correspond pas à la formation sélectionnée.'
                 );
             }
+
+            /*
+        | Spécialité liée à un programme
+        */
 
             if (!empty($specialite->program_id)) {
 
@@ -1605,14 +1665,14 @@ class DocumentController extends Controller
                         (int) $specialite->program_id ===
                         (int) $validated['program_id'],
                     422,
-                    'La spécialité ne correspond pas au programme.'
+                    'La spécialité ne correspond pas au programme sélectionné.'
                 );
             }
         }
 
         /*
     |--------------------------------------------------------------------------
-    | LEVEL
+    | NIVEAU
     |--------------------------------------------------------------------------
     */
 
@@ -1629,6 +1689,10 @@ class DocumentController extends Controller
 
         $validLevel = false;
 
+        /*
+    | Formation → Niveau
+    */
+
         if (!empty($level->formation_id)) {
 
             $validLevel =
@@ -1637,6 +1701,10 @@ class DocumentController extends Controller
                 (int) $validated['formation_id'];
         }
 
+        /*
+    | Filière → Niveau
+    */
+
         if (!empty($level->filiere_id)) {
 
             $validLevel =
@@ -1644,6 +1712,10 @@ class DocumentController extends Controller
                 (int) $level->filiere_id ===
                 (int) $validated['filiere_id'];
         }
+
+        /*
+    | Spécialité → Niveau
+    */
 
         if (!empty($level->specialite_id)) {
 
@@ -1656,12 +1728,12 @@ class DocumentController extends Controller
         abort_unless(
             $validLevel,
             422,
-            'Le niveau ne correspond pas au parcours sélectionné.'
+            'Le niveau sélectionné ne correspond pas au parcours choisi.'
         );
 
         /*
     |--------------------------------------------------------------------------
-    | SUBJECT
+    | MATIÈRE / MODULE
     |--------------------------------------------------------------------------
     */
 
@@ -1674,15 +1746,39 @@ class DocumentController extends Controller
         abort_unless(
             $subjectExists,
             422,
-            'La matière ne correspond pas au niveau sélectionné.'
+            'La matière sélectionnée ne correspond pas au niveau choisi.'
         );
+
+        /*
+    |--------------------------------------------------------------------------
+    | SUPÉRIEUR
+    |--------------------------------------------------------------------------
+    */
+
+        if (
+            $category->slug === 'higher' ||
+            $category->slug === 'superieur'
+        ) {
+
+            abort_unless(
+                !empty($validated['academic_domain_id']),
+                422,
+                'Le domaine académique est obligatoire pour le supérieur.'
+            );
+
+            abort_unless(
+                !empty($validated['filiere_id']),
+                422,
+                'La filière est obligatoire pour le supérieur.'
+            );
+        }
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | UPDATE
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| UPDATE
+|--------------------------------------------------------------------------
+*/
 
     public function update(
         Request $request,
@@ -1819,7 +1915,7 @@ class DocumentController extends Controller
             $validated['access_type'] === 'premium' &&
             (
                 !isset($validated['price']) ||
-                $validated['price'] <= 0
+                (float) $validated['price'] <= 0
             )
         ) {
             return back()
@@ -1828,6 +1924,16 @@ class DocumentController extends Controller
                     'Le prix est obligatoire pour un document premium.',
                 ])
                 ->withInput();
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | DOCUMENT GRATUIT
+    |--------------------------------------------------------------------------
+    */
+
+        if ($validated['access_type'] === 'free') {
+            $validated['price'] = null;
         }
 
         /*
@@ -1892,7 +1998,7 @@ class DocumentController extends Controller
 
         /*
     |--------------------------------------------------------------------------
-    | DONNÉES DU DOCUMENT
+    | MISE À JOUR DES DONNÉES
     |--------------------------------------------------------------------------
     */
 
@@ -1968,10 +2074,10 @@ class DocumentController extends Controller
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | DOCUMENTS PUBLIÉS
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| DOCUMENTS PUBLIÉS
+|--------------------------------------------------------------------------
+*/
 
     public function published()
     {
@@ -1997,18 +2103,22 @@ class DocumentController extends Controller
     }
 
     /*
-    |--------------------------------------------------------------------------
-    | SUPPRIMER
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| SUPPRIMER
+|--------------------------------------------------------------------------
+*/
 
     public function destroy(Document $document)
     {
         abort_unless(
-            (int)$document->staff_id ===
-                (int)$this->staff()->id,
+            (int) $document->staff_id ===
+                (int) $this->staff()->id,
             403
         );
+
+        /*
+    | Suppression du PDF
+    */
 
         if (
             $document->file_path &&
@@ -2021,6 +2131,10 @@ class DocumentController extends Controller
             );
         }
 
+        /*
+    | Suppression de la couverture
+    */
+
         if (
             $document->cover_image &&
             Storage::disk('public')->exists(
@@ -2032,7 +2146,15 @@ class DocumentController extends Controller
             );
         }
 
+        /*
+    | Suppression des relations tags
+    */
+
         $document->tags()->detach();
+
+        /*
+    | Suppression du document
+    */
 
         $document->delete();
 

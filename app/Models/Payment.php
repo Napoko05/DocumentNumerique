@@ -11,7 +11,7 @@ class Payment extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | ATTRIBUTS MASS ASSIGNABLE
+    | MASS ASSIGNMENT
     |--------------------------------------------------------------------------
     */
 
@@ -21,13 +21,13 @@ class Payment extends Model
         'amount',
         'currency',
         'payment_method',
+        'phone',
         'transaction_id',
         'payment_reference',
         'status',
         'failure_reason',
         'paid_at',
     ];
-
 
     /*
     |--------------------------------------------------------------------------
@@ -40,16 +40,12 @@ class Payment extends Model
         'paid_at' => 'datetime',
     ];
 
-
     /*
     |--------------------------------------------------------------------------
     | RELATIONS
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Utilisateur ayant effectué le paiement.
-     */
     public function user()
     {
         return $this->belongsTo(
@@ -58,15 +54,37 @@ class Payment extends Model
         );
     }
 
-
-    /**
-     * Document concerné par le paiement.
-     */
     public function document()
     {
         return $this->belongsTo(
             Document::class,
             'document_id'
         );
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUTS
+    |--------------------------------------------------------------------------
+    */
+
+    public function isPending(): bool
+    {
+        return $this->status === 'pending';
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->status === 'paid';
+    }
+
+    public function isFailed(): bool
+    {
+        return $this->status === 'failed';
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === 'cancelled';
     }
 }

@@ -8,13 +8,14 @@
 
     <a
         href="{{ route(
-        'vitrine.secondaire.niveau',
-        [
-            'formation' => $formationModel->slug,
-            'niveau' => $level->slug,
-        ]
-    ) }}"
-        class="vitrine-back">
+            'vitrine.secondaire.niveau',
+            [
+                'formation' => $formationModel->slug,
+                'niveau' => $level->slug,
+            ]
+        ) }}"
+        class="vitrine-back"
+    >
         <i class="bi bi-arrow-left"></i>
         Retour à {{ $level->name }}
     </a>
@@ -81,98 +82,150 @@
 
     @if($documents->count())
 
-    <div class="superieur-grid">
+        <div class="superieur-grid">
 
-        @foreach($documents as $document)
+            @foreach($documents as $document)
 
-        <a
-            href="{{ route(
-                    'vitrine.secondaire.document',
-                    [
-                        'formation' => $formationModel->slug,
-                        'niveau' => $level->slug,
-                        'matiere' => $subject->slug,
-                        'slug' => $document->slug,
-                    ]
-                ) }}"
-            class="superieur-card">
+                <article class="superieur-card">
 
-            <div class="superieur-card-icon">
+                    <div class="superieur-card-icon">
 
-                <i class="bi bi-file-earmark-text"></i>
+                        <i class="bi bi-file-earmark-pdf"></i>
 
-            </div>
+                    </div>
 
-            <div class="superieur-card-content">
+                    <div class="superieur-card-content">
 
-                <span class="card-kicker">
-                    {{ $document->documentType->name ?? 'DOCUMENT' }}
-                </span>
+                        <span class="card-kicker">
+                            {{ $document->documentType->name ?? 'DOCUMENT' }}
+                        </span>
 
-                <h3>
-                    {{ $document->title }}
-                </h3>
+                        <h3>
+                            {{ $document->title }}
+                        </h3>
 
-                @if($document->description)
+                        @if($document->description)
 
-                <p>
-                    {{ $document->description }}
-                </p>
+                            <p>
+                                {{ $document->description }}
+                            </p>
 
-                @endif
+                        @endif
 
-                <p>
+                        <div class="document-access">
 
-                    @if($document->access_type === 'premium')
+                            @if($document->access_type === 'premium')
 
-                    <i class="bi bi-lock-fill"></i>
-                    Premium
+                                <span class="badge-premium">
+                                    <i class="bi bi-lock-fill"></i>
+                                    Premium
+                                </span>
 
-                    @else
+                                @if($document->price)
 
-                    <i class="bi bi-unlock-fill"></i>
-                    Gratuit
+                                    <span class="document-price">
+                                        {{ number_format((float) $document->price, 0, ',', ' ') }} FCFA
+                                    </span>
 
-                    @endif
+                                @endif
 
-                </p>
+                            @else
 
-            </div>
+                                <span class="badge-free">
+                                    <i class="bi bi-unlock-fill"></i>
+                                    Gratuit
+                                </span>
 
-            <div class="superieur-card-arrow">
+                            @endif
 
-                <i class="bi bi-arrow-right"></i>
+                        </div>
 
-            </div>
+                        <div class="document-actions">
 
-        </a>
+                            {{-- VOIR --}}
+                            <a
+                                href="{{ route(
+                                    'vitrine.secondaire.document',
+                                    [
+                                        'formation' => $formationModel->slug,
+                                        'niveau' => $level->slug,
+                                        'matiere' => $subject->slug,
+                                        'slug' => $document->slug,
+                                    ]
+                                ) }}"
+                                class="btn-document-view"
+                            >
+                                <i class="bi bi-eye"></i>
+                                Voir
+                            </a>
 
-        @endforeach
+                            {{-- TÉLÉCHARGER --}}
+                            @if($document->access_type === 'premium')
 
-    </div>
+                                <a
+                                    href="{{ route(
+                                        'payments.create',
+                                        ['document' => $document->id]
+                                    ) }}"
+                                    class="btn-document-download"
+                                >
+                                    <i class="bi bi-download"></i>
+                                    Télécharger
+                                </a>
 
-    @else
+                            @else
 
-    <div class="empty-state">
+                                <a
+                                    href="{{ asset('storage/' . $document->file_path) }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="btn-document-download"
+                                >
+                                    <i class="bi bi-download"></i>
+                                    Télécharger
+                                </a>
 
-        <div class="empty-icon">
+                            @endif
 
-            <i class="bi bi-file-earmark-x"></i>
+                        </div>
+
+                    </div>
+
+                    <div class="superieur-card-arrow">
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </div>
+
+                </article>
+
+            @endforeach
 
         </div>
 
-        <h3>
-            Aucun document disponible
-        </h3>
+    @else
 
-        <p>
-            Aucun document publié n'est actuellement disponible
-            pour cette matière.
-        </p>
+        <div class="empty-state">
 
-    </div>
+            <div class="empty-icon">
+
+                <i class="bi bi-file-earmark-x"></i>
+
+            </div>
+
+            <h3>
+                Aucun document disponible
+            </h3>
+
+            <p>
+                Aucun document publié n'est actuellement disponible
+                pour cette matière.
+            </p>
+
+        </div>
 
     @endif
+
 </div>
 
 @endsection

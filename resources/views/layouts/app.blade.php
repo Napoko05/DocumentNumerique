@@ -71,8 +71,6 @@
     'resources/css/formation/superieur/accademie.css',
     'resources/css/formation/professionnel/formation.css',
     'resources/css/formation/professionnel/accademie.css',
-    'resources/css/formation/professionnel/accademie.css',
-    'resources/css/formation/professionnel/accademie.css',
     ])
 
 

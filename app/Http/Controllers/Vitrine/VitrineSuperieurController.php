@@ -228,7 +228,7 @@ class VitrineSuperieurController extends Controller
                 'level_id',
                 $niveau->id
             )
-            ->where('is_active', true)
+             ->where('is_active', true)
             ->orderBy('position')
             ->orderBy('name')
             ->get();
@@ -312,6 +312,35 @@ class VitrineSuperieurController extends Controller
             ->latest('published_at')
             ->latest('id')
             ->get();
+            \Log::info('VITRINE SUPERIEUR DOCUMENTS DEBUG', [
+    'category_id' => $category->id,
+    'category_slug' => $category->slug,
+
+    'domaine_id' => $domaine->id,
+    'domaine_slug' => $domaine->slug,
+
+    'filiere_id' => $filiere->id,
+    'filiere_slug' => $filiere->slug,
+
+    'niveau_id' => $niveau->id,
+    'niveau_slug' => $niveau->slug,
+
+    'subject_id' => $subject->id,
+    'subject_slug' => $subject->slug,
+
+    'documents' => $documents->map(function ($document) {
+        return [
+            'id' => $document->id,
+            'title' => $document->title,
+            'teaching_category_id' => $document->teaching_category_id,
+            'academic_domain_id' => $document->academic_domain_id,
+            'filiere_id' => $document->filiere_id,
+            'level_id' => $document->level_id,
+            'subject_id' => $document->subject_id,
+            'status' => $document->status,
+        ];
+    })->toArray(),
+]);
 
         return view(
             'niveau.superieur.documents',
