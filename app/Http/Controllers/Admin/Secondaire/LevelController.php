@@ -103,7 +103,7 @@ class LevelController extends Controller
 
             'slug' => Str::slug($validated['name']),
 
-            'order' => $validated['order'] ?? 0,
+            'position' => $validated['position'] ?? 0,
 
             'is_active' => true,
         ]);
@@ -171,7 +171,7 @@ class LevelController extends Controller
                 'max:100',
             ],
 
-            'order' => [
+            'position' => [
                 'nullable',
                 'integer',
                 'min:0',
@@ -188,7 +188,7 @@ class LevelController extends Controller
 
             'slug' => Str::slug($validated['name']),
 
-            'order' => $validated['order'] ?? 0,
+            'position' => $validated['position'] ?? 0,
         ]);
 
 

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Admin\Secondaire;
 
 use App\Http\Controllers\Controller;
+use App\Models\Formation;
 use App\Models\Level;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Formation;
-
 
 class SubjectController extends Controller
 {
@@ -17,20 +16,36 @@ class SubjectController extends Controller
     | LISTE DES MATIÈRES
     |--------------------------------------------------------------------------
     */
+
     public function index()
     {
-        $formationGeneral = Formation::where('slug', 'secondaire-general')->first();
+        $formationGeneral = Formation::where(
+            'slug',
+            'secondaire-general'
+        )->first();
 
-        $formationTechnique = Formation::where('slug', 'secondaire-technique')->first();
+        $formationTechnique = Formation::where(
+            'slug',
+            'secondaire-technique'
+        )->first();
 
-        $levels = Level::whereIn('formation_id', [
+        $formationIds = array_filter([
             $formationGeneral?->id,
             $formationTechnique?->id,
-        ])
+        ]);
+
+        $levels = Level::whereIn(
+            'formation_id',
+            $formationIds
+        )
             ->where('is_active', true)
-            ->with(['subjects' => function ($query) {
-                $query->orderBy('order');
-            }])
+            ->with([
+                'subjects' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->orderBy('position');
+                }
+            ])
             ->orderBy('order')
             ->get();
 
@@ -39,20 +54,24 @@ class SubjectController extends Controller
             compact('levels')
         );
     }
+
     /*
     |--------------------------------------------------------------------------
     | FORMULAIRE D'AJOUT
     |--------------------------------------------------------------------------
     */
+
     public function create()
     {
-
-        $levels = Level::whereHas('formation', function ($query) {
-            $query->whereIn('slug', [
-                'secondaire-general',
-                'secondaire-technique'
-            ]);
-        })
+        $levels = Level::whereHas(
+            'formation',
+            function ($query) {
+                $query->whereIn('slug', [
+                    'secondaire-general',
+                    'secondaire-technique',
+                ]);
+            }
+        )
             ->where('is_active', true)
             ->orderBy('order')
             ->get();
@@ -62,11 +81,13 @@ class SubjectController extends Controller
             compact('levels')
         );
     }
+
     /*
     |--------------------------------------------------------------------------
     | ENREGISTRER UNE MATIÈRE
     |--------------------------------------------------------------------------
     */
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -82,11 +103,12 @@ class SubjectController extends Controller
                 'max:150',
             ],
 
-            'order' => [
+            'position' => [
                 'nullable',
                 'integer',
                 'min:0',
             ],
+
         ]);
 
         $slug = Str::slug(
@@ -101,15 +123,13 @@ class SubjectController extends Controller
                 'level_id',
                 $validated['level_id']
             )
-            ->where(
-                'slug',
-                $slug
-            )
-            ->exists()
+                ->where(
+                    'slug',
+                    $slug
+                )
+                ->exists()
         ) {
-            $slug = $originalSlug
-                . '-'
-                . $numero;
+            $slug = $originalSlug . '-' . $numero;
 
             $numero++;
         }
@@ -117,19 +137,19 @@ class SubjectController extends Controller
         Subject::create([
 
             'level_id' =>
-            $validated['level_id'],
+                $validated['level_id'],
 
             'name' =>
-            $validated['name'],
+                $validated['name'],
 
             'slug' =>
-            $slug,
+                $slug,
 
-            'order' =>
-            $validated['order'] ?? 0,
+            'position' =>
+                $validated['position'] ?? 0,
 
             'is_active' =>
-            true,
+                true,
 
         ]);
 
@@ -142,19 +162,27 @@ class SubjectController extends Controller
                 'Matière ajoutée avec succès.'
             );
     }
+
     /*
     |--------------------------------------------------------------------------
     | FORMULAIRE DE MODIFICATION
     |--------------------------------------------------------------------------
     */
+
     public function edit(
         Subject $matiere
     ) {
-        $levels = Level::where(
-            'is_active',
-            true
+        $levels = Level::whereHas(
+            'formation',
+            function ($query) {
+                $query->whereIn('slug', [
+                    'secondaire-general',
+                    'secondaire-technique',
+                ]);
+            }
         )
-            ->orderBy('name')
+            ->where('is_active', true)
+            ->orderBy('order')
             ->get();
 
         return view(
@@ -165,14 +193,16 @@ class SubjectController extends Controller
             )
         );
     }
+
     /*
     |--------------------------------------------------------------------------
-    | MODIFIER
+    | MODIFIER UNE MATIÈRE
     |--------------------------------------------------------------------------
     */
+
     public function update(
         Request $request,
-        Subject $subject
+        Subject $matiere
     ) {
         $validated = $request->validate([
 
@@ -187,7 +217,7 @@ class SubjectController extends Controller
                 'max:150',
             ],
 
-            'order' => [
+            'position' => [
                 'nullable',
                 'integer',
                 'min:0',
@@ -207,37 +237,35 @@ class SubjectController extends Controller
                 'level_id',
                 $validated['level_id']
             )
-            ->where(
-                'slug',
-                $slug
-            )
-            ->where(
-                'id',
-                '!=',
-                $subject->id
-            )
-            ->exists()
+                ->where(
+                    'slug',
+                    $slug
+                )
+                ->where(
+                    'id',
+                    '!=',
+                    $matiere->id
+                )
+                ->exists()
         ) {
-            $slug = $originalSlug
-                . '-'
-                . $numero;
+            $slug = $originalSlug . '-' . $numero;
 
             $numero++;
         }
 
-        $subject->update([
+        $matiere->update([
 
             'level_id' =>
-            $validated['level_id'],
+                $validated['level_id'],
 
             'name' =>
-            $validated['name'],
+                $validated['name'],
 
             'slug' =>
-            $slug,
+                $slug,
 
-            'order' =>
-            $validated['order'] ?? 0,
+            'position' =>
+                $validated['position'] ?? 0,
 
         ]);
 
@@ -250,6 +278,7 @@ class SubjectController extends Controller
                 'Matière modifiée avec succès.'
             );
     }
+
     /*
     |--------------------------------------------------------------------------
     | ACTIVER / DÉSACTIVER
@@ -257,40 +286,35 @@ class SubjectController extends Controller
     */
 
     public function toggle(
-        Subject $subject
+        Subject $matiere
     ) {
-        $subject->update([
+        $matiere->update([
 
             'is_active' =>
-            ! $subject->is_active,
+                ! $matiere->is_active,
 
         ]);
 
         return back()
             ->with(
                 'success',
-                $subject->is_active
+                $matiere->is_active
                     ? 'Matière activée.'
                     : 'Matière désactivée.'
             );
     }
+
     /*
     |--------------------------------------------------------------------------
     | SUPPRIMER
     |--------------------------------------------------------------------------
     */
-    public function destroy(
-        Subject $subject
-    ) {
-        /*
-        |----------------------------------------------------------
-        | Vérification des documents
-        |----------------------------------------------------------
-        */
 
+    public function destroy(
+        Subject $matiere
+    ) {
         if (
-            $subject->documents()
-            ->exists()
+            $matiere->documents()->exists()
         ) {
             return back()
                 ->with(
@@ -299,7 +323,7 @@ class SubjectController extends Controller
                 );
         }
 
-        $subject->delete();
+        $matiere->delete();
 
         return back()
             ->with(

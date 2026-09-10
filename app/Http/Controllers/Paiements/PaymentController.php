@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Paiements;
 use App\Http\Controllers\Controller;
 use App\Models\Document;
 use App\Models\Payment;
+use App\Services\LigdiCashService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 class PaymentController extends Controller
 {
@@ -16,10 +19,21 @@ class PaymentController extends Controller
      * --------------------------------------------------------------------------
      * CONSTRUCTEUR
      * --------------------------------------------------------------------------
+     *
+     * Toutes les routes nécessitent l'authentification sauf :
+     *
+     * - callback()     : appelé directement par LigdiCash
+     * - cancelReturn() : retour navigateur après annulation LigdiCash
+     *
+     * return() reste protégé par auth car le paiement appartient
+     * à l'utilisateur connecté qui vient de quitter le checkout.
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth')->except([
+            'callback',
+            'cancelReturn',
+        ]);
     }
 
     /**
@@ -29,15 +43,33 @@ class PaymentController extends Controller
      */
     public function create(Document $document)
     {
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT PUBLIÉ
+        |--------------------------------------------------------------------------
+        */
+
         abort_unless(
             $document->status === 'published',
             404
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT PREMIUM
+        |--------------------------------------------------------------------------
+        */
+
         abort_unless(
             $document->isPremium(),
             404
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PRIX VALIDE
+        |--------------------------------------------------------------------------
+        */
 
         abort_unless(
             $document->price !== null &&
@@ -45,6 +77,12 @@ class PaymentController extends Controller
             422,
             'Le prix de ce document est invalide.'
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAIEMENT DÉJÀ EFFECTUÉ
+        |--------------------------------------------------------------------------
+        */
 
         $hasPaid = Payment::query()
             ->where('user_id', Auth::id())
@@ -54,7 +92,10 @@ class PaymentController extends Controller
 
         if ($hasPaid) {
             return redirect()
-                ->route('documents.show', $document)
+                ->route(
+                    'documents.show',
+                    $document
+                )
                 ->with(
                     'success',
                     'Vous avez déjà payé ce document.'
@@ -69,17 +110,24 @@ class PaymentController extends Controller
 
     /**
      * --------------------------------------------------------------------------
-     * CRÉATION D'UNE DEMANDE DE PAIEMENT
+     * CRÉATION DU PAIEMENT + REDIRECTION VERS LIGDICASH
      * --------------------------------------------------------------------------
      *
-     * Cette méthode crée uniquement une transaction "pending".
+     * Flux :
      *
-     * Le statut "paid" sera défini uniquement après confirmation
-     * réelle du paiement.
+     * Document premium
+     *       ↓
+     * Payment pending
+     *       ↓
+     * createInvoice()
+     *       ↓
+     * payment_url
+     *       ↓
+     * Hosted Checkout LigdiCash
      */
     public function store(
-        Request $request,
-        Document $document
+        Document $document,
+        LigdiCashService $ligdiCash
     ) {
         $user = Auth::user();
 
@@ -116,10 +164,6 @@ class PaymentController extends Controller
         |--------------------------------------------------------------------------
         | PRIX SERVEUR
         |--------------------------------------------------------------------------
-        |
-        | Le montant vient toujours de la base de données.
-        | Il ne faut jamais faire confiance à un montant envoyé par le navigateur.
-        |
         */
 
         if (
@@ -134,68 +178,7 @@ class PaymentController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDATION
-        |--------------------------------------------------------------------------
-        */
-
-        $validated = $request->validate([
-            'payment_method' => [
-                'required',
-                'string',
-                'in:orange_money,moov_money',
-            ],
-
-            'phone' => [
-                'required',
-                'string',
-                'regex:/^[0-9]{8}$/',
-            ],
-        ], [
-            'payment_method.required' =>
-                'Veuillez sélectionner un moyen de paiement.',
-
-            'payment_method.in' =>
-                'Le moyen de paiement sélectionné est invalide.',
-
-            'phone.required' =>
-                'Veuillez saisir votre numéro Mobile Money.',
-
-            'phone.regex' =>
-                'Le numéro Mobile Money doit contenir exactement 8 chiffres.',
-        ]);
-
-        /*
-        |--------------------------------------------------------------------------
-        | NORMALISATION DU NUMÉRO
-        |--------------------------------------------------------------------------
-        */
-
-        $phone = preg_replace(
-            '/\D/',
-            '',
-            $validated['phone']
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | VÉRIFICATION DU NUMÉRO
-        |--------------------------------------------------------------------------
-        */
-
-        if (
-            strlen($phone) !== 8
-        ) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'phone' =>
-                        'Le numéro Mobile Money doit contenir exactement 8 chiffres.'
-                ]);
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | VÉRIFICATION PAIEMENT EXISTANT
+        | PAIEMENT DÉJÀ PAYÉ
         |--------------------------------------------------------------------------
         */
 
@@ -219,11 +202,11 @@ class PaymentController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | TRANSACTION PENDING EXISTANTE
+        | RECHERCHE D'UNE TRANSACTION PENDING RÉCENTE
         |--------------------------------------------------------------------------
         |
-        | On évite de créer plusieurs paiements pour le même document
-        | dans un court intervalle.
+        | On évite de créer plusieurs factures Hosted Payin pour
+        | le même document dans un court intervalle.
         |
         */
 
@@ -239,104 +222,514 @@ class PaymentController extends Controller
             ->latest('id')
             ->first();
 
+        /*
+        |--------------------------------------------------------------------------
+        | PAIEMENT PENDING EXISTANT
+        |--------------------------------------------------------------------------
+        */
+
         if ($existingPayment) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | Une facture LigdiCash existe déjà
+            |--------------------------------------------------------------------------
+            */
+
+            if ($existingPayment->ligdicash_payment_url) {
+                return redirect()->away(
+                    $existingPayment->ligdicash_payment_url
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Pas encore de facture : on réutilise la transaction
+            |--------------------------------------------------------------------------
+            */
+
+            $payment = $existingPayment;
+
+        } else {
+
+            /*
+            |--------------------------------------------------------------------------
+            | NOUVELLE TRANSACTION
+            |--------------------------------------------------------------------------
+            */
+
+            $payment = DB::transaction(
+                function () use (
+                    $user,
+                    $document
+                ) {
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Référence Scientia
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $reference =
+                        'PAY-' .
+                        now()->format('YmdHis') .
+                        '-' .
+                        strtoupper(
+                            Str::random(10)
+                        );
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Transaction ID
+                    |--------------------------------------------------------------------------
+                    |
+                    | Cette valeur est envoyée par LigdiCash
+                    | dans custom_data.transaction_id.
+                    |
+                    */
+
+                    $transactionId =
+                        'SC-' .
+                        now()->format('YmdHis') .
+                        '-' .
+                        strtoupper(
+                            Str::random(12)
+                        );
+
+                    return Payment::create([
+                        'user_id' =>
+                            $user->id,
+
+                        'document_id' =>
+                            $document->id,
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Montant venant exclusivement de la DB
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'amount' =>
+                            $document->price,
+
+                        'currency' =>
+                            'FCFA',
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Référence Scientia
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'payment_reference' =>
+                            $reference,
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Identifiant marchand LigdiCash
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'transaction_id' =>
+                            $transactionId,
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Statut initial
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'status' =>
+                            'pending',
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Champs LigdiCash
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'ligdicash_token' =>
+                            null,
+
+                        'ligdicash_status' =>
+                            'pending',
+
+                        'ligdicash_payment_url' =>
+                            null,
+
+                        'ligdicash_response' =>
+                            null,
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Finalisation
+                        |--------------------------------------------------------------------------
+                        */
+
+                        'failure_reason' =>
+                            null,
+
+                        'paid_at' =>
+                            null,
+                    ]);
+                }
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CRÉATION DE LA FACTURE HOSTED PAYIN
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            $result = $ligdiCash->createInvoice(
+                $payment
+            );
+
+        } catch (Throwable $e) {
+
+            report($e);
+
+            Log::error(
+                'Création facture LigdiCash échouée.',
+                [
+                    'payment_id' =>
+                        $payment->id,
+
+                    'transaction_id' =>
+                        $payment->transaction_id,
+
+                    'error' =>
+                        $e->getMessage(),
+                ]
+            );
+
+            $payment->update([
+                'status' =>
+                    'failed',
+
+                'ligdicash_status' =>
+                    'failed',
+
+                'failure_reason' =>
+                    $e->getMessage(),
+            ]);
+
             return redirect()
                 ->route(
                     'payments.processing',
-                    $existingPayment
+                    $payment
+                )
+                ->with(
+                    'error',
+                    'Impossible de démarrer le paiement LigdiCash.'
                 );
         }
 
         /*
         |--------------------------------------------------------------------------
-        | CRÉATION DE LA TRANSACTION
+        | RÉCUPÉRATION URL HOSTED CHECKOUT
         |--------------------------------------------------------------------------
         */
 
-        $payment = DB::transaction(function () use (
-            $user,
-            $document,
-            $validated,
-            $phone
-        ) {
+        $payment = $payment->fresh();
 
-            /*
-            |--------------------------------------------------------------------------
-            | RÉFÉRENCE INTERNE
-            |--------------------------------------------------------------------------
-            */
+        $paymentUrl =
+            $result['payment_url']
+            ?? $payment?->ligdicash_payment_url;
 
-            $reference =
-                'PAY-' .
-                now()->format('YmdHis') .
-                '-' .
-                strtoupper(
-                    Str::random(10)
-                );
+        if (!$paymentUrl) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | CRÉATION DU PAIEMENT
-            |--------------------------------------------------------------------------
-            */
-
-            return Payment::create([
-                'user_id' =>
-                    $user->id,
-
-                'document_id' =>
-                    $document->id,
-
-                /*
-                | Montant provenant de la DB
-                */
-                'amount' =>
-                    $document->price,
-
-                'currency' =>
-                    'FCFA',
-
-                /*
-                | Orange Money ou Moov Money
-                */
-                'payment_method' =>
-                    $validated['payment_method'],
-
-                /*
-                | Numéro utilisé pour le paiement
-                */
-                'phone' =>
-                    $phone,
-
-                /*
-                | Référence interne Scientia
-                */
-                'payment_reference' =>
-                    $reference,
-
-                /*
-                | Pas encore confirmé
-                */
+            $payment->update([
                 'status' =>
-                    'pending',
+                    'failed',
 
-                /*
-                | Sera rempli après confirmation opérateur
-                */
-                'transaction_id' =>
-                    null,
+                'ligdicash_status' =>
+                    'failed',
 
                 'failure_reason' =>
-                    null,
-
-                'paid_at' =>
-                    null,
+                    'LigdiCash n\'a pas retourné une URL de paiement.',
             ]);
-        });
+
+            return redirect()
+                ->route(
+                    'payments.processing',
+                    $payment
+                )
+                ->with(
+                    'error',
+                    'LigdiCash n\'a pas fourni de page de paiement.'
+                );
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | REDIRECTION
+        | REDIRECTION VERS LIGDICASH
+        |--------------------------------------------------------------------------
+        */
+
+        return redirect()->away(
+            $paymentUrl
+        );
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * RETOUR NAVIGATEUR APRÈS PAIEMENT
+     * --------------------------------------------------------------------------
+     *
+     * Le navigateur revient ici après le Hosted Checkout.
+     *
+     * Le retour navigateur ne suffit jamais à considérer le paiement
+     * comme payé.
+     *
+     * On appelle confirmPayment() pour vérifier le statut réel
+     * auprès de LigdiCash.
+     */
+    public function return(
+        Request $request,
+        LigdiCashService $ligdiCash
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | IDENTIFIANTS RETOURNÉS PAR LIGDICASH
+        |--------------------------------------------------------------------------
+        */
+
+        $transactionId =
+            $request->input('transaction_id')
+            ?? $request->input('custom_data.transaction_id');
+
+        $token =
+            $request->input('token')
+            ?? $request->input('invoiceToken');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Recherche dans custom_data si celui-ci est JSON
+        |--------------------------------------------------------------------------
+        */
+
+        $customData = $request->input('custom_data');
+
+        if (
+            !$transactionId &&
+            is_string($customData)
+        ) {
+            $decodedCustomData =
+                json_decode(
+                    $customData,
+                    true
+                );
+
+            if (is_array($decodedCustomData)) {
+                $transactionId =
+                    $decodedCustomData['transaction_id']
+                    ?? null;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RECHERCHE DU PAYMENT
+        |--------------------------------------------------------------------------
+        */
+
+        $payment = null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Recherche par transaction_id
+        |--------------------------------------------------------------------------
+        */
+
+        if ($transactionId) {
+
+            $payment = Payment::query()
+                ->where(
+                    'transaction_id',
+                    $transactionId
+                )
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Recherche par token
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$payment &&
+            $token
+        ) {
+            $payment = Payment::query()
+                ->where(
+                    'ligdicash_token',
+                    $token
+                )
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAYMENT INTROUVABLE
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$payment) {
+
+            Log::warning(
+                'Retour LigdiCash : paiement introuvable.',
+                [
+                    'transaction_id' =>
+                        $transactionId,
+
+                    'token' =>
+                        $token,
+
+                    'payload' =>
+                        $request->all(),
+                ]
+            );
+
+            return redirect()
+                ->route('documents.index')
+                ->with(
+                    'error',
+                    'Impossible de retrouver votre paiement.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SÉCURITÉ UTILISATEUR
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            (int) $payment->user_id ===
+                (int) Auth::id(),
+            403
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT
+        |--------------------------------------------------------------------------
+        */
+
+        $payment->loadMissing('document');
+
+        /*
+        |--------------------------------------------------------------------------
+        | DÉJÀ PAYÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if ($payment->status === 'paid') {
+
+            return redirect()
+                ->route(
+                    'documents.show',
+                    $payment->document
+                )
+                ->with(
+                    'success',
+                    'Paiement confirmé. Vous pouvez maintenant accéder au document.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONFIRMATION RÉELLE AUPRÈS DE LIGDICASH
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            $result =
+                $ligdiCash->confirmPayment(
+                    $payment
+                );
+
+        } catch (Throwable $e) {
+
+            report($e);
+
+            Log::error(
+                'Retour LigdiCash : erreur de confirmation.',
+                [
+                    'payment_id' =>
+                        $payment->id,
+
+                    'transaction_id' =>
+                        $payment->transaction_id,
+
+                    'error' =>
+                        $e->getMessage(),
+                ]
+            );
+
+            return redirect()
+                ->route(
+                    'payments.processing',
+                    $payment
+                )
+                ->with(
+                    'error',
+                    'La vérification du paiement a échoué. Veuillez réessayer.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAYMENT CONFIRMÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ($result['status'] ?? null) ===
+            'paid'
+        ) {
+
+            return redirect()
+                ->route(
+                    'documents.show',
+                    $payment->document
+                )
+                ->with(
+                    'success',
+                    'Paiement confirmé. Vous pouvez maintenant accéder au document.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAYMENT ÉCHOUÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ($result['status'] ?? null) ===
+            'failed'
+        ) {
+
+            return redirect()
+                ->route(
+                    'payments.processing',
+                    $payment
+                )
+                ->with(
+                    'error',
+                    'Le paiement LigdiCash n\'a pas été effectué.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAYMENT TOUJOURS EN ATTENTE
         |--------------------------------------------------------------------------
         */
 
@@ -346,9 +739,289 @@ class PaymentController extends Controller
                 $payment
             )
             ->with(
-                'success',
-                'Votre demande de paiement a été créée.'
+                'info',
+                'Votre paiement est encore en cours de confirmation.'
             );
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * CALLBACK SERVEUR LIGDICASH
+     * --------------------------------------------------------------------------
+     *
+     * Cette méthode est appelée directement par LigdiCash.
+     *
+     * Aucune authentification utilisateur n'est nécessaire ici.
+     *
+     * Le statut est toujours confirmé auprès de l'API LigdiCash
+     * avant de passer le Payment à "paid".
+     */
+    public function callback(
+        Request $request,
+        LigdiCashService $ligdiCash
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | LOG DU CALLBACK
+        |--------------------------------------------------------------------------
+        */
+
+        Log::info(
+            'LigdiCash callback reçu.',
+            [
+                'payload' =>
+                    $request->all(),
+            ]
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | IDENTIFIANTS
+        |--------------------------------------------------------------------------
+        */
+
+        $transactionId =
+            $request->input('transaction_id')
+            ?? $request->input('custom_data.transaction_id');
+
+        $token =
+            $request->input('token')
+            ?? $request->input('invoiceToken');
+
+        /*
+        |--------------------------------------------------------------------------
+        | custom_data éventuellement envoyé sous forme JSON
+        |--------------------------------------------------------------------------
+        */
+
+        $customData = $request->input('custom_data');
+
+        if (
+            !$transactionId &&
+            is_string($customData)
+        ) {
+
+            $decodedCustomData =
+                json_decode(
+                    $customData,
+                    true
+                );
+
+            if (is_array($decodedCustomData)) {
+
+                $transactionId =
+                    $decodedCustomData['transaction_id']
+                    ?? null;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RECHERCHE DU PAYMENT
+        |--------------------------------------------------------------------------
+        */
+
+        $payment = null;
+
+        /*
+        |--------------------------------------------------------------------------
+        | Recherche par transaction_id
+        |--------------------------------------------------------------------------
+        */
+
+        if ($transactionId) {
+
+            $payment = Payment::query()
+                ->where(
+                    'transaction_id',
+                    $transactionId
+                )
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Recherche par token
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !$payment &&
+            $token
+        ) {
+
+            $payment = Payment::query()
+                ->where(
+                    'ligdicash_token',
+                    $token
+                )
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Paiement introuvable
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$payment) {
+
+            Log::warning(
+                'LigdiCash callback : paiement introuvable.',
+                [
+                    'transaction_id' =>
+                        $transactionId,
+
+                    'token' =>
+                        $token,
+                ]
+            );
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'message' =>
+                    'Paiement introuvable.',
+            ], 404);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DÉJÀ PAYÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if ($payment->status === 'paid') {
+
+            return response()->json([
+                'success' =>
+                    true,
+
+                'status' =>
+                    'paid',
+
+                'message' =>
+                    'Paiement déjà confirmé.',
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONFIRMATION RÉELLE
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            $result =
+                $ligdiCash->confirmPayment(
+                    $payment
+                );
+
+        } catch (Throwable $e) {
+
+            report($e);
+
+            Log::error(
+                'LigdiCash callback : erreur confirmation.',
+                [
+                    'payment_id' =>
+                        $payment->id,
+
+                    'transaction_id' =>
+                        $payment->transaction_id,
+
+                    'error' =>
+                        $e->getMessage(),
+                ]
+            );
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'status' =>
+                    'pending',
+
+                'message' =>
+                    'Impossible de confirmer le paiement.',
+            ], 500);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAYÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ($result['status'] ?? null) ===
+            'paid'
+        ) {
+
+            Log::info(
+                'Paiement LigdiCash confirmé.',
+                [
+                    'payment_id' =>
+                        $payment->id,
+
+                    'transaction_id' =>
+                        $payment->transaction_id,
+                ]
+            );
+
+            return response()->json([
+                'success' =>
+                    true,
+
+                'status' =>
+                    'paid',
+
+                'message' =>
+                    'Paiement confirmé.',
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ÉCHEC
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            ($result['status'] ?? null) ===
+            'failed'
+        ) {
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'status' =>
+                    'failed',
+
+                'message' =>
+                    'Paiement non effectué.',
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TOUJOURS PENDING
+        |--------------------------------------------------------------------------
+        */
+
+        return response()->json([
+            'success' =>
+                true,
+
+            'status' =>
+                'pending',
+
+            'message' =>
+                'Paiement toujours en attente.',
+        ]);
     }
 
     /**
@@ -366,7 +1039,7 @@ class PaymentController extends Controller
 
         abort_unless(
             (int) $payment->user_id ===
-            (int) Auth::id(),
+                (int) Auth::id(),
             403
         );
 
@@ -376,15 +1049,16 @@ class PaymentController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $payment->load('document');
+        $payment->loadMissing('document');
 
         /*
         |--------------------------------------------------------------------------
-        | PAIEMENT DÉJÀ CONFIRMÉ
+        | SI DÉJÀ PAYÉ
         |--------------------------------------------------------------------------
         */
 
         if ($payment->status === 'paid') {
+
             return redirect()
                 ->route(
                     'documents.show',
@@ -398,33 +1072,7 @@ class PaymentController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | PAIEMENT ÉCHOUÉ
-        |--------------------------------------------------------------------------
-        */
-
-        if ($payment->status === 'failed') {
-            return view(
-                'payments.processing',
-                compact('payment')
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | PAIEMENT ANNULÉ
-        |--------------------------------------------------------------------------
-        */
-
-        if ($payment->status === 'cancelled') {
-            return view(
-                'payments.processing',
-                compact('payment')
-            );
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | PAIEMENT EN ATTENTE
+        | AFFICHAGE DE LA PAGE
         |--------------------------------------------------------------------------
         */
 
@@ -436,10 +1084,12 @@ class PaymentController extends Controller
 
     /**
      * --------------------------------------------------------------------------
-     * STATUT D'UN PAIEMENT
+     * STATUT LOCAL
      * --------------------------------------------------------------------------
      *
-     * Cette méthode ne modifie jamais le statut.
+     * Cette méthode lit uniquement notre base de données.
+     *
+     * Elle ne contacte pas LigdiCash.
      */
     public function status(Payment $payment)
     {
@@ -451,15 +1101,9 @@ class PaymentController extends Controller
 
         abort_unless(
             (int) $payment->user_id ===
-            (int) Auth::id(),
+                (int) Auth::id(),
             403
         );
-
-        /*
-        |--------------------------------------------------------------------------
-        | RÉPONSE JSON
-        |--------------------------------------------------------------------------
-        */
 
         return response()->json([
             'status' =>
@@ -474,62 +1118,167 @@ class PaymentController extends Controller
             'transaction_id' =>
                 $payment->transaction_id,
 
-            'payment_method' =>
-                $payment->payment_method,
-
-            'phone' =>
-                $payment->phone,
-
             'amount' =>
                 $payment->amount,
 
             'currency' =>
                 $payment->currency,
 
+            'ligdicash_status' =>
+                $payment->ligdicash_status,
+
             'paid_at' =>
                 $payment->paid_at?->toISOString(),
         ]);
     }
 
-    public function confirm(Payment $payment)
-{
-    abort_unless(
-        $payment->user_id === Auth::id(),
-        403
-    );
+    /**
+     * --------------------------------------------------------------------------
+     * CONFIRMATION MANUELLE
+     * --------------------------------------------------------------------------
+     *
+     * Cette méthode contacte réellement LigdiCash.
+     */
+    public function confirm(
+        Payment $payment,
+        LigdiCashService $ligdiCash
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | PROPRIÉTAIRE
+        |--------------------------------------------------------------------------
+        */
 
-    if ($payment->status === 'paid') {
+        abort_unless(
+            (int) $payment->user_id ===
+                (int) Auth::id(),
+            403
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DÉJÀ PAYÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if ($payment->status === 'paid') {
+
+            return response()->json([
+                'success' =>
+                    true,
+
+                'status' =>
+                    'paid',
+
+                'paid' =>
+                    true,
+
+                'message' =>
+                    'Paiement déjà confirmé.',
+            ]);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEUL PENDING EST VÉRIFIABLE
+        |--------------------------------------------------------------------------
+        */
+
+        if ($payment->status !== 'pending') {
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'status' =>
+                    $payment->status,
+
+                'paid' =>
+                    false,
+
+                'message' =>
+                    'Ce paiement ne peut plus être confirmé.',
+            ], 422);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONFIRMATION AUPRÈS DE LIGDICASH
+        |--------------------------------------------------------------------------
+        */
+
+        try {
+
+            $result =
+                $ligdiCash->confirmPayment(
+                    $payment
+                );
+
+        } catch (Throwable $e) {
+
+            report($e);
+
+            Log::error(
+                'Confirmation manuelle LigdiCash échouée.',
+                [
+                    'payment_id' =>
+                        $payment->id,
+
+                    'transaction_id' =>
+                        $payment->transaction_id,
+
+                    'error' =>
+                        $e->getMessage(),
+                ]
+            );
+
+            return response()->json([
+                'success' =>
+                    false,
+
+                'status' =>
+                    $payment->fresh()->status,
+
+                'paid' =>
+                    false,
+
+                'message' =>
+                    'Impossible de vérifier le paiement auprès de LigdiCash.',
+            ], 502);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | RÉPONSE
+        |--------------------------------------------------------------------------
+        */
+
         return response()->json([
-            'success' => true,
-            'status' => 'paid',
-            'message' => 'Paiement déjà confirmé.'
+            'success' =>
+                ($result['status'] ?? null) === 'paid',
+
+            'status' =>
+                $result['status']
+                ?? $payment->fresh()->status,
+
+            'ligdicash_status' =>
+                $result['ligdicash_status']
+                ?? null,
+
+            'paid' =>
+                $result['paid']
+                ?? false,
+
+            'message' =>
+                ($result['status'] ?? null) === 'paid'
+                    ? 'Paiement confirmé.'
+                    : 'Paiement toujours en attente.',
         ]);
     }
 
-    if ($payment->status !== 'pending') {
-        return response()->json([
-            'success' => false,
-            'status' => $payment->status,
-            'message' => 'Ce paiement ne peut plus être confirmé.'
-        ], 422);
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | ICI viendra l'appel réel à Orange Money / Moov Money
-    |--------------------------------------------------------------------------
-    */
-
-    return response()->json([
-        'success' => false,
-        'status' => 'pending',
-        'message' => 'Paiement toujours en attente de confirmation.'
-    ]);
-}
-
     /**
      * --------------------------------------------------------------------------
-     * ANNULATION
+     * ANNULATION PAR L'UTILISATEUR
      * --------------------------------------------------------------------------
      */
     public function cancel(Payment $payment)
@@ -542,9 +1291,17 @@ class PaymentController extends Controller
 
         abort_unless(
             (int) $payment->user_id ===
-            (int) Auth::id(),
+                (int) Auth::id(),
             403
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT
+        |--------------------------------------------------------------------------
+        */
+
+        $payment->loadMissing('document');
 
         /*
         |--------------------------------------------------------------------------
@@ -563,12 +1320,6 @@ class PaymentController extends Controller
             ]);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | RETOUR
-        |--------------------------------------------------------------------------
-        */
-
         return redirect()
             ->route(
                 'documents.show',
@@ -577,6 +1328,34 @@ class PaymentController extends Controller
             ->with(
                 'info',
                 'Le paiement a été annulé.'
+            );
+    }
+
+    /**
+     * --------------------------------------------------------------------------
+     * RETOUR APRÈS ANNULATION LIGDICASH
+     * --------------------------------------------------------------------------
+     *
+     * Cette méthode est publique.
+     *
+     * Elle sert uniquement de retour navigateur depuis LigdiCash.
+     */
+    public function cancelReturn(
+        Request $request
+    ) {
+        Log::info(
+            'Retour annulation LigdiCash reçu.',
+            [
+                'payload' =>
+                    $request->all(),
+            ]
+        );
+
+        return redirect()
+            ->route('documents.index')
+            ->with(
+                'info',
+                'Le paiement a été annulé ou interrompu.'
             );
     }
 }

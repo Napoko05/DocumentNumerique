@@ -6,18 +6,17 @@
 
 <div class="formation-page">
 
-```
 {{-- HEADER --}}
 <section class="formation-hero">
     <div class="container">
 
         <div class="formation-badge">
             <i class="bi bi-mortarboard-fill"></i>
-            Enseignement secondaire
+            Enseignement géneral
         </div>
 
         <h1>
-            Enseignement secondaire
+            Enseignement géneral
         </h1>
 
         <p>
@@ -236,7 +235,7 @@
                 </h3>
 
                 <p>
-                    Les formations de l’enseignement secondaire
+                    Les formations de l’enseignement général et technique
                     apparaîtront ici lorsqu’elles seront disponibles.
                 </p>
 

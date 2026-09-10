@@ -35,10 +35,7 @@ class SubjectController extends Controller
                 $query->orderBy('position', 'asc');
             }
         ])
-        ->where(
-            'is_active',
-            true
-        )
+        ->where('is_active', true)
         ->orderBy('position', 'asc')
         ->get();
 
@@ -57,15 +54,20 @@ class SubjectController extends Controller
 
     public function create()
     {
+        $domaines = AcademicDomain::where(
+            'is_active',
+            true
+        )
+        ->orderBy('position', 'asc')
+        ->get();
+
         $levels = Level::whereHas(
             'filiere.academicDomain',
             function ($query) {
-
                 $query->where(
                     'is_active',
                     true
                 );
-
             }
         )
         ->where(
@@ -80,7 +82,10 @@ class SubjectController extends Controller
 
         return view(
             'admin.superieur.modules.create',
-            compact('levels')
+            compact(
+                'domaines',
+                'levels'
+            )
         );
     }
 
@@ -106,7 +111,7 @@ class SubjectController extends Controller
                 'max:150',
             ],
 
-            'order' => [
+            'position' => [
                 'nullable',
                 'integer',
                 'min:0',
@@ -172,8 +177,8 @@ class SubjectController extends Controller
             'slug' =>
                 $slug,
 
-            'order' =>
-                $validated['order'] ?? 0,
+            'position' =>
+                $validated['position'] ?? 0,
 
             'is_active' =>
                 true,
@@ -200,15 +205,20 @@ class SubjectController extends Controller
 
     public function edit(Subject $subject)
     {
+        $domaines = AcademicDomain::where(
+            'is_active',
+            true
+        )
+        ->orderBy('position', 'asc')
+        ->get();
+
         $levels = Level::whereHas(
             'filiere.academicDomain',
             function ($query) {
-
                 $query->where(
                     'is_active',
                     true
                 );
-
             }
         )
         ->where(
@@ -225,6 +235,7 @@ class SubjectController extends Controller
             'admin.superieur.modules.edit',
             compact(
                 'subject',
+                'domaines',
                 'levels'
             )
         );
@@ -254,7 +265,7 @@ class SubjectController extends Controller
                 'max:150',
             ],
 
-            'order' => [
+            'position' => [
                 'nullable',
                 'integer',
                 'min:0',
@@ -330,8 +341,8 @@ class SubjectController extends Controller
             'slug' =>
                 $slug,
 
-            'order' =>
-                $validated['order'] ?? 0,
+            'position' =>
+                $validated['position'] ?? 0,
 
             'is_active' =>
                 $validated['is_active'],
@@ -365,7 +376,6 @@ class SubjectController extends Controller
 
         ]);
 
-
         return back()
             ->with(
                 'success',
@@ -374,6 +384,8 @@ class SubjectController extends Controller
                     : 'Module désactivé.'
             );
     }
+
+
     /*
     |--------------------------------------------------------------------------
     | SUPPRIMER
@@ -382,12 +394,6 @@ class SubjectController extends Controller
 
     public function destroy(Subject $subject)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | VÉRIFICATION DES DOCUMENTS
-        |--------------------------------------------------------------------------
-        */
-
         if (
             $subject
                 ->documents()
@@ -401,7 +407,6 @@ class SubjectController extends Controller
         }
 
         $subject->delete();
-
 
         return back()
             ->with(

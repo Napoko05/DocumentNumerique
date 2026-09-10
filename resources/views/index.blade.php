@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -49,13 +48,10 @@
         <div class="yaas-container yaas-navbar-inner">
 
             {{-- LOGO --}}
-            <a href="{{ route('home') }}"
-                class="yaas-logo">
+            <a href="{{ route('home') }}" class="yaas-logo">
 
                 <span class="yaas-logo-mark">
-                    <img
-                        src="{{ asset('images/logo.png') }}"
-                        alt="YAA'Scientia">
+                    <img src="{{ asset('images/logo.png') }}" alt="YAA'Scientia">
                 </span>
 
                 <span class="yaas-logo-text">
@@ -69,17 +65,14 @@
             {{-- NAVIGATION DESKTOP --}}
             <nav class="yaas-main-nav">
 
-                <a href="{{ route('home') }}"
-                    class="yaas-nav-link active">
+                <a href="{{ route('home') }}" class="yaas-nav-link active">
                     Accueil
                 </a>
 
 
                 <div class="yaas-nav-dropdown">
 
-                    <button
-                        type="button"
-                        class="yaas-nav-link yaas-dropdown-trigger">
+                    <button type="button" class="yaas-nav-link yaas-dropdown-trigger">
 
                         <span>Bibliothèque</span>
 
@@ -92,22 +85,20 @@
 
                     <div class="yaas-dropdown-menu">
 
-                        <a href="{{ route('vitrine.secondaire.index') }}"
-                            class="yaas-dropdown-item">
+                        <a href="{{ route('vitrine.secondaire.index') }}" class="yaas-dropdown-item">
 
                             <span class="yaas-dropdown-icon blue">
                                 🎓
                             </span>
 
                             <span>
-                                <strong>Enseignement Secondaire</strong>
-                                <small>secondaidre genrale & technique</small>
+                                <strong>Enseignement Géneral</strong>
+                                <small>Enseignement genral & technique</small>
                             </span>
 
                         </a>
 
-                        <a href="{{ route('vitrine.superieur.domaines') }}"
-                            class="yaas-dropdown-item">
+                        <a href="{{ route('vitrine.superieur.domaines') }}" class="yaas-dropdown-item">
 
                             <span class="yaas-dropdown-icon green">
                                 🔬
@@ -121,8 +112,7 @@
                         </a>
 
 
-                        <a href="{{ route('vitrine.professionnel.formations') }}"
-                            class="yaas-dropdown-item">
+                        <a href="{{ route('vitrine.professionnel.formations') }}" class="yaas-dropdown-item">
 
                             <span class="yaas-dropdown-icon purple">
                                 💼
@@ -140,21 +130,18 @@
                 </div>
 
 
-                <a href="#documents"
-                    class="yaas-nav-link">
+                <a href="#documents" class="yaas-nav-link">
                     Documents
                 </a>
 
 
-                <a href="#apropos"
-                    class="yaas-nav-link">
+                <a href="#apropos" class="yaas-nav-link">
                     À propos
                 </a>
 
 
                 @auth
-                <a href="{{ route('profile.edit') }}"
-                    class="yaas-nav-link">
+                <a href="{{ route('profile.edit') }}" class="yaas-nav-link">
                     Profil
                 </a>
                 @endauth
@@ -167,19 +154,15 @@
 
                 @auth
 
-                <a href="{{ $dashboardRoute }}"
-                    class="yaas-btn yaas-btn-outline">
+                <a href="{{ $dashboardRoute }}" class="yaas-btn yaas-btn-outline">
                     Tableau de bord
                 </a>
 
-                <form method="POST"
-                    action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}">
 
                     @csrf
 
-                    <button
-                        type="submit"
-                        class="yaas-btn yaas-btn-dark">
+                    <button type="submit" class="yaas-btn yaas-btn-dark">
                         Déconnexion
                     </button>
 
@@ -187,13 +170,11 @@
 
                 @else
 
-                <a href="{{ route('login') }}"
-                    class="yaas-btn yaas-btn-text">
+                <a href="{{ route('login') }}" class="yaas-btn yaas-btn-text">
                     Connexion
                 </a>
 
-                <a href="{{ route('register') }}"
-                    class="yaas-btn yaas-btn-primary">
+                <a href="{{ route('register') }}" class="yaas-btn yaas-btn-primary">
                     Créer un compte
                 </a>
 
@@ -203,11 +184,7 @@
 
 
             {{-- MOBILE BUTTON --}}
-            <button
-                type="button"
-                class="yaas-mobile-toggle"
-                id="yaas-mobile-toggle"
-                aria-label="Ouvrir le menu">
+            <button type="button" class="yaas-mobile-toggle" id="yaas-mobile-toggle" aria-label="Ouvrir le menu">
 
                 <span></span>
                 <span></span>
@@ -219,14 +196,11 @@
 
 
         {{-- MOBILE NAVIGATION --}}
-        <div
-            class="yaas-mobile-menu"
-            id="yaas-mobile-menu">
+        <div class="yaas-mobile-menu" id="yaas-mobile-menu">
 
             <div class="yaas-mobile-inner">
 
-                <a href="{{ route('home') }}"
-                    class="yaas-mobile-link">
+                <a href="{{ route('home') }}" class="yaas-mobile-link">
                     Accueil
                 </a>
 
@@ -235,11 +209,11 @@
                     <span>Bibliothèque</span>
 
                     <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
-                        Secondaire général
+                       Enseignement général
                     </a>
 
                     <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
-                        Secondaire technique
+                        Enseignement technique
                     </a>
 
                     <a href="{{ route('vitrine.superieur.domaines') }}">
@@ -253,38 +227,31 @@
                 </div>
 
 
-                <a href="#documents"
-                    class="yaas-mobile-link">
+                <a href="#documents" class="yaas-mobile-link">
                     Documents
                 </a>
 
 
-                <a href="#apropos"
-                    class="yaas-mobile-link">
+                <a href="#apropos" class="yaas-mobile-link">
                     À propos
                 </a>
 
 
                 @auth
 
-                <a href="{{ route('profile.edit') }}"
-                    class="yaas-mobile-link">
+                <a href="{{ route('profile.edit') }}" class="yaas-mobile-link">
                     Mon profil
                 </a>
 
-                <a href="{{ $dashboardRoute }}"
-                    class="yaas-btn yaas-btn-primary yaas-mobile-btn">
+                <a href="{{ $dashboardRoute }}" class="yaas-btn yaas-btn-primary yaas-mobile-btn">
                     Tableau de bord
                 </a>
 
-                <form method="POST"
-                    action="{{ route('logout') }}">
+                <form method="POST" action="{{ route('logout') }}">
 
                     @csrf
 
-                    <button
-                        type="submit"
-                        class="yaas-btn yaas-btn-danger yaas-mobile-btn">
+                    <button type="submit" class="yaas-btn yaas-btn-danger yaas-mobile-btn">
                         Déconnexion
                     </button>
 
@@ -292,13 +259,11 @@
 
                 @else
 
-                <a href="{{ route('login') }}"
-                    class="yaas-btn yaas-btn-outline yaas-mobile-btn">
+                <a href="{{ route('login') }}" class="yaas-btn yaas-btn-outline yaas-mobile-btn">
                     Se connecter
                 </a>
 
-                <a href="{{ route('register') }}"
-                    class="yaas-btn yaas-btn-primary yaas-mobile-btn">
+                <a href="{{ route('register') }}" class="yaas-btn yaas-btn-primary yaas-mobile-btn">
                     Créer un compte
                 </a>
 
@@ -358,10 +323,7 @@
 
 
                     {{-- SEARCH --}}
-                    <form
-                        action="{{ route('documents.index') }}"
-                        method="GET"
-                        class="yaas-search">
+                    <form action="{{ route('documents.index') }}" method="GET" class="yaas-search">
 
                         <div class="yaas-search-icon">
 
@@ -373,11 +335,8 @@
                         </div>
 
 
-                        <input
-                            type="search"
-                            name="search"
-                            placeholder="Rechercher un livre, une matière, un document..."
-                            autocomplete="off">
+                        <input type="search" name="search"
+                            placeholder="Rechercher un livre, une matière, un document..." autocomplete="off">
 
 
                         <button type="submit">
@@ -389,8 +348,7 @@
 
                     <div class="yaas-hero-actions">
 
-                        <a href="{{ route('documents.index') }}"
-                            class="yaas-btn yaas-btn-primary yaas-btn-large">
+                        <a href="{{ route('documents.index') }}" class="yaas-btn yaas-btn-primary yaas-btn-large">
 
                             Explorer la bibliothèque
 
@@ -402,8 +360,7 @@
                         </a>
 
 
-                        <a href="#documents"
-                            class="yaas-btn yaas-btn-light yaas-btn-large">
+                        <a href="#documents" class="yaas-btn yaas-btn-light yaas-btn-large">
 
                             Découvrir les nouveautés
 
@@ -611,7 +568,7 @@
                         </div>
 
                         <h3>
-                            Secondaire général
+                            Enseignement général
                         </h3>
 
                         <p>
@@ -651,8 +608,7 @@
                     </a>
 
 
-                    <a href="{{ route('vitrine.superieur.domaines') }}"
-                        class="yaas-category-card category-green">
+                    <a href="{{ route('vitrine.superieur.domaines') }}" class="yaas-category-card category-green">
 
                         <div class="category-number">
                             03
@@ -714,9 +670,7 @@
         {{-- DOCUMENTS RECENTS --}}
         {{-- ========================================================= --}}
 
-        <section
-            id="documents"
-            class="yaas-section yaas-documents">
+        <section id="documents" class="yaas-section yaas-documents">
 
             <div class="yaas-container">
 
@@ -736,8 +690,7 @@
                     </div>
 
 
-                    <a href="{{ route('documents.index') }}"
-                        class="yaas-text-link">
+                    <a href="{{ route('documents.index') }}" class="yaas-text-link">
 
                         Voir toute la bibliothèque
 
@@ -758,9 +711,7 @@
 
                             @if($document->cover_image)
 
-                            <img
-                                src="{{ asset('storage/'.$document->cover_image) }}"
-                                alt="{{ $document->title }}"
+                            <img src="{{ asset('storage/'.$document->cover_image) }}" alt="{{ $document->title }}"
                                 loading="lazy">
 
                             @else
@@ -814,8 +765,7 @@
                             </p>
 
 
-                            <a href="{{ route('documents.show', $document) }}"
-                                class="document-button">
+                            <a href="{{ route('documents.show', $document) }}" class="document-button">
 
                                 Consulter
 
@@ -884,8 +834,7 @@
                             exclusives pour approfondir vos connaissances.
                         </p>
 
-                        <a href="{{ route('documents.index') }}"
-                            class="yaas-btn yaas-btn-white">
+                        <a href="{{ route('documents.index') }}" class="yaas-btn yaas-btn-white">
 
                             Explorer Premium
 
@@ -918,15 +867,11 @@
 
         </section>
 
-
-
         {{-- ========================================================= --}}
         {{-- A PROPOS --}}
         {{-- ========================================================= --}}
 
-        <section
-            id="apropos"
-            class="yaas-section yaas-about">
+        <section id="apropos" class="yaas-section yaas-about">
 
             <div class="yaas-container">
 
@@ -936,10 +881,7 @@
 
                         <div class="about-image-frame">
 
-                            <img
-                                src="{{ asset('images/etude.png') }}"
-                                alt="Étude et apprentissage"
-                                loading="lazy">
+                            <img src="{{ asset('images/etude.png') }}" alt="Étude et apprentissage" loading="lazy">
 
                         </div>
 
@@ -972,10 +914,15 @@
 
                         <p class="about-lead">
 
-                            YAA'Scientia est une bibliothèque numérique
-                            pensée pour rendre le savoir scientifique
-                            plus accessible, plus organisé et plus proche
-                            de chaque apprenant.
+                            La plateforme YAA’Scientia est un espace dédié à la valorisation de la formation et de la
+                            recherche
+                            scientifiques et technologiques à travers la diffusion et la vulgarisation de contenus
+                            variés.
+                            Cette ingénieuse initiative est une réponse aux multiples difficultés éprouvées dans la
+                            recherche d’outils de référence (documents d’apprentissage,
+                            rapports, mémoires, devoirs, examens …) pour s’en inspirer; ce qui a poussé l’initiateur,
+                            YAOUI Ahibouga Armand, à constitué une équipe compétente
+                            pluridisciplinaire pour proposer une solution efficace à ce défi.
 
                         </p>
 
@@ -991,12 +938,17 @@
                                     </strong>
 
                                     <p>
-                                        Une collection organisée
-                                        pour faciliter vos recherches.
+                                        Cette plateforme offre donc une disponibilité exclusive et un accès simplifié à
+                                        de contenus utiles et nécessaires aux élèves, aux étudiants, aux professionnels
+                                        et aux personnes curieuses passionnées des sciences.
+                                        Vous trouverez sur cette plateforme notamment des supports de cours, des sujets
+                                        de préparation aux devoirs et examens, des anciens examens, des articles
+                                        scientifiques, des rapports et des mémoires de devanciers
+                                        jadis restés dans les tiroirs de bibliothèques physiques.
+
                                     </p>
                                 </div>
                             </div>
-
 
                             <div>
                                 <span>✓</span>
@@ -1013,27 +965,35 @@
                                 </div>
                             </div>
 
-
                             <div>
                                 <span>✓</span>
 
                                 <div>
                                     <strong>
-                                        Pensée pour l'avenir
+                                        L’initiateur
                                     </strong>
 
                                     <p>
-                                        Une plateforme numérique moderne
-                                        qui évolue avec vos besoins.
+                                        YAOUI Ahibouga Armand est un jeune chercheur burkinabè, doctorant en Analyse et
+                                        Politiques Économiques à l’Université Norbert ZONGO au Burkina Faso.
+                                        Il est enseignant titulaire de mathématiques dans les lycées et collèges et
+                                        enseignant vacataire des modules d’économie et de mathématiques financières dans
+                                        l’enseignement supérieur.
+                                        Il est auteur de plusieurs articles et livres essais. YAOUI est titulaire d’un
+                                        Master et Analyse et Politiques Économiques, et d’une Licence en mathématiques
+                                        informatique, spécialité mathématiques appliquées.
+                                        Il est à l’initiative du groupe YAA’Scientia lancé en 2024 et qui œuvre dans la
+                                        valorisation de la science à travers des enseignements approfondies dans les
+                                        disciplines scientifiques, des formations en informatique,
+                                        en méthodologie de recherche scientifique;
+                                        et la création d’espaces de vulgarisation scientifiques comme celui-ci.
                                     </p>
                                 </div>
                             </div>
 
                         </div>
 
-
-                        <a href="{{ route('contact.form') }}"
-                            class="yaas-btn yaas-btn-primary">
+                        <a href="{{ route('contact.form') }}" class="yaas-btn yaas-btn-primary">
 
                             Nous contacter
 
@@ -1065,13 +1025,10 @@
 
                 <div class="yaas-footer-brand">
 
-                    <a href="{{ route('home') }}"
-                        class="yaas-logo footer-logo">
+                    <a href="{{ route('home') }}" class="yaas-logo footer-logo">
 
                         <span class="yaas-logo-mark">
-                            <img
-                                src="{{ asset('images/logo.png') }}"
-                                alt="YAA'Scientia">
+                            <img src="{{ asset('images/logo.png') }}" alt="YAA'Scientia">
                         </span>
 
                         <span class="yaas-logo-text">
@@ -1122,7 +1079,7 @@
                     </h4>
 
                     <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
-                        Secondaire général
+                        Enseignement général
                     </a>
 
                     <a href="{{ route('vitrine.superieur.domaines') }}">
@@ -1158,7 +1115,6 @@
 
             </div>
 
-
             <div class="yaas-footer-bottom">
 
                 <span>
@@ -1167,7 +1123,8 @@
                 </span>
 
                 <span>
-                    Conçu avec ♥ au Burkina Faso
+                    Développeurs <br>
+                      Lamine SAVADOGO <br> SOME Arsène
                 </span>
 
             </div>

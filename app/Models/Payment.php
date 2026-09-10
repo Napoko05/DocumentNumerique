@@ -16,18 +16,71 @@ class Payment extends Model
     */
 
     protected $fillable = [
+
+        /*
+        |--------------------------------------------------------------------------
+        | SCIENTIA
+        |--------------------------------------------------------------------------
+        */
+
         'user_id',
+
         'document_id',
+
         'amount',
+
         'currency',
-        'payment_method',
-        'phone',
+
         'transaction_id',
+
         'payment_reference',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ANCIENS CHAMPS CONSERVÉS
+        |--------------------------------------------------------------------------
+        |
+        | Ces champs existent dans la base mais ne sont plus utilisés
+        | par notre flux Hosted Payin.
+        |
+        */
+
+        'payment_method',
+
+        'phone',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LIGDICASH
+        |--------------------------------------------------------------------------
+        */
+
+        'ligdicash_token',
+
+        'ligdicash_request_id',
+
+        'ligdicash_status',
+
+        'ligdicash_payment_url',
+
+        'ligdicash_response',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | STATUT SCIENTIA
+        |--------------------------------------------------------------------------
+        */
+
         'status',
+
         'failure_reason',
+
         'paid_at',
     ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -36,13 +89,38 @@ class Payment extends Model
     */
 
     protected $casts = [
-        'amount'  => 'decimal:2',
+
+        /*
+        |--------------------------------------------------------------------------
+        | Montant
+        |--------------------------------------------------------------------------
+        */
+
+        'amount' => 'decimal:2',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Date de paiement
+        |--------------------------------------------------------------------------
+        */
+
         'paid_at' => 'datetime',
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Réponse API LigdiCash
+        |--------------------------------------------------------------------------
+        */
+
+        'ligdicash_response' => 'array',
     ];
+
 
     /*
     |--------------------------------------------------------------------------
-    | RELATIONS
+    | RELATION UTILISATEUR
     |--------------------------------------------------------------------------
     */
 
@@ -54,6 +132,13 @@ class Payment extends Model
         );
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | RELATION DOCUMENT
+    |--------------------------------------------------------------------------
+    */
+
     public function document()
     {
         return $this->belongsTo(
@@ -62,9 +147,10 @@ class Payment extends Model
         );
     }
 
+
     /*
     |--------------------------------------------------------------------------
-    | STATUTS
+    | STATUTS SCIENTIA
     |--------------------------------------------------------------------------
     */
 
@@ -73,18 +159,60 @@ class Payment extends Model
         return $this->status === 'pending';
     }
 
+
     public function isPaid(): bool
     {
         return $this->status === 'paid';
     }
+
 
     public function isFailed(): bool
     {
         return $this->status === 'failed';
     }
 
+
     public function isCancelled(): bool
     {
         return $this->status === 'cancelled';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | STATUTS LIGDICASH
+    |--------------------------------------------------------------------------
+    */
+
+    public function isLigdiCashPending(): bool
+    {
+        return $this->ligdicash_status === 'pending';
+    }
+
+
+    public function isLigdiCashCompleted(): bool
+    {
+        return $this->ligdicash_status === 'completed';
+    }
+
+
+    public function isLigdiCashNotCompleted(): bool
+    {
+        return $this->ligdicash_status === 'notcompleted';
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | ACCÈS DOCUMENT
+    |--------------------------------------------------------------------------
+    |
+    | L'accès premium dépend uniquement du statut Scientia "paid".
+    |
+    */
+
+    public function grantsDocumentAccess(): bool
+    {
+        return $this->isPaid();
     }
 }

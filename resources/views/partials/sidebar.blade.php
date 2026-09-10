@@ -68,8 +68,6 @@
 
         </a>
 
-
-
         {{-- =================================================
              BIBLIOTHÈQUE
         ================================================== --}}
@@ -83,7 +81,6 @@
                 </span>
 
             </div>
-
 
             {{-- Secondaire général --}}
 
@@ -100,7 +97,7 @@
                 </span>
 
                 <span>
-                    Secondaire général
+                    Enseignement général
                 </span>
 
             </a>
@@ -121,7 +118,7 @@
                 </span>
 
                 <span>
-                    Secondaire technique
+                    Enseignement technique
                 </span>
 
             </a>

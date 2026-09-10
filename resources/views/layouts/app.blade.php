@@ -145,8 +145,6 @@
 
                 </a>
 
-
-
                 {{-- =================================================
                  BIBLIOTHÈQUE
             ================================================== --}}
@@ -186,7 +184,7 @@
                             <span>
 
                                 <strong>
-                                    Enseignement Secondaire 
+                                    Enseignement Géneral
                                 </strong>
 
                                 <small>
@@ -196,12 +194,6 @@
                             </span>
 
                         </a>
-
-
-
-                     
-
-
 
                         {{-- Supérieur --}}
 
@@ -255,7 +247,6 @@
                 </div>
 
 
-
                 {{-- DOCUMENTS --}}
 
                 <a
@@ -269,8 +260,6 @@
 
                 </a>
 
-
-
                 {{-- À PROPOS --}}
 
                 <a
@@ -280,8 +269,6 @@
                     À propos
 
                 </a>
-
-
 
                 {{-- PROFIL --}}
 
@@ -355,8 +342,6 @@
 
             </div>
 
-
-
             {{-- =====================================================
              MOBILE TOGGLE
         ====================================================== --}}
@@ -376,8 +361,6 @@
 
         </div>
 
-
-
         {{-- =========================================================
          MOBILE MENU
     ========================================================== --}}
@@ -387,7 +370,6 @@
             id="yaas-mobile-menu">
 
             <div class="yaas-mobile-inner">
-
 
                 {{-- Accueil --}}
 
@@ -399,8 +381,6 @@
 
                 </a>
 
-
-
                 {{-- Bibliothèque --}}
 
                 <div class="yaas-mobile-section">
@@ -411,12 +391,12 @@
 
 
                     <a href="{{ route('vitrine.secondaire.index') }}">
-                        🎓 Secondaire général
+                        🎓 Enseignement général
                     </a>
 
 
                     <a href="{{ route('vitrine.secondaire.index') }}">
-                        ⚙ Secondaire technique
+                        ⚙ Enseignement technique
                     </a>
 
 
@@ -605,12 +585,12 @@
 
 
                     <a href="{{ route('vitrine.secondaire.index') }}">
-                        Secondaire général
+                        Enseignement général
                     </a>
 
 
                     <a href="{{ route('vitrine.secondaire.index') }}">
-                        Secondaire technique
+                        Enseignement technique
                     </a>
 
 
@@ -685,8 +665,6 @@
         </div>
 
     </footer>
-
-
 
     {{-- ============================================================
      SCRIPTS

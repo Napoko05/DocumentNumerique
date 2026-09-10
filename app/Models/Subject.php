@@ -70,7 +70,7 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            fn ($q) => $q->secondary()
+            fn($q) => $q->secondary()
         );
     }
 
@@ -84,10 +84,10 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            fn ($q) => $q->higher()
+            fn($q) => $q->higher()
         );
     }
-
+    
     /*
     |--------------------------------------------------------------------------
     | PROFESSIONNEL
@@ -98,7 +98,7 @@ class Subject extends Model
     {
         return $query->whereHas(
             'level',
-            fn ($q) => $q->professional()
+            fn($q) => $q->professional()
         );
     }
 }

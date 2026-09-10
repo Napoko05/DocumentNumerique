@@ -835,7 +835,7 @@ Route::prefix('secondaire')
             'document'
         ])->name('document');
     });
-    
+
 /*
 |--------------------------------------------------------------------------
 | SUPÉRIEUR
@@ -1067,91 +1067,71 @@ Route::prefix('professionnel')
             ]
         )->name('ens.show');
     });
-
-
 /*
 |--------------------------------------------------------------------------
-| PAIEMENTS
+| PAIEMENTS — RETOURS LIGDICASH
 |--------------------------------------------------------------------------
 |
-| Documents premium
+| Ces routes sont publiques car LigdiCash doit pouvoir les appeler.
 |
 */
 
-Route::middleware('auth')
-    ->prefix('paiements')
-    ->name('payments.')
-    ->group(function () {
+Route::post(
+    '/paiement/callback',
+    [PaymentController::class, 'callback']
+)->name('payments.callback');
 
-        /*
-        |--------------------------------------------------------------------------
-        | FORMULAIRE
-        |--------------------------------------------------------------------------
-        |
-        | GET /paiements/document/15
-        |
-        */
+Route::get(
+    '/paiement/return',
+    [PaymentController::class, 'return']
+)->name('payments.return');
 
-        Route::get(
-            '/document/{document}',
-            [PaymentController::class, 'create']
-        )
-            ->name('create');
+Route::get(
+    '/paiement/cancel',
+    [PaymentController::class, 'cancelReturn']
+)->name('payments.cancel.return');
 
+Route::middleware('auth')->group(function () {
 
-        /*
-        |--------------------------------------------------------------------------
-        | CRÉER LA TRANSACTION
-        |--------------------------------------------------------------------------
-        |
-        | POST /paiements/document/15
-        |
-        */
+    Route::get(
+        '/paiement/{document}/create',
+        [PaymentController::class, 'create']
+    )
+        ->whereNumber('document')
+        ->name('payments.create');
 
-        Route::post(
-            '/document/{document}',
-            [PaymentController::class, 'store']
-        )
-            ->name('store');
+    Route::post(
+        '/paiement/{document}',
+        [PaymentController::class, 'store']
+    )
+        ->whereNumber('document')
+        ->name('payments.store');
 
+    Route::get(
+        '/paiement/{payment}/processing',
+        [PaymentController::class, 'processing']
+    )
+        ->whereNumber('payment')
+        ->name('payments.processing');
 
-        /*
-        |--------------------------------------------------------------------------
-        | TRAITEMENT DU PAIEMENT
-        |--------------------------------------------------------------------------
-        |
-        */
+    Route::get(
+        '/paiement/{payment}/status',
+        [PaymentController::class, 'status']
+    )
+        ->whereNumber('payment')
+        ->name('payments.status');
 
-        Route::get(
-            '/{payment}/processing',
-            [PaymentController::class, 'processing']
-        )
-            ->name('processing');
+    Route::post(
+        '/paiement/{payment}/confirm',
+        [PaymentController::class, 'confirm']
+    )
+        ->whereNumber('payment')
+        ->name('payments.confirm');
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | STATUT
-        |--------------------------------------------------------------------------
-        |
-        */
-
-        Route::get(
-            '/{payment}/status',
-            [PaymentController::class, 'status']
-        )
-            ->name('status');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ANNULATION
-        |--------------------------------------------------------------------------
-        */
-
-        Route::post(
-            '/{payment}/cancel',
-            [PaymentController::class, 'cancel']
-        )
-            ->name('cancel');
-    });
+    Route::post(
+        '/paiement/{payment}/cancel',
+        [PaymentController::class, 'cancel']
+    )
+        ->whereNumber('payment')
+        ->name('payments.cancel');
+});
