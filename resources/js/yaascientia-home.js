@@ -5,18 +5,15 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    /*
-    |--------------------------------------------------------------------------
-    | MOBILE MENU
-    |--------------------------------------------------------------------------
-    */
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
 
     const mobileToggle =
         document.getElementById('yaas-mobile-toggle');
 
     const mobileMenu =
         document.getElementById('yaas-mobile-menu');
-
 
     if (mobileToggle && mobileMenu) {
 
@@ -40,34 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const bars =
                 mobileToggle.querySelectorAll('span');
 
-            if (isOpen) {
+            if (bars.length >= 3) {
 
-                bars[0].style.transform =
-                    'translateY(7px) rotate(45deg)';
+                if (isOpen) {
 
-                bars[1].style.opacity = '0';
+                    bars[0].style.transform =
+                        'translateY(7px) rotate(45deg)';
 
-                bars[2].style.transform =
-                    'translateY(-7px) rotate(-45deg)';
+                    bars[1].style.opacity = '0';
 
-            } else {
+                    bars[2].style.transform =
+                        'translateY(-7px) rotate(-45deg)';
 
-                bars[0].style.transform = '';
+                } else {
 
-                bars[1].style.opacity = '';
+                    bars[0].style.transform = '';
+                    bars[1].style.opacity = '';
+                    bars[2].style.transform = '';
 
-                bars[2].style.transform = '';
-
+                }
             }
-
         });
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | FERME LE MENU APRÈS UN CLIC
-        |--------------------------------------------------------------------------
-        */
 
         mobileMenu
             .querySelectorAll('a')
@@ -85,46 +76,190 @@ document.addEventListener('DOMContentLoaded', () => {
                     const bars =
                         mobileToggle.querySelectorAll('span');
 
-                    bars[0].style.transform = '';
-                    bars[1].style.opacity = '';
-                    bars[2].style.transform = '';
+                    if (bars.length >= 3) {
 
+                        bars[0].style.transform = '';
+                        bars[1].style.opacity = '';
+                        bars[2].style.transform = '';
+
+                    }
                 });
-
             });
-
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | DROPDOWN BIBLIOTHÈQUE
-    |--------------------------------------------------------------------------
-    */
+    /* =====================================================
+       DROPDOWNS
+       BIBLIOTHÈQUE + PROFIL
+       ===================================================== */
 
-    const dropdown =
-        document.querySelector('.yaas-nav-dropdown');
-
-    const dropdownTrigger =
-        document.querySelector('.yaas-dropdown-trigger');
+    const dropdowns =
+        document.querySelectorAll('.yaas-nav-dropdown');
 
 
-    if (dropdown && dropdownTrigger) {
+    if (dropdowns.length) {
 
-        dropdownTrigger.addEventListener('click', event => {
+        const closeDropdown = dropdown => {
 
-            event.stopPropagation();
+            dropdown.classList.remove('open');
 
-            dropdown.classList.toggle('open');
+            const trigger =
+                dropdown.querySelector(
+                    '.yaas-dropdown-trigger'
+                );
+
+            if (trigger) {
+
+                trigger.setAttribute(
+                    'aria-expanded',
+                    'false'
+                );
+            }
+        };
+
+
+        const closeAllDropdowns = () => {
+
+            dropdowns.forEach(dropdown => {
+                closeDropdown(dropdown);
+            });
+        };
+
+
+        const openDropdown = dropdown => {
+
+            dropdowns.forEach(otherDropdown => {
+
+                if (otherDropdown !== dropdown) {
+                    closeDropdown(otherDropdown);
+                }
+
+            });
+
+
+            dropdown.classList.add('open');
+
+            const trigger =
+                dropdown.querySelector(
+                    '.yaas-dropdown-trigger'
+                );
+
+            if (trigger) {
+
+                trigger.setAttribute(
+                    'aria-expanded',
+                    'true'
+                );
+            }
+        };
+
+
+        dropdowns.forEach(dropdown => {
+
+            const trigger =
+                dropdown.querySelector(
+                    '.yaas-dropdown-trigger'
+                );
+
+            const menu =
+                dropdown.querySelector(
+                    '.yaas-dropdown-menu'
+                );
+
+
+            if (!trigger || !menu) {
+                return;
+            }
+
+
+            trigger.setAttribute(
+                'aria-expanded',
+                dropdown.classList.contains('open')
+                    ? 'true'
+                    : 'false'
+            );
+
+
+            /* ---------------------------------------------
+               CLIC SUR LE BOUTON
+               --------------------------------------------- */
+
+            trigger.addEventListener('click', event => {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                const isOpen =
+                    dropdown.classList.contains('open');
+
+
+                if (isOpen) {
+
+                    closeDropdown(dropdown);
+
+                } else {
+
+                    openDropdown(dropdown);
+
+                }
+
+            });
+
+
+            /* ---------------------------------------------
+               CLIC DANS LE MENU
+               --------------------------------------------- */
+
+            menu.addEventListener('click', event => {
+
+                const link =
+                    event.target.closest('a');
+
+
+                if (link) {
+
+                    closeAllDropdowns();
+
+                    return;
+
+                }
+
+
+                event.stopPropagation();
+
+            });
 
         });
 
 
+        /* ---------------------------------------------
+           CLIC EN DEHORS
+           --------------------------------------------- */
+
         document.addEventListener('click', event => {
 
-            if (!dropdown.contains(event.target)) {
+            if (
+                !event.target.closest(
+                    '.yaas-nav-dropdown'
+                )
+            ) {
 
-                dropdown.classList.remove('open');
+                closeAllDropdowns();
+
+            }
+
+        });
+
+
+        /* ---------------------------------------------
+           TOUCHE ESCAPE
+           --------------------------------------------- */
+
+        document.addEventListener('keydown', event => {
+
+            if (event.key === 'Escape') {
+
+                closeAllDropdowns();
 
             }
 
@@ -133,19 +268,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ANIMATION AU SCROLL
-    |--------------------------------------------------------------------------
-    */
+    /* =====================================================
+       ANIMATION AU SCROLL
+       ===================================================== */
 
     const animatedElements =
         document.querySelectorAll(
-            '.yaas-category-card, .yaas-document-card, .yaas-about-content, .yaas-about-visual'
+            '.yaas-category-card, ' +
+            '.yaas-document-card, ' +
+            '.yaas-about-content, ' +
+            '.yaas-about-visual'
         );
 
 
-    if ('IntersectionObserver' in window) {
+    if (
+        animatedElements.length &&
+        'IntersectionObserver' in window
+    ) {
 
         const observer =
             new IntersectionObserver(
@@ -187,11 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SMOOTH SCROLL
-    |--------------------------------------------------------------------------
-    */
+    /* =====================================================
+       SMOOTH SCROLL
+       ===================================================== */
 
     document
         .querySelectorAll('a[href^="#"]')
@@ -201,6 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const targetId =
                     link.getAttribute('href');
+
 
                 if (
                     !targetId ||
@@ -213,12 +351,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const target =
                     document.querySelector(targetId);
 
+
                 if (!target) {
                     return;
                 }
 
 
                 event.preventDefault();
+
 
                 target.scrollIntoView({
                     behavior: 'smooth',
@@ -230,11 +370,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | SEARCH — PETIT EFFET
-    |--------------------------------------------------------------------------
-    */
+    /* =====================================================
+       SEARCH
+       ===================================================== */
 
     const searchInput =
         document.querySelector(

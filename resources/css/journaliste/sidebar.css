@@ -640,3 +640,88 @@
     }
 
 }
+/* =========================================================
+   MENU PROFIL - SOUS-MENU JOURNALISTE
+   ========================================================= */
+
+.sidebar-menu-group {
+    width: 100%;
+}
+
+/* Le bouton parent */
+
+.sidebar-menu-toggle {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    position: relative;
+}
+
+/* Chevron */
+
+.sidebar-chevron {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s ease;
+}
+
+.sidebar-menu-toggle.submenu-open .sidebar-chevron {
+    transform: rotate(180deg);
+}
+
+/* Sous-menu */
+
+.sidebar-submenu {
+    padding: 4px 0 6px 0;
+}
+
+/* Liens du sous-menu */
+
+.sidebar-sublink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-left: 18px;
+    margin-right: 8px;
+    padding: 10px 12px;
+
+    color: inherit;
+    text-decoration: none;
+
+    border-radius: 8px;
+
+    font-size: 0.92rem;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sidebar-sublink:hover {
+    text-decoration: none;
+    transform: translateX(2px);
+}
+
+/* Icône du sous-menu */
+
+.sidebar-subicon {
+    width: 22px;
+    min-width: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Sous-menu actif */
+
+.sidebar-sublink.active {
+    font-weight: 600;
+}

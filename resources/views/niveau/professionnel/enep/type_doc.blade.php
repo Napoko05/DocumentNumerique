@@ -2,13 +2,16 @@
 
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    <section class="formation-hero">
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
+    <section class="professionnel-hero">
 
         <div class="container">
 
-            <span class="formation-badge">
+            <span class="professionnel-badge">
                 <i class="bi bi-folder-fill"></i>
                 RESSOURCES PÉDAGOGIQUES
             </span>
@@ -27,15 +30,22 @@
 
     </section>
 
-    <section class="formation-content">
+
+    {{-- =========================================================
+         CONTENU
+    ========================================================== --}}
+    <section class="professionnel-content">
 
         <div class="container">
 
-            <div class="section-heading">
+            {{-- =================================================
+                 EN-TÊTE
+            ================================================== --}}
+            <div class="professionnel-section-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span class="professionnel-section-kicker">
                         {{ $module->name }}
                     </span>
 
@@ -45,7 +55,7 @@
 
                 </div>
 
-                <span class="class-count">
+                <span class="professionnel-count">
 
                     {{ $types->count() }}
 
@@ -55,134 +65,155 @@
 
             </div>
 
+
+            {{-- =================================================
+                 TYPES DE DOCUMENTS
+            ================================================== --}}
             @if($types->isNotEmpty())
 
-            <div class="classes-grid">
+                <div class="professionnel-grid">
 
-                @foreach($types as $type)
+                    @foreach($types as $type)
 
-                <a
-                    href="{{ route('vitrine.professionnel.enep.documents', [
-        'formationSlug' => $formation->slug,
-        'niveauSlug' => $niveau->slug,
-        'moduleSlug' => $module->slug,
-        'typeSlug' => $type->slug
-    ]) }}"
-                    class="class-card">
+                        <a
+                            href="{{ route('vitrine.professionnel.enep.documents', [
+                                'formationSlug' => $formation->slug,
+                                'niveauSlug' => $niveau->slug,
+                                'moduleSlug' => $module->slug,
+                                'typeSlug' => $type->slug
+                            ]) }}"
+                            class="professionnel-card"
+                        >
 
-                    <div class="class-card-top">
+                            {{-- CARD TOP --}}
+                            <div class="professionnel-card-top">
 
-                        <div class="class-icon">
+                                <div class="professionnel-icon">
 
-                            @switch($type->slug)
+                                    @switch($type->slug)
 
-                            @case('cours')
-                            📚
-                            @break
+                                        @case('cours')
+                                            📚
+                                            @break
 
-                            @case('td')
-                            📝
-                            @break
+                                        @case('td')
+                                            📝
+                                            @break
 
-                            @case('tp')
-                            🧪
-                            @break
+                                        @case('tp')
+                                            🧪
+                                            @break
 
-                            @case('examens')
-                            📄
-                            @break
+                                        @case('examens')
+                                            📄
+                                            @break
 
-                            @case('corriges')
-                            ✅
-                            @break
+                                        @case('corriges')
+                                            ✅
+                                            @break
 
-                            @case('memoires')
-                            📕
-                            @break
+                                        @case('memoires')
+                                            📕
+                                            @break
 
-                            @case('rapports')
-                            📘
-                            @break
+                                        @case('rapports')
+                                            📘
+                                            @break
 
-                            @case('sujets')
-                            🎯
-                            @break
+                                        @case('sujets')
+                                            🎯
+                                            @break
 
-                            @default
-                            📁
+                                        @default
+                                            📁
 
-                            @endswitch
+                                    @endswitch
 
-                        </div>
+                                </div>
 
-                        <div class="class-arrow">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
+                                <div class="professionnel-arrow">
+                                    <i class="bi bi-arrow-right"></i>
+                                </div>
 
-                    </div>
+                            </div>
 
-                    <div class="class-card-body">
 
-                        <h3>
-                            {{ $type->name }}
-                        </h3>
+                            {{-- CARD BODY --}}
+                            <div class="professionnel-card-body">
 
-                        <p>
-                            <i class="bi bi-file-earmark-text"></i>
-                            Ressources disponibles
-                        </p>
+                                <h3>
+                                    {{ $type->name }}
+                                </h3>
 
-                    </div>
+                                <p>
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    Ressources disponibles
+                                </p>
 
-                    <div class="class-card-footer">
+                            </div>
 
-                        <span>
-                            Voir les documents
-                        </span>
 
-                        <i class="bi bi-arrow-right"></i>
+                            {{-- CARD FOOTER --}}
+                            <div class="professionnel-card-footer">
 
-                    </div>
+                                <span>
+                                    Voir les documents
+                                </span>
 
-                </a>
+                                <i class="bi bi-arrow-right"></i>
 
-                @endforeach
+                            </div>
 
-            </div>
+                        </a>
+
+                    @endforeach
+
+                </div>
 
             @else
 
-            <div class="empty-state">
+                {{-- =================================================
+                     ÉTAT VIDE
+                ================================================== --}}
+                <div class="professionnel-empty">
 
-                <div class="empty-icon">
-                    <i class="bi bi-folder-x"></i>
+                    <div class="professionnel-empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun type de document disponible
+                    </h3>
+
+                    <p>
+                        Aucun type de document n'est actuellement
+                        disponible pour ce module.
+                    </p>
+
                 </div>
-
-                <h3>
-                    Aucun type de document disponible
-                </h3>
-
-                <p>
-                    Aucun type de document n'est actuellement
-                    disponible pour ce module.
-                </p>
-
-            </div>
 
             @endif
 
-            <div class="doc-type-back-container">
+
+            {{-- =================================================
+                 RETOUR
+            ================================================== --}}
+            <div class="professionnel-back-wrapper">
 
                 <a
                     href="{{ route('vitrine.professionnel.enep.modules', [
                         'formationSlug' => $formation->slug,
                         'niveauSlug' => $niveau->slug
                     ]) }}"
-                    class="doc-type-back-btn">
+                    class="professionnel-back"
+                    aria-label="Retour aux modules"
+                >
 
                     <i class="bi bi-arrow-left"></i>
 
-                    Retour aux modules
+                    <span>
+                        Retour aux modules
+                    </span>
 
                 </a>
 

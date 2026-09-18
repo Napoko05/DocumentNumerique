@@ -214,72 +214,148 @@
 
 
 
+
+{{-- =================================================
+     ESPACE PERSONNEL
+================================================== --}}
+
+@auth
+
+    <div class="ys-sidebar-divider"></div>
+
+    <div class="ys-sidebar-section-title">
+        Mon compte
+    </div>
+
+
+    {{-- =================================================
+         PROFIL + SOUS-MENUS
+    ================================================== --}}
+
+    @php
+        $profilOuvert = request()->routeIs(
+            'profile.edit',
+            'profile.update',
+            'profile.password.edit',
+            'profile.password.update'
+        );
+    @endphp
+
+    <div class="ys-sidebar-menu-group">
+
+        <button
+            type="button"
+            class="ys-sidebar-link ys-sidebar-menu-toggle
+                {{ $profilOuvert ? 'active' : '' }}"
+            onclick="toggleUserProfileSubmenu('userProfileSubmenu', this)"
+            aria-expanded="{{ $profilOuvert ? 'true' : 'false' }}"
+        >
+
+            <span class="ys-sidebar-icon">
+                <i class="bi bi-person"></i>
+            </span>
+
+            <span class="ys-sidebar-link-text">
+                Mon profil
+            </span>
+
+            <span class="ys-sidebar-chevron">
+                <i class="bi bi-chevron-down"></i>
+            </span>
+
+        </button>
+
+
         {{-- =================================================
-             ESPACE PERSONNEL
+             SOUS-MENU PROFIL
         ================================================== --}}
 
-        @auth
+        <div
+            id="userProfileSubmenu"
+            class="ys-sidebar-submenu {{ $profilOuvert ? 'open' : '' }}"
+            style="{{ $profilOuvert ? 'display:block;' : 'display:none;' }}"
+        >
 
-            <div class="ys-sidebar-divider"></div>
-
-            <div class="ys-sidebar-section-title">
-
-                Mon compte
-
-            </div>
-
-
-            {{-- Profil --}}
+            {{-- Mise à jour du profil --}}
 
             <a
                 href="{{ route('profile.edit') }}"
-                class="ys-sidebar-link
-                    {{ request()->routeIs('profile.*')
+                class="ys-sidebar-sublink
+                    {{ request()->routeIs('profile.edit', 'profile.update')
                         ? 'active'
                         : '' }}"
             >
 
-                <span class="ys-sidebar-icon">
-                    <i class="bi bi-person"></i>
+                <span class="ys-sidebar-subicon">
+                    <i class="bi bi-person-gear"></i>
                 </span>
 
                 <span>
-                    Mon profil
+                    Mise à jour du profil
                 </span>
 
             </a>
 
 
-            {{-- Déconnexion --}}
+            {{-- Mot de passe --}}
 
-            <form
-                method="POST"
-                action="{{ route('logout') }}"
-                class="ys-sidebar-form"
+            <a
+                href="{{ route('profile.password.edit') }}"
+                class="ys-sidebar-sublink
+                    {{ request()->routeIs(
+                        'profile.password.edit',
+                        'profile.password.update'
+                    )
+                        ? 'active'
+                        : '' }}"
             >
 
-                @csrf
+                <span class="ys-sidebar-subicon">
+                    <i class="bi bi-key"></i>
+                </span>
 
-                <button
-                    type="submit"
-                    class="ys-sidebar-link ys-sidebar-logout"
-                >
+                <span>
+                    Mot de passe
+                </span>
 
-                    <span class="ys-sidebar-icon">
-                        <i class="bi bi-box-arrow-right"></i>
-                    </span>
+            </a>
 
-                    <span>
-                        Se déconnecter
-                    </span>
+        </div>
 
-                </button>
+    </div>
 
-            </form>
 
-        @endauth
+    {{-- =================================================
+         DÉCONNEXION
+    ================================================== --}}
 
-    </nav>
+    <form
+        method="POST"
+        action="{{ route('logout') }}"
+        class="ys-sidebar-form"
+    >
+
+        @csrf
+
+        <button
+            type="submit"
+            class="ys-sidebar-link ys-sidebar-logout"
+        >
+
+            <span class="ys-sidebar-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            <span>
+                Se déconnecter
+            </span>
+
+        </button>
+
+    </form>
+
+@endauth
+
 
 
 

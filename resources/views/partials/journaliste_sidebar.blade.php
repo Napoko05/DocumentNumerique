@@ -1,13 +1,13 @@
 @php
-    $staff = auth('staff')->user();
+$staff = auth('staff')->user();
 
-    $prenom = $staff->prenom ?? $staff->name ?? 'Journaliste';
-    $nom = $staff->nom ?? '';
+$prenom = $staff->prenom ?? $staff->name ?? 'Journaliste';
+$nom = $staff->nom ?? '';
 
-    $initiales = strtoupper(
-        substr($prenom, 0, 1) .
-        substr($nom, 0, 1)
-    );
+$initiales = strtoupper(
+substr($prenom, 0, 1) .
+substr($nom, 0, 1)
+);
 @endphp
 
 
@@ -18,8 +18,7 @@
 <aside
     id="journalistSidebar"
     class="journalist-sidebar"
-    aria-label="Navigation journaliste"
->
+    aria-label="Navigation journaliste">
 
 
     {{-- =====================================================
@@ -33,14 +32,12 @@
 
         <a
             href="{{ route('journaliste.dashboard') }}"
-            class="sidebar-brand-link"
-        >
+            class="sidebar-brand-link">
 
             <img
                 src="{{ asset('images/logo.png') }}"
                 alt="YAA'Scientia"
-                class="sidebar-logo"
-            >
+                class="sidebar-logo">
 
 
             <div class="sidebar-brand-text">
@@ -64,8 +61,7 @@
             type="button"
             id="sidebarClose"
             class="sidebar-mobile-close d-lg-none"
-            aria-label="Fermer le menu"
-        >
+            aria-label="Fermer le menu">
 
             <i class="bi bi-x-lg"></i>
 
@@ -89,8 +85,7 @@
         <a
             href="{{ route('journaliste.dashboard') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.dashboard') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.dashboard') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-grid-1x2-fill"></i>
@@ -118,8 +113,7 @@
         <a
             href="{{ route('journaliste.documents.create') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.documents.create') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.documents.create') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-file-earmark-plus"></i>
@@ -137,8 +131,7 @@
         <a
             href="{{ route('journaliste.documents.index') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.documents.index') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.documents.index') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-files"></i>
@@ -156,8 +149,7 @@
         <a
             href="{{ route('journaliste.documents.drafts') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.documents.drafts') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.documents.drafts') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-file-earmark-text"></i>
@@ -175,8 +167,7 @@
         <a
             href="{{ route('journaliste.documents.published') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.documents.published') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.documents.published') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-check2-circle"></i>
@@ -204,8 +195,7 @@
         <a
             href="{{ route('journaliste.statistiques') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.statistiques') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.statistiques') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-bar-chart-line"></i>
@@ -223,8 +213,7 @@
         <a
             href="{{ route('journaliste.revenus') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.revenus') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.revenus') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-cash-coin"></i>
@@ -242,8 +231,7 @@
         <a
             href="{{ route('journaliste.paiements') }}"
             class="sidebar-link
-                {{ request()->routeIs('journaliste.paiements') ? 'active' : '' }}"
-        >
+                {{ request()->routeIs('journaliste.paiements') ? 'active' : '' }}">
 
             <span class="sidebar-icon">
                 <i class="bi bi-credit-card"></i>
@@ -266,24 +254,82 @@
         </div>
 
 
+
         {{-- Profil --}}
 
-        <a
-            href="{{ route('journaliste.profil') }}"
-            class="sidebar-link
-                {{ request()->routeIs('journaliste.profil') ? 'active' : '' }}"
-        >
+        @php
+        $profilOuvert = request()->routeIs(
+        'journaliste.profil',
+        'journaliste.profil.update',
+        'journaliste.profil.password.edit',
+        'journaliste.profil.password.update'
+        );
+        @endphp
 
-            <span class="sidebar-icon">
-                <i class="bi bi-person-circle"></i>
-            </span>
+        <div class="sidebar-menu-group">
 
-            <span class="sidebar-link-text">
-                Mon profil
-            </span>
+            <button
+                type="button"
+                class="sidebar-link sidebar-menu-toggle {{ $profilOuvert ? 'active' : '' }}"
+                onclick="toggleSidebarSubmenu('profilSubmenu', this)"
+                aria-expanded="{{ $profilOuvert ? 'true' : 'false' }}">
 
-        </a>
+                <span class="sidebar-icon">
+                    <i class="bi bi-person-circle"></i>
+                </span>
 
+                <span class="sidebar-link-text">
+                    Mon profil
+                </span>
+
+                <span class="sidebar-chevron">
+                    <i class="bi bi-chevron-down"></i>
+                </span>
+
+            </button>
+
+            <div
+                id="profilSubmenu"
+                class="sidebar-submenu {{ $profilOuvert ? 'open' : '' }}"
+                style="{{ $profilOuvert ? 'display:block;' : 'display:none;' }}">
+
+                {{-- Mise à jour du profil --}}
+
+                <a
+                    href="{{ route('journaliste.profil') }}"
+                    class="sidebar-sublink
+                {{ request()->routeIs('journaliste.profil') ? 'active' : '' }}">
+                    <span class="sidebar-subicon">
+                        <i class="bi bi-person-vcard"></i>
+                    </span>
+
+                    <span>
+                        Mise à jour du profil
+                    </span>
+                </a>
+
+
+                {{-- Mot de passe --}}
+
+                <a
+                    href="{{ route('journaliste.profil.password.edit') }}"
+                    class="sidebar-sublink
+                {{ request()->routeIs(
+                    'journaliste.profil.password.edit',
+                    'journaliste.profil.password.update'
+                ) ? 'active' : '' }}">
+                    <span class="sidebar-subicon">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+
+                    <span>
+                        Mot de passe
+                    </span>
+                </a>
+
+            </div>
+
+        </div>
 
         {{-- Voir le site --}}
 
@@ -291,8 +337,7 @@
             href="{{ route('home') }}"
             target="_blank"
             rel="noopener noreferrer"
-            class="sidebar-link"
-        >
+            class="sidebar-link">
 
             <span class="sidebar-icon">
                 <i class="bi bi-box-arrow-up-right"></i>
@@ -321,8 +366,7 @@
 
         <a
             href="{{ route('journaliste.profil') }}"
-            class="sidebar-user"
-        >
+            class="sidebar-user">
 
             <div class="sidebar-avatar">
                 {{ $initiales }}
@@ -336,7 +380,7 @@
                     {{ $prenom }}
 
                     @if($nom)
-                        {{ $nom }}
+                    {{ $nom }}
                     @endif
 
                 </div>
@@ -362,15 +406,13 @@
         <form
             method="POST"
             action="{{ route('logout') }}"
-            class="sidebar-logout-form"
-        >
+            class="sidebar-logout-form">
 
             @csrf
 
             <button
                 type="submit"
-                class="sidebar-logout"
-            >
+                class="sidebar-logout">
 
                 <span class="sidebar-icon">
                     <i class="bi bi-box-arrow-right"></i>
@@ -387,3 +429,36 @@
     </div>
 
 </aside>
+<script>
+    function toggleSidebarSubmenu(submenuId, button) {
+        const submenu = document.getElementById(submenuId);
+
+        if (!submenu) {
+            return;
+        }
+
+        const isOpen = submenu.style.display === 'block';
+
+        submenu.style.display = isOpen ? 'none' : 'block';
+
+        button.setAttribute(
+            'aria-expanded',
+            isOpen ? 'false' : 'true'
+        );
+
+        button.classList.toggle('submenu-open', !isOpen);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const openSubmenus = document.querySelectorAll('.sidebar-submenu.open');
+
+        openSubmenus.forEach(function(submenu) {
+            const button = submenu.previousElementSibling;
+
+            if (button) {
+                button.classList.add('submenu-open');
+                button.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+</script>

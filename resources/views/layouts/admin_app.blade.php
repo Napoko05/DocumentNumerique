@@ -44,6 +44,8 @@
         'resources/css/admin/style_edit_journaliste.css',
         'resources/css/admin/style_ajout_matiere.css',
         'resources/css/admin/create_matieres.css',
+        'resources/css/admin/edit_user.css',
+        
     ])
 
     @yield('head')

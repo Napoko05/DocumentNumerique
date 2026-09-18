@@ -4,151 +4,312 @@
 
 @section('content')
 
-<div class="vitrine-page">
+<div class="professionnel-page">
 
-    <div class="page-header">
+```
+{{-- =========================================================
+     HERO
+========================================================== --}}
 
-        <div class="breadcrumb">
+<section class="professionnel-hero">
 
-            <a href="{{ route('vitrine.professionnel.formations') }}">
-                Professionnel
-            </a>
+    <div class="container">
 
-            <span>/</span>
-
-            <a href="{{ route('vitrine.professionnel.ens.programmes') }}">
-                ENS
-            </a>
-
-            <span>/</span>
-
-            <a href="{{ route(
-                'vitrine.professionnel.ens.specialites',
-                $programme->slug
-            ) }}">
-                {{ $programme->name }}
-            </a>
-
-            <span>/</span>
-
-            <a href="{{ route(
-                'vitrine.professionnel.ens.niveaux',
-                [
-                    'programmeSlug' => $programme->slug,
-                    'specialiteSlug' => $specialite->slug
-                ]
-            ) }}">
-                {{ $specialite->name }}
-            </a>
-
-            <span>/</span>
-
-            <span>{{ $niveau->name }}</span>
-
-        </div>
-
-        <span class="page-kicker">
-            ENS
+        <span class="professionnel-badge">
+            <i class="bi bi-book-fill"></i>
+            MODULES
         </span>
 
         <h1>
-            Modules
+            {{ $niveau->name }}
         </h1>
-
-        <p>
-            Sélectionnez un module ou une matière pour consulter
-            les types de documents disponibles.
-        </p>
 
     </div>
 
-    @if($subjects->isNotEmpty())
+</section>
 
-        <div class="classes-grid">
 
-            @foreach($subjects as $subject)
+{{-- =========================================================
+     CONTENU
+========================================================== --}}
 
-                <a
-                    href="{{ route(
-                        'vitrine.professionnel.ens.type_doc',
-                        [
-                            'programmeSlug' => $programme->slug,
-                            'specialiteSlug' => $specialite->slug,
-                            'niveauSlug' => $niveau->slug,
-                            'moduleSlug' => $subject->slug
-                        ]
-                    ) }}"
-                    class="class-card"
-                >
+<section class="professionnel-content">
 
-                    <div class="class-card-top">
+    <div class="container">
 
-                        <div class="class-icon">
-                            {{ $subject->icon ?? '📚' }}
-                        </div>
+        {{-- =================================================
+             RETOUR
+        ================================================== --}}
 
-                        <span class="class-arrow">
-                            →
-                        </span>
+        <div class="professionnel-back-wrapper">
 
-                    </div>
+            <a
+                href="{{ route('vitrine.professionnel.ens.niveaux', [
+                    'formationSlug' => $formation->slug,
+                    'programmeSlug' => $programme->slug,
+                    'specialiteSlug' => $specialite->slug
+                ]) }}"
+                class="professionnel-back"
+                aria-label="Retour aux niveaux"
+            >
+                <i class="bi bi-arrow-left"></i>
 
-                    <div class="class-card-body">
-
-                        <h2>
-                            {{ $subject->name }}
-                        </h2>
-
-                        <p>
-                            Consulter les documents
-                        </p>
-
-                    </div>
-
-                </a>
-
-            @endforeach
+                <span>Retour aux niveaux</span>
+            </a>
 
         </div>
 
-    @else
 
-        <div class="empty-state">
+        {{-- =================================================
+             TITRE
+        ================================================== --}}
 
-            <div class="empty-icon">
-                📚
+        <div class="professionnel-section-heading">
+
+            <div>
+
+                <span class="professionnel-section-kicker">
+                    MODULES
+                </span>
+
+                <h2>
+                    Modules disponibles
+                </h2>
+
             </div>
 
-            <h2>
-                Aucun module disponible
-            </h2>
+            <span class="professionnel-count">
 
-            <p>
-                Aucun module ou matière ne possède actuellement
-                de document publié pour ce niveau.
-            </p>
+                {{ $subjects->count() }}
+
+                module{{ $subjects->count() > 1 ? 's' : '' }}
+
+            </span>
 
         </div>
 
-    @endif
-    <div class="doc-type-back-container">
 
-    <a
-        href="{{ route('vitrine.professionnel.ens.niveaux', [
-            'formationSlug' => $formation->slug,
-            'programmeSlug' => $programme->slug,
-            'specialiteSlug' => $specialite->slug
-        ]) }}"
-        class="doc-type-back-btn"
-    >
+        @if($subjects->isNotEmpty())
 
-        <i class="bi bi-arrow-left"></i>
+            {{-- =================================================
+                 DESKTOP
+            ================================================== --}}
 
-        Retour aux niveaux
+            <div class="professionnel-grid">
 
-    </a>
+                @foreach($subjects as $subject)
 
-</div>
+                    <a
+                        href="{{ route(
+                            'vitrine.professionnel.ens.type_doc',
+                            [
+                                'programmeSlug' => $programme->slug,
+                                'specialiteSlug' => $specialite->slug,
+                                'niveauSlug' => $niveau->slug,
+                                'moduleSlug' => $subject->slug
+                            ]
+                        ) }}"
+                        class="professionnel-card"
+                    >
+
+                        {{-- CARD TOP --}}
+
+                        <div class="professionnel-card-top">
+
+                            <div class="professionnel-icon">
+                                {{ $subject->icon ?? '📚' }}
+                            </div>
+
+                            <span class="professionnel-arrow">
+                                <i class="bi bi-arrow-right"></i>
+                            </span>
+
+                        </div>
+
+
+                        {{-- CARD BODY --}}
+
+                        <div class="professionnel-card-body">
+
+                            <h2>
+                                {{ $subject->name }}
+                            </h2>
+
+                            <p>
+                                <i class="bi bi-bookmark-fill"></i>
+                                Module
+                            </p>
+
+                        </div>
+
+
+                        {{-- CARD FOOTER --}}
+
+                        <div class="professionnel-card-footer">
+
+                            <span>
+                                Voir les documents
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
+
+            </div>
+
+
+            {{-- =================================================
+                 MOBILE CAROUSEL
+            ================================================== --}}
+
+            <div
+                id="ensModulesCarousel"
+                class="carousel slide professionnel-carousel"
+                data-bs-ride="false"
+            >
+
+                <div class="carousel-inner">
+
+                    @foreach($subjects as $index => $subject)
+
+                        <div
+                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                        >
+
+                            <div class="professionnel-mobile-card">
+
+                                <a
+                                    href="{{ route(
+                                        'vitrine.professionnel.ens.type_doc',
+                                        [
+                                            'programmeSlug' => $programme->slug,
+                                            'specialiteSlug' => $specialite->slug,
+                                            'niveauSlug' => $niveau->slug,
+                                            'moduleSlug' => $subject->slug
+                                        ]
+                                    ) }}"
+                                    class="professionnel-card"
+                                >
+
+                                    <div class="professionnel-card-top">
+
+                                        <div class="professionnel-icon">
+                                            {{ $subject->icon ?? '📚' }}
+                                        </div>
+
+                                        <span class="professionnel-arrow">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-body">
+
+                                        <h2>
+                                            {{ $subject->name }}
+                                        </h2>
+
+                                        <p>
+                                            <i class="bi bi-bookmark-fill"></i>
+                                            Module
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-footer">
+
+                                        <span>
+                                            Voir les documents
+                                        </span>
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </div>
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+
+                {{-- =================================================
+                     CAROUSEL CONTROLS
+                ================================================== --}}
+
+                @if($subjects->count() > 1)
+
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#ensModulesCarousel"
+                        data-bs-slide="prev"
+                    >
+                        <span class="carousel-control-prev-icon"></span>
+
+                        <span class="visually-hidden">
+                            Précédent
+                        </span>
+                    </button>
+
+
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#ensModulesCarousel"
+                        data-bs-slide="next"
+                    >
+                        <span class="carousel-control-next-icon"></span>
+
+                        <span class="visually-hidden">
+                            Suivant
+                        </span>
+                    </button>
+
+                @endif
+
+            </div>
+
+
+        @else
+
+            {{-- =================================================
+                 ÉTAT VIDE
+            ================================================== --}}
+
+            <div class="professionnel-empty">
+
+                <div class="professionnel-empty-icon">
+                    <i class="bi bi-book"></i>
+                </div>
+
+                <h3>
+                    Aucun module disponible
+                </h3>
+
+                <p>
+                    Aucun module n'est actuellement disponible
+                    pour ce niveau.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</section>
+```
 
 </div>
 

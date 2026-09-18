@@ -4,227 +4,176 @@
 
 @section('content')
 
-<div class="vitrine-page">
+<div class="secondaire-page">
 
-    <a
-        href="{{ route(
-            'vitrine.secondaire.niveau',
-            [
-                'formation' => $formationModel->slug,
-                'niveau' => $level->slug,
-            ]
-        ) }}"
-        class="vitrine-back"
-    >
-        <i class="bi bi-arrow-left"></i>
-        Retour à {{ $level->name }}
-    </a>
+    {{-- =====================================================
+         HERO
+         ===================================================== --}}
+    <section class="secondaire-hero">
 
-    <div class="breadcrumb-vitrine">
+        <div class="container">
 
-        <a href="{{ url('/') }}">
-            Accueil
-        </a>
+            <div class="secondaire-badge">
+                <i class="bi bi-book-fill"></i>
+                Matière
+            </div>
 
-        <i class="bi bi-chevron-right"></i>
-
-        <span>
-            Secondaire
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <span>
-            {{ $formationModel->name }}
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <span>
-            {{ $level->name }}
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <strong>
-            {{ $subject->name }}
-        </strong>
-
-    </div>
-
-    <div class="page-header">
-
-        <div>
-
-            <span class="page-kicker">
-                MATIÈRE
-            </span>
-
-            <h1>
-                {{ $subject->name }}
-            </h1>
-
-            <p>
-                Consultez les documents pédagogiques disponibles pour ce niveau.
-            </p>
+            <h1>{{ $subject->name }}</h1>
 
         </div>
 
-        <div class="class-count">
+    </section>
 
-            {{ $documents->count() }}
 
-            document{{ $documents->count() > 1 ? 's' : '' }}
+    {{-- =====================================================
+         CONTENU
+         ===================================================== --}}
+    <section class="secondaire-content">
 
-        </div>
+        <div class="container">
 
-    </div>
+            {{-- =================================================
+                 RETOUR
+                 ================================================= --}}
+            <div class="secondaire-back-wrapper">
 
-    @if($documents->count())
-
-        <div class="superieur-grid">
-
-            @foreach($documents as $document)
-
-                <article class="superieur-card">
-
-                    <div class="superieur-card-icon">
-
-                        <i class="bi bi-file-earmark-pdf"></i>
-
-                    </div>
-
-                    <div class="superieur-card-content">
-
-                        <span class="card-kicker">
-                            {{ $document->documentType->name ?? 'DOCUMENT' }}
-                        </span>
-
-                        <h3>
-                            {{ $document->title }}
-                        </h3>
-
-                        @if($document->description)
-
-                            <p>
-                                {{ $document->description }}
-                            </p>
-
-                        @endif
-
-                        <div class="document-access">
-
-                            @if($document->access_type === 'premium')
-
-                                <span class="badge-premium">
-                                    <i class="bi bi-lock-fill"></i>
-                                    Premium
-                                </span>
-
-                                @if($document->price)
-
-                                    <span class="document-price">
-                                        {{ number_format((float) $document->price, 0, ',', ' ') }} FCFA
-                                    </span>
-
-                                @endif
-
-                            @else
-
-                                <span class="badge-free">
-                                    <i class="bi bi-unlock-fill"></i>
-                                    Gratuit
-                                </span>
-
-                            @endif
-
-                        </div>
-
-                        <div class="document-actions">
-
-                            {{-- VOIR --}}
-                            <a
-                                href="{{ route(
-                                    'vitrine.secondaire.document',
-                                    [
-                                        'formation' => $formationModel->slug,
-                                        'niveau' => $level->slug,
-                                        'matiere' => $subject->slug,
-                                        'slug' => $document->slug,
-                                    ]
-                                ) }}"
-                                class="btn-document-view"
-                            >
-                                <i class="bi bi-eye"></i>
-                                Voir
-                            </a>
-
-                            {{-- TÉLÉCHARGER --}}
-                            @if($document->access_type === 'premium')
-
-                                <a
-                                    href="{{ route(
-                                        'payments.create',
-                                        ['document' => $document->id]
-                                    ) }}"
-                                    class="btn-document-download"
-                                >
-                                    <i class="bi bi-download"></i>
-                                    Télécharger
-                                </a>
-
-                            @else
-
-                                <a
-                                    href="{{ asset('storage/' . $document->file_path) }}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    class="btn-document-download"
-                                >
-                                    <i class="bi bi-download"></i>
-                                    Télécharger
-                                </a>
-
-                            @endif
-
-                        </div>
-
-                    </div>
-
-                    <div class="superieur-card-arrow">
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </div>
-
-                </article>
-
-            @endforeach
-
-        </div>
-
-    @else
-
-        <div class="empty-state">
-
-            <div class="empty-icon">
-
-                <i class="bi bi-file-earmark-x"></i>
+                <a
+                    href="{{ route(
+                        'vitrine.secondaire.niveau',
+                        [
+                            'formation' => $formationModel->slug,
+                            'niveau' => $level->slug,
+                        ]
+                    ) }}"
+                    class="secondaire-back"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour à {{ $level->name }}</span>
+                </a>
 
             </div>
 
-            <h3>
-                Aucun document disponible
-            </h3>
 
-            <p>
-                Aucun document publié n'est actuellement disponible
-                pour cette matière.
-            </p>
+            {{-- =================================================
+                 DOCUMENTS
+                 ================================================= --}}
+            @if($documents->count())
+
+                <div class="secondaire-grid">
+
+                    @foreach($documents as $document)
+
+                        <article class="secondaire-card document-card">
+
+                            <div class="secondaire-card-top">
+
+                                <div class="secondaire-icon">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </div>
+
+                            </div>
+
+
+                            <div class="secondaire-card-body">
+
+                                <h3>
+                                    {{ $document->title }}
+                                </h3>
+
+                                @if($document->access_type === 'premium')
+
+                                    <p>
+                                        <i class="bi bi-lock-fill"></i>
+
+                                        {{ number_format((float) $document->price, 0, ',', ' ') }}
+                                        FCFA
+                                    </p>
+
+                                @else
+
+                                    <p>
+                                        <i class="bi bi-unlock-fill"></i>
+                                        Gratuit
+                                    </p>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- =================================================
+                                 ACTIONS
+                                 ================================================= --}}
+                            <div class="document-actions">
+
+                                @if($document->access_type === 'premium')
+
+                                    {{-- PREMIUM : PAIEMENT --}}
+                                    <a
+                                        href="{{ route(
+                                            'payments.create',
+                                            ['document' => $document->id]
+                                        ) }}"
+                                        class="btn-document-download"
+                                    >
+                                        <i class="bi bi-credit-card"></i>
+                                        Payer
+                                    </a>
+
+                                @else
+
+                                    {{-- GRATUIT : VOIR --}}
+                                    <a
+                                        href="{{ route(
+                                            'documents.read',
+                                            $document
+                                        ) }}"
+                                        target="_blank"
+                                        class="btn-document-view"
+                                    >
+                                        <i class="bi bi-eye"></i>
+                                        Voir
+                                    </a>
+
+                                    {{-- GRATUIT : TÉLÉCHARGER --}}
+                                    <a
+                                        href="{{ route(
+                                            'documents.download',
+                                            $document
+                                        ) }}"
+                                        class="btn-document-download"
+                                    >
+                                        <i class="bi bi-download"></i>
+                                        Télécharger
+                                    </a>
+
+                                @endif
+
+                            </div>
+
+                        </article>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                <div class="secondaire-empty">
+
+                    <div class="secondaire-empty-icon">
+                        <i class="bi bi-file-earmark-x"></i>
+                    </div>
+
+                    <h3>Aucun document disponible</h3>
+
+                </div>
+
+            @endif
 
         </div>
 
-    @endif
+    </section>
 
 </div>
 

@@ -4,188 +4,230 @@
 
 @section('content')
 
-<div class="vitrine-page">
-    <a
-        href="{{ route(
-        'vitrine.secondaire.niveau',
-        [
-            'formation' => $formationModel->slug,
-            'niveau' => $level->slug,
-        ]
-    ) }}"
-        class="vitrine-back">
-        <i class="bi bi-arrow-left"></i>
-        Retour à {{ $level->name }}
-    </a>
+<div class="secondaire-page">
 
-    <div class="breadcrumb-vitrine">
+    {{-- =====================================================
+         HERO
+         ===================================================== --}}
+    <section class="secondaire-hero">
 
-        <a href="{{ url('/') }}">
-            Accueil
-        </a>
+        <div class="container">
 
-        <i class="bi bi-chevron-right"></i>
+            <div class="secondaire-badge">
+                <i class="bi bi-book-fill"></i>
+                Ressources pédagogiques
+            </div>
 
-        <span>
-            Secondaire
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <span>
-            {{ $formationModel->name }}
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <span>
-            {{ $level->name }}
-        </span>
-
-        <i class="bi bi-chevron-right"></i>
-
-        <strong>
-            {{ $subject->name }}
-        </strong>
-
-    </div>
-
-    <div class="page-header">
-
-        <div>
-
-            <span class="page-kicker">
-                RESSOURCES PÉDAGOGIQUES
-            </span>
-
-            <h1>
-                {{ $subject->name }}
-            </h1>
+            <h1>{{ $subject->name }}</h1>
 
             <p>
-                Documents disponibles pour
-                <strong>{{ $level->name }}</strong>.
+                Documents disponibles pour {{ $level->name }}.
             </p>
 
         </div>
 
-        <span class="class-count">
+    </section>
 
-            {{ $documents->count() }}
 
-            document{{ $documents->count() > 1 ? 's' : '' }}
+    {{-- =====================================================
+         CONTENU
+         ===================================================== --}}
+    <section class="secondaire-content">
 
-        </span>
+        <div class="container">
 
-    </div>
+            {{-- =================================================
+                 RETOUR EN HAUT
+                 ================================================= --}}
+            <div class="secondaire-back-wrapper">
 
-    @if($documents->isNotEmpty())
-
-    <div class="superieur-grid">
-
-        @foreach($documents as $document)
-
-        <a
-            href="{{ route(
-                        'vitrine.secondaire.document',
+                <a
+                    href="{{ route(
+                        'vitrine.secondaire.niveau',
                         [
                             'formation' => $formationModel->slug,
                             'niveau' => $level->slug,
-                            'matiere' => $subject->slug,
-                            'slug' => $document->slug,
                         ]
                     ) }}"
-            class="superieur-card document-card">
-
-            <div class="superieur-card-icon">
-
-                @if($document->cover_image)
-
-                <img
-                    src="{{ asset('storage/' . $document->cover_image) }}"
-                    alt="{{ $document->title }}">
-
-                @else
-
-                <i class="bi bi-file-earmark-text"></i>
-
-                @endif
+                    class="secondaire-back"
+                    aria-label="Retour à {{ $level->name }}"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour à {{ $level->name }}</span>
+                </a>
 
             </div>
 
-            <div class="superieur-card-content">
 
-                <span class="card-kicker">
+            {{-- =================================================
+                 TITRE
+                 ================================================= --}}
+            <div class="section-heading">
 
-                    {{ $document->documentType->name ?? 'DOCUMENT' }}
+                <div>
 
-                </span>
-
-                <h3>
-                    {{ $document->title }}
-                </h3>
-
-                @if($document->description)
-
-                <p>
-                    {{ Str::limit($document->description, 120) }}
-                </p>
-
-                @endif
-
-                <div class="document-meta">
-
-                    @if($document->access_type === 'premium')
-
-                    <span class="badge-premium">
-                        <i class="bi bi-lock-fill"></i>
-                        Premium
+                    <span class="section-kicker">
+                        {{ $formationModel->name }}
                     </span>
 
-                    @else
-
-                    <span class="badge-free">
-                        <i class="bi bi-unlock-fill"></i>
-                        Gratuit
-                    </span>
-
-                    @endif
+                    <h2>
+                        Documents disponibles
+                    </h2>
 
                 </div>
 
+                <span class="class-count">
+                    {{ $documents->count() }}
+                    document{{ $documents->count() > 1 ? 's' : '' }}
+                </span>
+
             </div>
 
-            <div class="superieur-card-arrow">
 
-                <i class="bi bi-arrow-right"></i>
+            {{-- =================================================
+                 DOCUMENTS
+                 ================================================= --}}
+            @if($documents->isNotEmpty())
 
-            </div>
+                <div class="secondaire-grid">
 
-        </a>
+                    @foreach($documents as $document)
 
-        @endforeach
+                        <div class="secondaire-card document-card">
 
-    </div>
+                            {{-- =================================
+                                 ICÔNE / COUVERTURE
+                                 ================================= --}}
+                            <div class="secondaire-card-top">
 
-    @else
+                                <div class="secondaire-icon document-cover">
 
-    <div class="empty-state">
+                                    @if($document->cover_image)
 
-        <div class="empty-icon">
-            <i class="bi bi-file-earmark-x"></i>
+                                        <img
+                                            src="{{ asset('storage/' . $document->cover_image) }}"
+                                            alt="{{ $document->title }}"
+                                        >
+
+                                    @else
+
+                                        <i class="bi bi-file-earmark-text"></i>
+
+                                    @endif
+
+                                </div>
+
+                                <span class="secondaire-arrow">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </span>
+
+                            </div>
+
+
+                            {{-- =================================
+                                 CONTENU
+                                 ================================= --}}
+                            <div class="secondaire-card-body">
+
+                                <span class="card-kicker">
+                                    {{ $document->documentType->name ?? 'DOCUMENT' }}
+                                </span>
+
+                                <h3>
+                                    {{ $document->title }}
+                                </h3>
+
+
+                                @if($document->description)
+
+                                    <p>
+                                        <i class="bi bi-text-left"></i>
+                                        {{ Str::limit($document->description, 100) }}
+                                    </p>
+
+                                @endif
+
+
+                                {{-- =============================
+                                     TYPE D'ACCÈS
+                                     ============================= --}}
+                                <p>
+
+                                    @if($document->access_type === 'premium')
+
+                                        <i class="bi bi-lock-fill"></i>
+                                        Premium
+
+                                    @else
+
+                                        <i class="bi bi-unlock-fill"></i>
+                                        Gratuit
+
+                                    @endif
+
+                                </p>
+
+                            </div>
+
+
+                            {{-- =================================
+                                 ACTIONS
+                                 ================================= --}}
+                            <div class="document-actions">
+
+                                <a
+                                    href="{{ route('documents.read', $document) }}"
+                                    target="_blank"
+                                    class="document-view-btn"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                    Ouvrir
+                                </a>
+
+
+                                <a
+                                    href="{{ route('documents.download', $document) }}"
+                                    class="document-download-btn"
+                                >
+                                    <i class="bi bi-download"></i>
+                                    Télécharger
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    @endforeach
+
+                </div>
+
+            @else
+
+                {{-- =============================================
+                     AUCUN DOCUMENT
+                     ============================================= --}}
+                <div class="secondaire-empty">
+
+                    <div class="secondaire-empty-icon">
+                        <i class="bi bi-file-earmark-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun document disponible
+                    </h3>
+
+                    <p>
+                        Aucun document publié n'est actuellement disponible
+                        pour cette matière.
+                    </p>
+
+                </div>
+
+            @endif
+
         </div>
 
-        <h3>
-            Aucun document disponible
-        </h3>
-
-        <p>
-            Aucun document publié n'est actuellement disponible pour cette matière.
-        </p>
-
-    </div>
-
-    @endif
+    </section>
 
 </div>
 

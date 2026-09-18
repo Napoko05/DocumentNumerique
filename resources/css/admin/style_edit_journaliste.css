@@ -584,3 +584,122 @@
     }
 
 }
+
+/* =========================================================
+   ALERTES PROFIL
+========================================================= */
+
+.profile-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    width: 100%;
+    margin-bottom: 24px;
+    padding: 16px 18px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+}
+
+.profile-alert-icon {
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.profile-alert strong {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 15px;
+}
+
+.profile-alert p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   SUCCÈS
+========================================================= */
+
+.profile-alert-success {
+    background: #eaf7ef;
+    border-color: #b8e0c6;
+    color: #176b36;
+}
+
+.profile-alert-success .profile-alert-icon {
+    background: #198754;
+    color: #fff;
+}
+
+
+/* =========================================================
+   DANGER
+========================================================= */
+
+.profile-alert-danger {
+    background: #fdecec;
+    border-color: #f1b5b5;
+    color: #b42318;
+}
+
+.profile-alert-danger .profile-alert-icon {
+    background: #dc3545;
+    color: #fff;
+}
+
+
+/* =========================================================
+   LISTE DES ERREURS
+========================================================= */
+
+.profile-alert-errors {
+    margin: 8px 0 0;
+    padding-left: 20px;
+}
+
+.profile-alert-errors li {
+    margin-bottom: 4px;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.profile-alert-errors li:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   ERREURS SOUS LES CHAMPS
+========================================================= */
+
+.profile-field .field-error {
+    display: block;
+    margin-top: 6px;
+    color: #dc3545;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.profile-field input.is-invalid,
+.profile-field select.is-invalid,
+.profile-field textarea.is-invalid {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.08);
+}
+
+.profile-field input.is-invalid:focus,
+.profile-field select.is-invalid:focus,
+.profile-field textarea.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+}

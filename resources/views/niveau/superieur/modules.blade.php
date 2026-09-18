@@ -1,15 +1,18 @@
 @extends('layouts.app')
 
+@section('title', $niveau->name . ' — Modules / Matières')
+
 @section('content')
 
 <div class="superieur-page">
 
+{{-- HERO --}}
 <section class="superieur-hero">
     <div class="container">
 
         <span class="superieur-badge">
             <i class="bi bi-book-fill"></i>
-            MODULES / MATIÈRES
+            Modules / Matières
         </span>
 
         <h1>
@@ -20,23 +23,42 @@
             {{ $domaine->name }}
             •
             {{ $filiere->name }}
-            •
-            Choisissez un module ou une matière.
         </p>
 
     </div>
 </section>
 
 
+{{-- CONTENU --}}
 <section class="superieur-content">
     <div class="container">
 
+        {{-- RETOUR --}}
+        <div class="superieur-back-wrapper">
+            <a
+                href="{{ route(
+                    'vitrine.superieur.niveaux',
+                    [
+                        'domaineSlug' => $domaine->slug,
+                        'filiereSlug' => $filiere->slug
+                    ]
+                ) }}"
+                class="superieur-back"
+                aria-label="Retour aux niveaux"
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Retour aux niveaux</span>
+            </a>
+        </div>
+
+
+        {{-- EN-TÊTE --}}
         <div class="section-heading">
 
             <div>
 
                 <span class="section-kicker">
-                    PARCOURS ACADÉMIQUE
+                    Parcours académique
                 </span>
 
                 <h2>
@@ -55,6 +77,7 @@
 
         @if($subjects->isNotEmpty())
 
+            {{-- GRILLE --}}
             <div class="superieur-grid">
 
                 @foreach($subjects as $subject)
@@ -84,9 +107,9 @@
 
                             </div>
 
-                            <div class="superieur-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
+                            <span class="superieur-arrow">
+                                <i class="bi bi-arrow-up-right"></i>
+                            </span>
 
                         </div>
 
@@ -103,11 +126,9 @@
                             </p>
 
                             @if(!empty($subject->description))
-
                                 <p class="superieur-description">
                                     {{ $subject->description }}
                                 </p>
-
                             @endif
 
                         </div>
@@ -131,7 +152,6 @@
 
 
             {{-- CAROUSEL MOBILE --}}
-
             <div
                 id="superieurSubjectsCarousel"
                 class="carousel slide superieur-carousel"
@@ -173,9 +193,9 @@
 
                                         </div>
 
-                                        <div class="superieur-arrow">
-                                            <i class="bi bi-arrow-right"></i>
-                                        </div>
+                                        <span class="superieur-arrow">
+                                            <i class="bi bi-arrow-up-right"></i>
+                                        </span>
 
                                     </div>
 
@@ -192,11 +212,9 @@
                                         </p>
 
                                         @if(!empty($subject->description))
-
                                             <p class="superieur-description">
                                                 {{ $subject->description }}
                                             </p>
-
                                         @endif
 
                                     </div>
@@ -231,7 +249,6 @@
                         data-bs-target="#superieurSubjectsCarousel"
                         data-bs-slide="prev"
                     >
-
                         <span
                             class="carousel-control-prev-icon"
                             aria-hidden="true"
@@ -240,7 +257,6 @@
                         <span class="visually-hidden">
                             Précédent
                         </span>
-
                     </button>
 
 
@@ -250,7 +266,6 @@
                         data-bs-target="#superieurSubjectsCarousel"
                         data-bs-slide="next"
                     >
-
                         <span
                             class="carousel-control-next-icon"
                             aria-hidden="true"
@@ -259,15 +274,16 @@
                         <span class="visually-hidden">
                             Suivant
                         </span>
-
                     </button>
 
                 @endif
 
             </div>
 
+
         @else
 
+            {{-- ÉTAT VIDE --}}
             <div class="superieur-empty">
 
                 <div class="superieur-empty-icon">
@@ -278,37 +294,9 @@
                     Aucun module disponible
                 </h3>
 
-                <p>
-                    Aucun module ou matière n'est actuellement disponible
-                    pour le niveau
-                    <strong>{{ $niveau->name }}</strong>.
-                </p>
-
             </div>
 
         @endif
-
-
-        <div class="superieur-back-container">
-
-            <a
-                href="{{ route(
-                    'vitrine.superieur.niveaux',
-                    [
-                        'domaineSlug' => $domaine->slug,
-                        'filiereSlug' => $filiere->slug
-                    ]
-                ) }}"
-                class="superieur-back-btn"
-            >
-
-                <i class="bi bi-arrow-left"></i>
-
-                Retour aux niveaux
-
-            </a>
-
-        </div>
 
     </div>
 </section>

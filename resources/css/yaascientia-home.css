@@ -2455,3 +2455,337 @@
         0 18px 50px rgba(21,94,239,.13),
         0 0 0 4px rgba(21,94,239,.06);
 }
+
+/*================================
+      Chevrons index
+      =======================================
+      */
+
+      /* =========================================================
+   PAGINATION DOCUMENTS
+   ========================================================= */
+
+.yaas-pagination {
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.yaas-pagination svg {
+    width: 18px !important;
+    height: 18px !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+}
+
+.yaas-pagination a,
+.yaas-pagination button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.yaas-pagination svg path {
+    stroke-width: 2;
+}
+
+/* ============================================================
+   DROPDOWN NAVBAR
+============================================================ */
+
+.yaas-nav-dropdown {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+
+/* ============================================================
+   BOUTON DROPDOWN
+============================================================ */
+
+.yaas-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    border: 0;
+    background: transparent;
+
+    cursor: pointer;
+
+    position: relative;
+    z-index: 20;
+}
+
+.yaas-dropdown-trigger svg {
+    width: 15px;
+    height: 15px;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+
+    transition: transform .2s ease;
+}
+
+
+/* Rotation du chevron */
+
+.yaas-nav-dropdown.open
+.yaas-dropdown-trigger svg {
+    transform: rotate(180deg);
+}
+
+
+/* ============================================================
+   MENU DROPDOWN
+============================================================ */
+
+.yaas-dropdown-menu {
+    position: absolute;
+
+    top: calc(100% + 8px);
+    left: 50%;
+
+    transform: translateX(-50%) translateY(-5px);
+
+    width: 310px;
+
+    padding: 8px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, .14);
+
+    z-index: 9999;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity .18s ease,
+        visibility .18s ease,
+        transform .18s ease;
+}
+
+
+/* ============================================================
+   OUVERTURE PAR JAVASCRIPT
+============================================================ */
+
+.yaas-nav-dropdown.open
+.yaas-dropdown-menu {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform:
+        translateX(-50%)
+        translateY(0);
+}
+
+
+/* ============================================================
+   ITEM DROPDOWN
+============================================================ */
+
+.yaas-dropdown-item {
+
+    position: relative;
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 12px 13px;
+
+    border-radius: 9px;
+
+    color: #1f2937;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    transition:
+        background-color .18s ease,
+        color .18s ease;
+}
+
+.yaas-dropdown-item:hover {
+
+    background: #f3f7fc;
+
+    color: #0b4da2;
+
+}
+
+
+/* ============================================================
+   ICÔNES
+============================================================ */
+
+.yaas-dropdown-icon {
+
+    width: 38px;
+    height: 38px;
+
+    flex: 0 0 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 9px;
+
+    font-size: 18px;
+}
+
+.yaas-dropdown-icon.blue {
+    background: #eaf2fb;
+}
+
+.yaas-dropdown-icon.green {
+    background: #eaf8f0;
+}
+
+.yaas-dropdown-icon.purple {
+    background: #f3edff;
+}
+
+
+/* ============================================================
+   TEXTE
+============================================================ */
+
+.yaas-dropdown-item > span:last-child {
+
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+}
+
+.yaas-dropdown-item strong {
+
+    display: block;
+
+    color: #1f2937;
+
+    font-size: 14px;
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.yaas-dropdown-item small {
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #6b7280;
+
+    font-size: 11px;
+
+    line-height: 1.4;
+}
+
+
+/* ============================================================
+   HOVER DESKTOP
+   Facultatif : permet aussi l'ouverture au survol
+============================================================ */
+
+@media (min-width: 901px) {
+
+    .yaas-nav-dropdown:hover
+    .yaas-dropdown-menu {
+
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+
+        transform:
+            translateX(-50%)
+            translateY(0);
+    }
+
+}
+
+
+/* ============================================================
+   IMPORTANT :
+   LE MENU DOIT RESTER AU-DESSUS DU RESTE
+============================================================ */
+
+.yaas-navbar {
+    position: relative;
+    z-index: 1000;
+}
+
+.yaas-navbar-inner {
+    position: relative;
+    z-index: 1001;
+}
+
+.yaas-main-nav {
+    position: relative;
+    z-index: 1002;
+}
+
+.yaas-nav-dropdown {
+    z-index: 1003;
+}
+
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 900px) {
+
+    .yaas-main-nav {
+        z-index: auto;
+    }
+
+    .yaas-dropdown-menu {
+        position: static;
+
+        width: 100%;
+
+        margin-top: 8px;
+
+        transform: none;
+
+        box-shadow: none;
+    }
+
+    .yaas-nav-dropdown.open
+    .yaas-dropdown-menu {
+
+        transform: none;
+    }
+
+}

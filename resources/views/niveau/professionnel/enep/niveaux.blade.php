@@ -1,14 +1,19 @@
 @extends('layouts.app')
 
+@section('title', $formation->name)
+
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    <section class="formation-hero">
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
+    <section class="professionnel-hero">
 
         <div class="container">
 
-            <span class="formation-badge">
+            <span class="professionnel-badge">
                 <i class="bi bi-mortarboard-fill"></i>
                 FORMATION PROFESSIONNELLE
             </span>
@@ -20,6 +25,7 @@
 
             <p>
                 Choisissez votre niveau de formation.
+
                 @if(!empty($formation->description))
                     — {{ $formation->description }}
                 @endif
@@ -29,15 +35,42 @@
 
     </section>
 
-    <section class="formation-content">
+
+    {{-- =========================================================
+         CONTENT
+    ========================================================== --}}
+    <section class="professionnel-content">
 
         <div class="container">
 
-            <div class="section-heading">
+            {{-- =================================================
+                 BOUTON RETOUR
+            ================================================== --}}
+            <div class="professionnel-back-wrapper">
+
+                <a
+                    href="{{ route('vitrine.professionnel.formations') }}"
+                    class="professionnel-back"
+                    aria-label="Retour aux formations professionnelles"
+                >
+                    <i class="bi bi-arrow-left"></i>
+
+                    <span>
+                        Retour aux formations
+                    </span>
+                </a>
+
+            </div>
+
+
+            {{-- =================================================
+                 EN-TÊTE
+            ================================================== --}}
+            <div class="professionnel-section-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span class="professionnel-section-kicker">
                         PARCOURS DE FORMATION
                     </span>
 
@@ -47,7 +80,7 @@
 
                 </div>
 
-                <span class="class-count">
+                <span class="professionnel-count">
 
                     {{ $niveaux->count() }}
 
@@ -57,9 +90,16 @@
 
             </div>
 
+
+            {{-- =================================================
+                 NIVEAUX
+            ================================================== --}}
             @if($niveaux->isNotEmpty())
 
-                <div class="classes-grid">
+                {{-- =================================================
+                     DESKTOP / TABLETTE
+                ================================================== --}}
+                <div class="professionnel-grid">
 
                     @foreach($niveaux as $niveau)
 
@@ -71,22 +111,25 @@
                                     'niveauSlug' => $niveau->slug
                                 ]
                             ) }}"
-                            class="class-card"
+                            class="professionnel-card"
                         >
 
-                            <div class="class-card-top">
+                            {{-- CARD TOP --}}
+                            <div class="professionnel-card-top">
 
-                                <div class="class-icon">
+                                <div class="professionnel-icon">
                                     {{ $niveau->icon ?? '🎓' }}
                                 </div>
 
-                                <div class="class-arrow">
+                                <div class="professionnel-arrow">
                                     <i class="bi bi-arrow-right"></i>
                                 </div>
 
                             </div>
 
-                            <div class="class-card-body">
+
+                            {{-- CARD BODY --}}
+                            <div class="professionnel-card-body">
 
                                 <h3>
                                     {{ $niveau->name }}
@@ -99,7 +142,9 @@
 
                             </div>
 
-                            <div class="class-card-footer">
+
+                            {{-- CARD FOOTER --}}
+                            <div class="professionnel-card-footer">
 
                                 <span>
                                     Voir les types de documents
@@ -115,11 +160,129 @@
 
                 </div>
 
+
+                {{-- =================================================
+                     CAROUSEL MOBILE
+                ================================================== --}}
+                <div
+                    id="professionnelNiveauxCarousel"
+                    class="carousel slide professionnel-carousel"
+                    data-bs-ride="false"
+                >
+
+                    <div class="carousel-inner">
+
+                        @foreach($niveaux as $index => $niveau)
+
+                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+
+                                <div class="professionnel-carousel-item">
+
+                                    <a
+                                        href="{{ route(
+                                            'vitrine.professionnel.enep.modules',
+                                            [
+                                                'formationSlug' => $formation->slug,
+                                                'niveauSlug' => $niveau->slug
+                                            ]
+                                        ) }}"
+                                        class="professionnel-card professionnel-mobile-card"
+                                    >
+
+                                        {{-- CARD TOP --}}
+                                        <div class="professionnel-card-top">
+
+                                            <div class="professionnel-icon">
+                                                {{ $niveau->icon ?? '🎓' }}
+                                            </div>
+
+                                            <div class="professionnel-arrow">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </div>
+
+                                        </div>
+
+
+                                        {{-- CARD BODY --}}
+                                        <div class="professionnel-card-body">
+
+                                            <h3>
+                                                {{ $niveau->name }}
+                                            </h3>
+
+                                            <p>
+                                                <i class="bi bi-mortarboard-fill"></i>
+                                                Niveau de formation
+                                            </p>
+
+                                        </div>
+
+
+                                        {{-- CARD FOOTER --}}
+                                        <div class="professionnel-card-footer">
+
+                                            <span>
+                                                Voir les types de documents
+                                            </span>
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+
+                    {{-- =================================================
+                         CAROUSEL CONTROLS
+                    ================================================== --}}
+                    @if($niveaux->count() > 1)
+
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#professionnelNiveauxCarousel"
+                            data-bs-slide="prev"
+                            aria-label="Niveau précédent"
+                        >
+                            <span
+                                class="carousel-control-prev-icon"
+                                aria-hidden="true"
+                            ></span>
+                        </button>
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#professionnelNiveauxCarousel"
+                            data-bs-slide="next"
+                            aria-label="Niveau suivant"
+                        >
+                            <span
+                                class="carousel-control-next-icon"
+                                aria-hidden="true"
+                            ></span>
+                        </button>
+
+                    @endif
+
+                </div>
+
             @else
 
-                <div class="empty-state">
+                {{-- =================================================
+                     EMPTY STATE
+                ================================================== --}}
+                <div class="professionnel-empty">
 
-                    <div class="empty-icon">
+                    <div class="professionnel-empty-icon">
                         <i class="bi bi-folder-x"></i>
                     </div>
 
@@ -136,23 +299,6 @@
 
             @endif
 
-            <div class="doc-type-back-container">
-
-                <a
-                    href="{{ route(
-                        'vitrine.professionnel.formations'
-                    ) }}"
-                    class="doc-type-back-btn"
-                >
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Retour aux formations
-
-                </a>
-
-            </div>
-
         </div>
 
     </section>
@@ -160,3 +306,4 @@
 </div>
 
 @endsection
+

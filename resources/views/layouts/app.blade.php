@@ -58,19 +58,17 @@
     'resources/css/layout.css',
     'resources/css/auth.css',
     'resources/css/login/style_register.css',
+    'resources/css/journaliste/profile.css',
+    'resources/css/profile.css',
+     'resources/css/contact.css',
+       'resources/css/journaliste/style_profil_user.css',
+    'resources/css/formation/secondaire/vitrine_secondaire.css',
+    'resources/css/formation/superieur/vitrine_superieur.css',
+    'resources/css/formation/professionnel/formation.css',
     'resources/js/app.js',
     'resources/js/yaascientia-home.js',
-    'resources/css/journaliste/profile.css',
-    'resources/css/formation/secondaire/classe.css',
-    'resources/css/formation/secondaire/matiere.css',
-    'resources/css/formation/secondaire/type_doc.css',
-    'resources/css/formation/secondaire/document.css',
-    'resources/css/formation/superieur/filiere.css',
-    'resources/css/formation/superieur/niveau.css',
-    'resources/css/formation/superieur/module.css',
-    'resources/css/formation/superieur/accademie.css',
-    'resources/css/formation/professionnel/formation.css',
-    'resources/css/formation/professionnel/accademie.css',
+
+
     ])
 
 
@@ -272,17 +270,85 @@
 
                 {{-- PROFIL --}}
 
-                @auth
+                {{-- PROFIL --}}
 
-                <a
-                    href="{{ route('profile.edit') }}"
-                    class="yaas-nav-link
-                    {{ request()->routeIs('profile.*')
-                        ? 'active'
-                        : '' }}">
-                    Profil
-                </a>
-                @endauth
+@auth
+
+<div class="yaas-nav-dropdown">
+
+    <button
+        type="button"
+        class="yaas-nav-link yaas-dropdown-trigger
+            {{ request()->routeIs('profile.*')
+                ? 'active'
+                : '' }}">
+
+        <span>
+            Profil
+        </span>
+
+        <svg viewBox="0 0 24 24">
+            <path d="m6 9 6 6 6-6" />
+        </svg>
+
+    </button>
+
+    <div class="yaas-dropdown-menu">
+
+        {{-- Mise à jour du profil --}}
+
+        <a
+            href="{{ route('profile.edit') }}"
+            class="yaas-dropdown-item">
+
+            <span class="yaas-dropdown-icon blue">
+                👤
+            </span>
+
+            <span>
+
+                <strong>
+                    Mise à jour du profil
+                </strong>
+
+                <small>
+                    Modifier mes informations
+                </small>
+
+            </span>
+
+        </a>
+
+
+        {{-- Mot de passe --}}
+
+        <a
+            href="{{ route('profile.password.edit') }}"
+            class="yaas-dropdown-item">
+
+            <span class="yaas-dropdown-icon purple">
+                🔑
+            </span>
+
+            <span>
+
+                <strong>
+                    Mot de passe
+                </strong>
+
+                <small>
+                    Modifier mon mot de passe
+                </small>
+
+            </span>
+
+        </a>
+
+    </div>
+
+</div>
+
+@endauth
             </nav>
             {{-- =====================================================
              ACTIONS DESKTOP
@@ -430,12 +496,25 @@
 
                 {{-- Profil --}}
 
-                <a
-                    href="{{ route('profile.edit') }}"
-                    class="yaas-mobile-link">
+             {{-- =================================================
+     PROFIL MOBILE
+================================================= --}}
 
-                    Mon profil
-                </a>
+<div class="yaas-mobile-section">
+
+    <span>
+        Profil
+    </span>
+
+    <a href="{{ route('profile.edit') }}">
+        👤 Mise à jour du profil
+    </a>
+
+    <a href="{{ route('profile.password.edit') }}">
+        🔑 Mot de passe
+    </a>
+
+</div>
 
                 {{-- Déconnexion --}}
 

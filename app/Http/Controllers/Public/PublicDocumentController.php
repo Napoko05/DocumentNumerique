@@ -271,4 +271,158 @@ class PublicDocumentController extends Controller
 
         return response()->file($path);
     }
+
+        /**
+     * --------------------------------------------------------------------------
+     * TÉLÉCHARGEMENT DU DOCUMENT
+     * --------------------------------------------------------------------------
+     *
+     * FREE:
+     *      téléchargement direct
+     *
+     * PREMIUM:
+     *      - utilisateur non connecté → connexion
+     *      - utilisateur connecté sans paiement → paiement
+     *      - utilisateur connecté avec paiement → téléchargement
+     *      - staff admin/journaliste → téléchargement direct
+     */
+    public function download(Document $document)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT PUBLIÉ
+        |--------------------------------------------------------------------------
+        */
+
+        abort_unless(
+            $document->status === 'published',
+            404
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FICHIER
+        |--------------------------------------------------------------------------
+        */
+
+        $path = storage_path(
+            'app/public/' . $document->file_path
+        );
+
+        if (!file_exists($path)) {
+            abort(
+                404,
+                'Fichier introuvable.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DOCUMENT GRATUIT
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$document->isPremium()) {
+            return response()->download(
+                $path,
+                basename($path)
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | STAFF : ADMIN / JOURNALISTE
+        |--------------------------------------------------------------------------
+        */
+
+        if (Auth::guard('staff')->check()) {
+
+            $staff = Auth::guard('staff')->user();
+
+            if (
+                in_array(
+                    $staff->role_alias,
+                    [
+                        'admin',
+                        'journalist',
+                    ],
+                    true
+                )
+            ) {
+                return response()->download(
+                    $path,
+                    basename($path)
+                );
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | UTILISATEUR WEB : CONNEXION OBLIGATOIRE
+        |--------------------------------------------------------------------------
+        */
+
+        if (!Auth::guard('web')->check()) {
+
+            return redirect()
+                ->route('login')
+                ->with(
+                    'error',
+                    'Veuillez vous connecter pour télécharger ce document premium.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VÉRIFICATION DU PAIEMENT
+        |--------------------------------------------------------------------------
+        */
+
+        $hasPaid = Payment::query()
+            ->where(
+                'user_id',
+                Auth::guard('web')->id()
+            )
+            ->where(
+                'document_id',
+                $document->id
+            )
+            ->where(
+                'status',
+                'paid'
+            )
+            ->exists();
+
+        /*
+        |--------------------------------------------------------------------------
+        | PAS ENCORE PAYÉ
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$hasPaid) {
+
+            return redirect()
+                ->route(
+                    'payments.create',
+                    [
+                        'document' => $document->id,
+                    ]
+                )
+                ->with(
+                    'info',
+                    'Le paiement est requis pour télécharger ce document premium.'
+                );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | TÉLÉCHARGEMENT AUTORISÉ
+        |--------------------------------------------------------------------------
+        */
+
+        return response()->download(
+            $path,
+            basename($path)
+        );
+    }
 }

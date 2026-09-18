@@ -4,13 +4,14 @@
 
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    <section class="formation-hero">
+    {{-- HERO --}}
+    <section class="professionnel-hero">
 
         <div class="container">
 
-            <span class="formation-badge">
+            <span class="professionnel-badge">
                 <i class="bi bi-book-fill"></i>
                 RESSOURCES PÉDAGOGIQUES
             </span>
@@ -30,10 +31,37 @@
 
     </section>
 
-    <section class="formation-content">
+
+    {{-- CONTENU --}}
+    <section class="professionnel-content">
 
         <div class="container">
 
+            {{-- RETOUR --}}
+            <div class="professionnel-back-wrapper">
+
+                <a
+                    href="{{ route(
+                        'vitrine.professionnel.specialite.niveaux',
+                        [
+                            'formationSlug' => $formation->slug,
+                            'specialiteSlug' => $specialite->slug
+                        ]
+                    ) }}"
+                    class="professionnel-back"
+                    aria-label="Retour aux niveaux"
+                >
+
+                    <i class="bi bi-arrow-left"></i>
+
+                    <span>Retour aux niveaux</span>
+
+                </a>
+
+            </div>
+
+
+            {{-- TITRE --}}
             <div class="section-heading">
 
                 <div>
@@ -52,15 +80,17 @@
 
                     {{ $subjects->count() }}
 
-                    subjects{{ $subjects->count() > 1 ? 's' : '' }}
+                    module{{ $subjects->count() > 1 ? 's' : '' }}
 
                 </span>
 
             </div>
 
+
+            {{-- MODULES --}}
             @if($subjects->isNotEmpty())
 
-                <div class="classes-grid">
+                <div class="professionnel-grid">
 
                     @foreach($subjects as $module)
 
@@ -74,22 +104,27 @@
                                     'moduleSlug' => $module->slug
                                 ]
                             ) }}"
-                            class="class-card"
+                            class="professionnel-card"
                         >
 
-                            <div class="class-card-top">
+                            <div class="professionnel-card-top">
 
-                                <div class="class-icon">
+                                <div class="professionnel-icon">
+
                                     {{ $module->icon ?? '📚' }}
+
                                 </div>
 
-                                <div class="class-arrow">
+                                <div class="professionnel-arrow">
+
                                     <i class="bi bi-arrow-right"></i>
+
                                 </div>
 
                             </div>
 
-                            <div class="class-card-body">
+
+                            <div class="professionnel-card-body">
 
                                 <h3>
                                     {{ $module->name }}
@@ -102,7 +137,8 @@
 
                             </div>
 
-                            <div class="class-card-footer">
+
+                            <div class="professionnel-card-footer">
 
                                 <span>
                                     Voir les types de documents
@@ -120,6 +156,7 @@
 
             @else
 
+                {{-- ÉTAT VIDE --}}
                 <div class="empty-state">
 
                     <div class="empty-icon">
@@ -138,27 +175,6 @@
                 </div>
 
             @endif
-
-            <div class="doc-type-back-container">
-
-                <a
-                    href="{{ route(
-                        'vitrine.professionnel.specialite.niveaux',
-                        [
-                            'formationSlug' => $formation->slug,
-                            'specialiteSlug' => $specialite->slug
-                        ]
-                    ) }}"
-                    class="doc-type-back-btn"
-                >
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Retour aux niveaux
-
-                </a>
-
-            </div>
 
         </div>
 

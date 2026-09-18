@@ -98,46 +98,48 @@ class LoginController extends Controller
     // =========================
     // REDIRECTION APRES LOGIN
     // =========================
-    protected function authenticated(Request $request, $user)
-    {
-       
-        session()->flash('success', 'Connexion réussie !');
+   // =========================
+// REDIRECTION APRES LOGIN
+// =========================
+protected function authenticated(Request $request, $user)
+{
+    session()->flash('success', 'Connexion réussie !');
 
-        // =========================
-        // UTILISATEUR SIMPLE
-        // =========================
-        if ($user instanceof User) {
-            return redirect()->route('home');
-        }
-
-        // =========================
-        // STAFF
-        // =========================
-        if ($user instanceof Staff) {
-
-            if (empty($user->role_alias)) {
-
-                Auth::guard('staff')->logout();
-
-                return redirect()
-                    ->route('login')
-                    ->withErrors([
-                        'login' => 'Aucun rôle attribué à ce compte.',
-                    ]);
-            }
-
-            return match ($user->role_alias) {
-
-                'admin' => redirect()->route('admin.dashboard'),
-
-                'journalist' => redirect()->route('journaliste.dashboard'),
-
-                default => redirect()->route('home'),
-            };
-        }
-
-        return redirect()->route('home');
+    // =========================
+    // UTILISATEUR SIMPLE
+    // =========================
+    if ($user instanceof User) {
+        return redirect()->intended(route('home'));
     }
+
+    // =========================
+    // STAFF
+    // =========================
+    if ($user instanceof Staff) {
+
+        if (empty($user->role_alias)) {
+
+            Auth::guard('staff')->logout();
+
+            return redirect()
+                ->route('login')
+                ->withErrors([
+                    'login' => 'Aucun rôle attribué à ce compte.',
+                ]);
+        }
+
+        return match ($user->role_alias) {
+
+            'admin' => redirect()->route('admin.dashboard'),
+
+            'journalist' => redirect()->route('journaliste.dashboard'),
+
+            default => redirect()->route('home'),
+        };
+    }
+
+    return redirect()->route('home');
+}
 
     // =========================
     // LOGOUT

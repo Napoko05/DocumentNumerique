@@ -2,282 +2,302 @@
 
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    <section class="formation-hero">
+{{-- =========================================================
+     HERO
+========================================================== --}}
 
-        <div class="container">
+<section class="professionnel-hero">
 
-            <div class="formation-badge">
-                <i class="bi bi-mortarboard-fill"></i>
-                SPÉCIALITÉS DE FORMATION
-            </div>
+    <div class="container">
 
-            <h1>
-                {{ $programme->icon ?? '🎓' }}
-                {{ $programme->name }}
-            </h1>
+        <span class="professionnel-badge">
+            <i class="bi bi-mortarboard-fill"></i>
+            SPÉCIALITÉS DE FORMATION
+        </span>
 
-            <p>
-                {{ $programme->description
-                    ?? 'Choisissez votre spécialité de formation.' }}
-            </p>
+        <h1>
+            {{ $programme->icon ?? '🎓' }}
+            {{ $programme->name }}
+        </h1>
+
+        <p>
+            {{ $programme->description
+                ?? 'Choisissez votre spécialité de formation.' }}
+        </p>
+
+    </div>
+
+</section>
+
+
+{{-- =========================================================
+     CONTENU
+========================================================== --}}
+
+<section class="professionnel-content">
+
+    <div class="container">
+
+        {{-- =================================================
+             RETOUR
+        ================================================== --}}
+
+        <div class="professionnel-back-wrapper">
+
+            <a
+                href="{{ route('vitrine.professionnel.ens.programmes', [
+                    'formationSlug' => $formation->slug
+                ]) }}"
+                class="professionnel-back"
+                aria-label="Retour aux programmes"
+            >
+                <i class="bi bi-arrow-left"></i>
+
+                <span>Retour aux programmes</span>
+            </a>
 
         </div>
 
-    </section>
 
+        {{-- =================================================
+             TITRE
+        ================================================== --}}
 
-    <section class="formation-content">
+        <div class="professionnel-section-heading">
 
-        <div class="container">
+            <div>
 
-            <div class="section-heading">
-
-                <div>
-
-                    <span class="section-kicker">
-                        SPÉCIALITÉS
-                    </span>
-
-                    <h2>
-                        Choisissez votre spécialité
-                    </h2>
-
-                </div>
-
-                <span class="class-count">
-
-                    {{ $specialites->count() }}
-
-                    spécialité{{ $specialites->count() > 1 ? 's' : '' }}
-
+                <span class="professionnel-section-kicker">
+                    SPÉCIALITÉS
                 </span>
+
+                <h2>
+                    Choisissez votre spécialité
+                </h2>
+
+            </div>
+
+            <span class="professionnel-count">
+
+                {{ $specialites->count() }}
+
+                spécialité{{ $specialites->count() > 1 ? 's' : '' }}
+
+            </span>
+
+        </div>
+
+
+        @if($specialites->isNotEmpty())
+
+            {{-- =================================================
+                 DESKTOP GRID
+            ================================================== --}}
+
+            <div class="professionnel-grid">
+
+                @foreach($specialites as $specialite)
+
+                    <a
+                        href="{{ route('vitrine.professionnel.ens.niveaux', [
+                            'formationSlug' => $formation->slug,
+                            'programmeSlug' => $programme->slug,
+                            'specialiteSlug' => $specialite->slug
+                        ]) }}"
+                        class="professionnel-card"
+                    >
+
+                        <div class="professionnel-card-top">
+
+                            <div class="professionnel-icon">
+                                {{ $specialite->icon ?? '📚' }}
+                            </div>
+
+                            <div class="professionnel-arrow">
+                                <i class="bi bi-arrow-right"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="professionnel-card-body">
+
+                            <h3>
+                                {{ $specialite->name }}
+                            </h3>
+
+                            <p>
+                                <i class="bi bi-bookmark-fill"></i>
+
+                                Spécialité de formation
+                            </p>
+
+                        </div>
+
+
+                        <div class="professionnel-card-footer">
+
+                            <span>
+                                Voir les niveaux
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
 
             </div>
 
 
-            @if($specialites->isNotEmpty())
+            {{-- =================================================
+                 MOBILE CAROUSEL
+            ================================================== --}}
 
-                <div class="classes-grid">
+            <div
+                id="ensSpecialitesCarousel"
+                class="carousel slide professionnel-carousel"
+                data-bs-ride="false"
+            >
 
-                    @foreach($specialites as $specialite)
+                <div class="carousel-inner">
 
-                        <a
-                            href="{{ route('vitrine.professionnel.ens.niveaux', [
-                                'formationSlug' => $formation->slug,
-                                'programmeSlug' => $programme->slug,
-                                'specialiteSlug' => $specialite->slug
-                            ]) }}"
-                            class="class-card"
+                    @foreach($specialites as $index => $specialite)
+
+                        <div
+                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
                         >
 
-                            <div class="class-card-top">
+                            <div class="professionnel-mobile-card">
 
-                                <div class="class-icon">
-                                    {{ $specialite->icon ?? '📚' }}
-                                </div>
+                                <a
+                                    href="{{ route('vitrine.professionnel.ens.niveaux', [
+                                        'formationSlug' => $formation->slug,
+                                        'programmeSlug' => $programme->slug,
+                                        'specialiteSlug' => $specialite->slug
+                                    ]) }}"
+                                    class="professionnel-card"
+                                >
 
-                                <div class="class-arrow">
-                                    <i class="bi bi-arrow-right"></i>
-                                </div>
+                                    <div class="professionnel-card-top">
+
+                                        <div class="professionnel-icon">
+                                            {{ $specialite->icon ?? '📚' }}
+                                        </div>
+
+                                        <div class="professionnel-arrow">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-body">
+
+                                        <h3>
+                                            {{ $specialite->name }}
+                                        </h3>
+
+                                        <p>
+                                            <i class="bi bi-bookmark-fill"></i>
+
+                                            Spécialité de formation
+                                        </p>
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-footer">
+
+                                        <span>
+                                            Voir les niveaux
+                                        </span>
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </div>
+
+                                </a>
 
                             </div>
 
-
-                            <div class="class-card-body">
-
-                                <h3>
-                                    {{ $specialite->name }}
-                                </h3>
-
-                                <p>
-
-                                    <i class="bi bi-bookmark-fill"></i>
-
-                                    Spécialité de formation
-
-                                </p>
-
-                            </div>
-
-
-                            <div class="class-card-footer">
-
-                                <span>
-                                    Voir les niveaux
-                                </span>
-
-                                <i class="bi bi-arrow-right"></i>
-
-                            </div>
-
-                        </a>
+                        </div>
 
                     @endforeach
 
                 </div>
 
 
-                {{-- MOBILE --}}
+                {{-- =================================================
+                     CAROUSEL CONTROLS
+                ================================================== --}}
 
-                <div
-                    id="ensSpecialitesCarousel"
-                    class="carousel slide classes-carousel"
-                    data-bs-ride="false"
-                >
+                @if($specialites->count() > 1)
 
-                    <div class="carousel-inner">
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#ensSpecialitesCarousel"
+                        data-bs-slide="prev"
+                    >
+                        <span class="carousel-control-prev-icon"></span>
 
-                        @foreach($specialites as $index => $specialite)
-
-                            <div
-                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
-                            >
-
-                                <div class="mobile-class-card">
-
-                                    <a
-                                        href="{{ route('vitrine.professionnel.ens.niveaux', [
-                                            'formationSlug' => $formation->slug,
-                                            'programmeSlug' => $programme->slug,
-                                            'specialiteSlug' => $specialite->slug
-                                        ]) }}"
-                                        class="class-card"
-                                    >
-
-                                        <div class="class-card-top">
-
-                                            <div class="class-icon">
-                                                {{ $specialite->icon ?? '📚' }}
-                                            </div>
-
-                                            <div class="class-arrow">
-                                                <i class="bi bi-arrow-right"></i>
-                                            </div>
-
-                                        </div>
+                        <span class="visually-hidden">
+                            Précédent
+                        </span>
+                    </button>
 
 
-                                        <div class="class-card-body">
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#ensSpecialitesCarousel"
+                        data-bs-slide="next"
+                    >
+                        <span class="carousel-control-next-icon"></span>
 
-                                            <h3>
-                                                {{ $specialite->name }}
-                                            </h3>
+                        <span class="visually-hidden">
+                            Suivant
+                        </span>
+                    </button>
 
-                                            <p>
-
-                                                <i class="bi bi-bookmark-fill"></i>
-
-                                                Spécialité de formation
-
-                                            </p>
-
-                                        </div>
-
-
-                                        <div class="class-card-footer">
-
-                                            <span>
-                                                Voir les niveaux
-                                            </span>
-
-                                            <i class="bi bi-arrow-right"></i>
-
-                                        </div>
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
-                    </div>
-
-
-                    @if($specialites->count() > 1)
-
-                        <button
-                            class="carousel-control-prev"
-                            type="button"
-                            data-bs-target="#ensSpecialitesCarousel"
-                            data-bs-slide="prev"
-                        >
-
-                            <span class="carousel-control-prev-icon"></span>
-
-                            <span class="visually-hidden">
-                                Précédent
-                            </span>
-
-                        </button>
-
-                        <button
-                            class="carousel-control-next"
-                            type="button"
-                            data-bs-target="#ensSpecialitesCarousel"
-                            data-bs-slide="next"
-                        >
-
-                            <span class="carousel-control-next-icon"></span>
-
-                            <span class="visually-hidden">
-                                Suivant
-                            </span>
-
-                        </button>
-
-                    @endif
-
-                </div>
-
-
-            @else
-
-                <div class="empty-state">
-
-                    <div class="empty-icon">
-                        <i class="bi bi-folder-x"></i>
-                    </div>
-
-                    <h3>
-                        Aucune spécialité disponible
-                    </h3>
-
-                    <p>
-                        Aucune spécialité n'est actuellement disponible
-                        pour ce programme.
-                    </p>
-
-                </div>
-
-            @endif
-
-
-            {{-- RETOUR --}}
-
-            <div class="doc-type-back-container">
-
-                <a
-                    href="{{ route('vitrine.professionnel.ens.programmes', [
-                        'formationSlug' => $formation->slug
-                    ]) }}"
-                    class="doc-type-back-btn"
-                >
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Retour aux programmes
-
-                </a>
+                @endif
 
             </div>
 
-        </div>
 
-    </section>
+        @else
+
+            {{-- =================================================
+                 ÉTAT VIDE
+            ================================================== --}}
+
+            <div class="professionnel-empty">
+
+                <div class="professionnel-empty-icon">
+                    <i class="bi bi-folder-x"></i>
+                </div>
+
+                <h3>
+                    Aucune spécialité disponible
+                </h3>
+
+                <p>
+                    Aucune spécialité n'est actuellement disponible
+                    pour ce programme.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</section>
 
 </div>
 

@@ -19,6 +19,7 @@
     'resources/css/yaascientia-home.css',
     'resources/js/app.js',
     'resources/js/yaascientia-home.js'
+    
     ])
 </head>
 
@@ -140,11 +141,82 @@
                 </a>
 
 
-                @auth
-                <a href="{{ route('profile.edit') }}" class="yaas-nav-link">
-                    Profil
-                </a>
-                @endauth
+@auth
+
+    <div class="yaas-nav-dropdown">
+
+        <button
+            type="button"
+            class="yaas-nav-link yaas-dropdown-trigger
+                {{ request()->routeIs('profile.*') ? 'active' : '' }}"
+        >
+
+            <span>
+                Profil
+            </span>
+
+            <svg viewBox="0 0 24 24">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+
+        </button>
+
+
+        <div class="yaas-dropdown-menu">
+
+            {{-- Mise à jour du profil --}}
+
+            <a
+                href="{{ route('profile.edit') }}"
+                class="yaas-dropdown-item"
+            >
+
+                <span class="yaas-dropdown-icon blue">
+                    👤
+                </span>
+
+                <span>
+                    <strong>
+                        Mise à jour du profil
+                    </strong>
+
+                    <small>
+                        Modifier mes informations
+                    </small>
+                </span>
+
+            </a>
+
+
+            {{-- Mot de passe --}}
+
+            <a
+                href="{{ route('profile.password.edit') }}"
+                class="yaas-dropdown-item"
+            >
+
+                <span class="yaas-dropdown-icon purple">
+                    🔑
+                </span>
+
+                <span>
+                    <strong>
+                        Mot de passe
+                    </strong>
+
+                    <small>
+                        Modifier mon mot de passe
+                    </small>
+                </span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+@endauth
+
 
             </nav>
 
@@ -208,11 +280,11 @@
 
                     <span>Bibliothèque</span>
 
-                    <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
-                       Enseignement général
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-general'])}}">
+                        Enseignement général
                     </a>
 
-                    <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-technique']) }}">
                         Enseignement technique
                     </a>
 
@@ -239,9 +311,29 @@
 
                 @auth
 
-                <a href="{{ route('profile.edit') }}" class="yaas-mobile-link">
-                    Mon profil
-                </a>
+{{-- =================================================
+     PROFIL MOBILE
+================================================= --}}
+
+<div class="yaas-mobile-section">
+
+    <span>
+        Profil
+    </span>
+
+    {{-- Mise à jour du profil --}}
+
+    <a href="{{ route('profile.edit') }}">
+        👤 Mise à jour du profil
+    </a>
+
+    {{-- Mot de passe --}}
+
+    <a href="{{ route('profile.password.edit') }}">
+        🔑 Mot de passe
+    </a>
+
+</div>
 
                 <a href="{{ $dashboardRoute }}" class="yaas-btn yaas-btn-primary yaas-mobile-btn">
                     Tableau de bord
@@ -556,7 +648,7 @@
                 <div class="yaas-category-grid">
 
 
-                    <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}"
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-general']) }}"
                         class="yaas-category-card category-blue">
 
                         <div class="category-number">
@@ -582,7 +674,7 @@
                     </a>
 
 
-                    <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}"
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-technique']) }}"
                         class="yaas-category-card category-orange">
 
                         <div class="category-number">
@@ -664,8 +756,6 @@
 
         </section>
 
-
-
         {{-- ========================================================= --}}
         {{-- DOCUMENTS RECENTS --}}
         {{-- ========================================================= --}}
@@ -711,7 +801,9 @@
 
                             @if($document->cover_image)
 
-                            <img src="{{ asset('storage/'.$document->cover_image) }}" alt="{{ $document->title }}"
+                            <img
+                                src="{{ asset('storage/'.$document->cover_image) }}"
+                                alt="{{ $document->title }}"
                                 loading="lazy">
 
                             @else
@@ -726,13 +818,17 @@
                             <div class="document-type">
 
                                 @if($document->access_type === 'premium')
+
                                 <span class="premium">
                                     PREMIUM
                                 </span>
+
                                 @else
+
                                 <span class="free">
                                     GRATUIT
                                 </span>
+
                                 @endif
 
                             </div>
@@ -765,13 +861,41 @@
                             </p>
 
 
-                            <a href="{{ route('documents.show', $document) }}" class="document-button">
+                            {{-- ACTIONS --}}
+                            @if($document->access_type === 'premium')
 
-                                Consulter
-
+                            <a
+                                href="{{ route(
+                                'payments.create',
+                                ['document' => $document->id]
+                            ) }}"
+                                class="document-button">
+                                Payer
                                 <span>→</span>
-
                             </a>
+
+                            @else
+
+                            <div class="document-actions">
+
+                                <a
+                                    href="{{ route('documents.read', $document) }}"
+                                    target="_blank"
+                                    class="document-button">
+                                    Lire
+                                    <span>→</span>
+                                </a>
+
+                                <a
+                                    href="{{ route('documents.download', $document) }}"
+                                    class="document-button">
+                                    Télécharger
+                                    <span>↓</span>
+                                </a>
+
+                            </div>
+
+                            @endif
 
                         </div>
 
@@ -1011,8 +1135,6 @@
 
     </main>
 
-
-
     {{-- ========================================================= --}}
     {{-- FOOTER --}}
     {{-- ========================================================= --}}
@@ -1078,8 +1200,11 @@
                         Ressources
                     </h4>
 
-                    <a href=href="{{ route('vitrine.secondaire.formation', ['formation' => 'technique']) }}">
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-general']) }}">
                         Enseignement général
+                    </a>
+                    <a href="{{ route('vitrine.secondaire.formation', ['formation' => 'secondaire-technique']) }}">
+                        Enseignement technique
                     </a>
 
                     <a href="{{ route('vitrine.superieur.domaines') }}">
@@ -1124,7 +1249,7 @@
 
                 <span>
                     Développeurs <br>
-                      Lamine SAVADOGO <br> SOME Arsène
+                    Lamine SAVADOGO <br> SOME Arsène
                 </span>
 
             </div>

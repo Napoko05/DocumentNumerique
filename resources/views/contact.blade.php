@@ -1,66 +1,214 @@
 @extends('layouts.app')
 
+@section('title', 'Contactez-nous')
+
 @section('content')
 
-<div class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+<div class="contact-page">
 
-    <div class="mb-8">
-        <p class="text-sm font-semibold text-brand-700 uppercase tracking-wider mb-2">Support</p>
-        <h1 class="font-heading text-2xl sm:text-3xl font-bold text-ink">Contactez-nous</h1>
-        <p class="text-sm text-ink-muted mt-1">Une question ? Écrivez-nous, nous vous répondrons rapidement.</p>
+    <div class="contact-container">
+
+        {{-- En-tête --}}
+        <div class="contact-header">
+
+            <span class="contact-kicker">
+                Support
+            </span>
+
+            <h1 class="contact-title">
+                Contactez-nous
+            </h1>
+
+            <p class="contact-description">
+                Une question ? Écrivez-nous, nous vous répondrons rapidement.
+            </p>
+
+        </div>
+
+
+        {{-- Message de succès --}}
+        @if(session('success'))
+            <div class="contact-alert contact-alert-success" role="alert">
+
+                <span class="contact-alert-icon">
+                    <i class="bi bi-check-circle-fill"></i>
+                </span>
+
+                <span>
+                    {{ session('success') }}
+                </span>
+
+            </div>
+        @endif
+
+
+        {{-- Erreurs de validation --}}
+        @if($errors->any())
+            <div class="contact-alert contact-alert-danger" role="alert">
+
+                <span class="contact-alert-icon">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </span>
+
+                <div>
+                    <strong>
+                        Veuillez corriger les erreurs suivantes :
+                    </strong>
+
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+
+            </div>
+        @endif
+
+
+        {{-- Carte du formulaire --}}
+        <div class="contact-card">
+
+            <form
+                action="{{ route('contact.submit') }}"
+                method="POST"
+                class="contact-form"
+            >
+
+                @csrf
+
+
+                {{-- Nom --}}
+                <div class="contact-field">
+
+                    <label
+                        for="nom"
+                        class="contact-label"
+                    >
+                        Nom & Prenom
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nom"
+                        name="nom"
+                        value="{{ old('nom') }}"
+                        required
+                        autocomplete="name"
+                        placeholder="Votre nom"
+                        class="contact-input @error('nom') is-invalid @enderror"
+                    >
+
+                    @error('nom')
+                        <small class="contact-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+
+                {{-- Email --}}
+                <div class="contact-field">
+
+                    <label
+                        for="email"
+                        class="contact-label"
+                    >
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        required
+                        autocomplete="email"
+                        placeholder="email@exemple.com"
+                        class="contact-input @error('email') is-invalid @enderror"
+                    >
+
+                    @error('email')
+                        <small class="contact-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+
+                {{-- Objet --}}
+                <div class="contact-field">
+
+                    <label
+                        for="objet"
+                        class="contact-label"
+                    >
+                        Objet
+                    </label>
+
+                    <input
+                        type="text"
+                        id="objet"
+                        name="objet"
+                        value="{{ old('objet') }}"
+                        placeholder="Sujet de votre message"
+                        class="contact-input @error('objet') is-invalid @enderror"
+                    >
+
+                    @error('objet')
+                        <small class="contact-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+
+                {{-- Message --}}
+                <div class="contact-field">
+
+                    <label
+                        for="message"
+                        class="contact-label"
+                    >
+                        Message
+                    </label>
+
+                    <textarea
+                        id="message"
+                        name="message"
+                        rows="5"
+                        required
+                        placeholder="Votre message..."
+                        class="contact-textarea @error('message') is-invalid @enderror"
+                    >{{ old('message') }}</textarea>
+
+                    @error('message')
+                        <small class="contact-error">
+                            {{ $message }}
+                        </small>
+                    @enderror
+
+                </div>
+
+
+                {{-- Bouton d'envoi --}}
+                <button
+                    type="submit"
+                    class="contact-submit"
+                >
+                    <i class="bi bi-send-fill"></i>
+                    <span>Envoyer le message</span>
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
 
-    @if(session('success'))
-        <div class="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-sm text-emerald-800">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="mb-6 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-sm text-red-700">
-            <ul class="list-disc list-inside space-y-1">
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-8">
-        <form action="{{ route('contact.submit') }}" method="POST" class="space-y-5">
-            @csrf
-
-            <div>
-                <label class="block text-sm font-medium text-ink mb-1.5">Nom</label>
-                <input type="text" name="nom" value="{{ old('nom') }}" required class="input-field" placeholder="Votre nom">
-                @error('nom') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-ink mb-1.5">Email</label>
-                <input type="email" name="email" value="{{ old('email') }}" required class="input-field" placeholder="email@exemple.com">
-                @error('email') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-ink mb-1.5">Objet</label>
-                <input type="text" name="objet" value="{{ old('objet') }}" class="input-field" placeholder="Sujet de votre message">
-                @error('objet') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium text-ink mb-1.5">Message</label>
-                <textarea name="message" rows="5" required
-                          class="input-field resize-none"
-                          placeholder="Votre message...">{{ old('message') }}</textarea>
-                @error('message') <p class="mt-1 text-xs text-red-600">{{ $message }}</p> @enderror
-            </div>
-
-            <button type="submit" class="btn-primary w-full justify-center">
-                Envoyer le message
-            </button>
-        </form>
-    </div>
 </div>
 
 @endsection

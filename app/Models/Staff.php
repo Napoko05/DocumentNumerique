@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use App\Notifications\JournalistResetPassword;
 
 class Staff extends Authenticatable
 {
@@ -37,6 +38,21 @@ class Staff extends Authenticatable
     {
         return 'staff';
     }
+/**
+ * Envoie le lien personnalisé de réinitialisation
+ * pour les comptes journalistes.
+ */
+public function sendPasswordResetNotification($token): void
+{
+    $url = route('journaliste.password.reset', [
+        'token' => $token,
+        'email' => $this->email,
+    ]);
+
+    $this->notify(
+        new JournalistResetPassword($url)
+    );
+}
 
 
     /*

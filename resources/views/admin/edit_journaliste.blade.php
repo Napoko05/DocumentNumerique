@@ -31,6 +31,71 @@
 
     </div>
 
+    {{-- =========================================================
+     MESSAGES DE SESSION
+========================================================= --}}
+
+    @if(session('success'))
+    <div class="profile-alert profile-alert-success">
+        <div class="profile-alert-icon">
+            ✓
+        </div>
+
+        <div>
+            <strong>Opération réussie</strong>
+            <p>{{ session('success') }}</p>
+        </div>
+    </div>
+    @endif
+
+
+    @if(session('error'))
+    <div class="profile-alert profile-alert-danger">
+        <div class="profile-alert-icon">
+            !
+        </div>
+
+        <div>
+            <strong>Erreur</strong>
+            <p>{{ session('error') }}</p>
+        </div>
+    </div>
+    @endif
+
+
+    {{-- =========================================================
+     ERREURS DE VALIDATION
+========================================================= --}}
+
+    @if($errors->any())
+    <div class="profile-alert profile-alert-danger">
+
+        <div class="profile-alert-icon">
+            !
+        </div>
+
+        <div>
+
+            <strong>
+                Impossible d'enregistrer les modifications
+            </strong>
+
+            <p>
+                Veuillez corriger les erreurs suivantes :
+            </p>
+
+            <ul class="profile-alert-errors">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+
+        </div>
+
+    </div>
+    @endif
+
+
 
     {{-- ========================================================= --}}
     {{-- INFORMATIONS DU PROFIL --}}

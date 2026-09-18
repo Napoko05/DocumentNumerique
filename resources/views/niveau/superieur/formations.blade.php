@@ -1,309 +1,304 @@
 @extends('layouts.app')
 
+@section('title', $domaine->name)
+
 @section('content')
 
 <div class="superieur-page">
 
-<section class="superieur-hero">
-    <div class="container">
+    {{-- =====================================================
+         HERO
+         ===================================================== --}}
+    <section class="superieur-hero">
 
-        <span class="superieur-badge">
-            <i class="bi bi-building-fill"></i>
-            FORMATIONS SUPÉRIEURES
-        </span>
+        <div class="container">
 
-        <h1>
-            @if(!empty($domaine->icon))
-                {{ $domaine->icon }}
-            @else
-                <i class="bi bi-mortarboard-fill"></i>
-            @endif
-
-            {{ $domaine->name }}
-        </h1>
-
-        <p>
-            Choisissez une formation académique.
-        </p>
-
-    </div>
-</section>
-
-<section class="superieur-content">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <div>
-                <span class="section-kicker">
-                    FORMATIONS
-                </span>
-
-                <h2>
-                    Choisissez votre formation
-                </h2>
-            </div>
-
-            <span class="class-count">
-                {{ $formations->count() }}
-                formation{{ $formations->count() > 1 ? 's' : '' }}
+            <span class="superieur-badge">
+                <i class="bi bi-building-fill"></i>
+                Formations supérieures
             </span>
+
+            <h1>
+                @if(!empty($domaine->icon))
+                    {{ $domaine->icon }}
+                @else
+                    <i class="bi bi-mortarboard-fill"></i>
+                @endif
+
+                {{ $domaine->name }}
+            </h1>
 
         </div>
 
-        @if($formations->isNotEmpty())
+    </section>
 
-            <div class="superieur-grid">
 
-                @foreach($formations as $formation)
+    {{-- =====================================================
+         CONTENU
+         ===================================================== --}}
+    <section class="superieur-content">
 
-                    <a
-                        href="{{ route(
-                            'vitrine.superieur.filieres',
-                            [
-                                'domaineSlug' => $domaine->slug,
-                                'formationSlug' => $formation->slug
-                            ]
-                        ) }}"
-                        class="superieur-card"
-                    >
+        <div class="container">
 
-                        <div class="superieur-card-top">
+            {{-- =================================================
+                 RETOUR EN HAUT
+                 ================================================= --}}
+            <div class="superieur-back-wrapper">
 
-                            <div class="superieur-icon">
+                <a
+                    href="{{ route('vitrine.superieur.domaines') }}"
+                    class="superieur-back"
+                    aria-label="Retour aux domaines"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour aux domaines</span>
+                </a>
 
-                                @if(!empty($formation->icon))
-                                    {{ $formation->icon }}
-                                @else
-                                    <i class="bi bi-mortarboard-fill"></i>
+            </div>
+
+
+            {{-- =================================================
+                 EN-TÊTE
+                 ================================================= --}}
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-kicker">
+                        Formations
+                    </span>
+
+                    <h2>
+                        Choisissez votre formation
+                    </h2>
+                </div>
+
+                <span class="class-count">
+                    {{ $formations->count() }}
+                    formation{{ $formations->count() > 1 ? 's' : '' }}
+                </span>
+
+            </div>
+
+
+            {{-- =================================================
+                 FORMATIONS
+                 ================================================= --}}
+            @if($formations->isNotEmpty())
+
+                <div class="superieur-grid">
+
+                    @foreach($formations as $formation)
+
+                        <a
+                            href="{{ route(
+                                'vitrine.superieur.filieres',
+                                [
+                                    'domaineSlug' => $domaine->slug,
+                                    'formationSlug' => $formation->slug
+                                ]
+                            ) }}"
+                            class="superieur-card"
+                        >
+
+                            <div class="superieur-card-top">
+
+                                <div class="superieur-icon">
+
+                                    @if(!empty($formation->icon))
+                                        {{ $formation->icon }}
+                                    @else
+                                        <i class="bi bi-mortarboard-fill"></i>
+                                    @endif
+
+                                </div>
+
+                                <span class="superieur-arrow">
+                                    <i class="bi bi-arrow-up-right"></i>
+                                </span>
+
+                            </div>
+
+
+                            <div class="superieur-card-body">
+
+                                <h3>
+                                    {{ $formation->name }}
+                                </h3>
+
+                                @if(!empty($formation->description))
+
+                                    <p>
+                                        <i class="bi bi-info-circle-fill"></i>
+                                        {{ $formation->description }}
+                                    </p>
+
                                 @endif
 
                             </div>
 
-                            <div class="superieur-arrow">
+
+                            <div class="superieur-card-footer">
+
+                                <span>
+                                    Voir les filières
+                                </span>
+
                                 <i class="bi bi-arrow-right"></i>
-                            </div>
-
-                        </div>
-
-                        <div class="superieur-card-body">
-
-                            <h3>
-                                {{ $formation->name }}
-                            </h3>
-
-                            @if(!empty($formation->description))
-
-                                <p class="superieur-description">
-                                    <i class="bi bi-info-circle-fill"></i>
-                                    {{ $formation->description }}
-                                </p>
-
-                            @else
-
-                                <p>
-                                    <i class="bi bi-mortarboard-fill"></i>
-                                    Formation académique
-                                </p>
-
-                            @endif
-
-                        </div>
-
-                        <div class="superieur-card-footer">
-
-                            <span>
-                                Voir les filières
-                            </span>
-
-                            <i class="bi bi-arrow-right"></i>
-
-                        </div>
-
-                    </a>
-
-                @endforeach
-
-            </div>
-
-
-            {{-- =====================================================
-                 CAROUSEL MOBILE
-                 ===================================================== --}}
-
-            <div
-                id="superieurFormationsCarousel"
-                class="carousel slide superieur-carousel"
-                data-bs-ride="false"
-            >
-
-                <div class="carousel-inner">
-
-                    @foreach($formations as $index => $formation)
-
-                        <div
-                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
-                        >
-
-                            <div class="superieur-carousel-item">
-
-                                <a
-                                    href="{{ route(
-                                        'vitrine.superieur.filieres',
-                                        [
-                                            'domaineSlug' => $domaine->slug,
-                                            'formationSlug' => $formation->slug
-                                        ]
-                                    ) }}"
-                                    class="superieur-card superieur-mobile-card"
-                                >
-
-                                    <div class="superieur-card-top">
-
-                                        <div class="superieur-icon">
-
-                                            @if(!empty($formation->icon))
-                                                {{ $formation->icon }}
-                                            @else
-                                                <i class="bi bi-mortarboard-fill"></i>
-                                            @endif
-
-                                        </div>
-
-                                        <div class="superieur-arrow">
-                                            <i class="bi bi-arrow-right"></i>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="superieur-card-body">
-
-                                        <h3>
-                                            {{ $formation->name }}
-                                        </h3>
-
-                                        @if(!empty($formation->description))
-
-                                            <p class="superieur-description">
-                                                <i class="bi bi-info-circle-fill"></i>
-                                                {{ $formation->description }}
-                                            </p>
-
-                                        @else
-
-                                            <p>
-                                                <i class="bi bi-mortarboard-fill"></i>
-                                                Formation académique
-                                            </p>
-
-                                        @endif
-
-                                    </div>
-
-                                    <div class="superieur-card-footer">
-
-                                        <span>
-                                            Voir les filières
-                                        </span>
-
-                                        <i class="bi bi-arrow-right"></i>
-
-                                    </div>
-
-                                </a>
 
                             </div>
 
-                        </div>
+                        </a>
 
                     @endforeach
 
                 </div>
 
-                @if($formations->count() > 1)
 
-                    <button
-                        class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#superieurFormationsCarousel"
-                        data-bs-slide="prev"
-                    >
+                {{-- =================================================
+                     CAROUSEL MOBILE
+                     ================================================= --}}
+                <div
+                    id="superieurFormationsCarousel"
+                    class="carousel slide superieur-carousel"
+                    data-bs-ride="false"
+                >
 
-                        <span
-                            class="carousel-control-prev-icon"
-                            aria-hidden="true"
-                        ></span>
+                    <div class="carousel-inner">
 
-                        <span class="visually-hidden">
-                            Précédent
-                        </span>
+                        @foreach($formations as $index => $formation)
 
-                    </button>
+                            <div
+                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                            >
 
-                    <button
-                        class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#superieurFormationsCarousel"
-                        data-bs-slide="next"
-                    >
+                                <div class="superieur-carousel-item">
 
-                        <span
-                            class="carousel-control-next-icon"
-                            aria-hidden="true"
-                        ></span>
+                                    <a
+                                        href="{{ route(
+                                            'vitrine.superieur.filieres',
+                                            [
+                                                'domaineSlug' => $domaine->slug,
+                                                'formationSlug' => $formation->slug
+                                            ]
+                                        ) }}"
+                                        class="superieur-card superieur-mobile-card"
+                                    >
 
-                        <span class="visually-hidden">
-                            Suivant
-                        </span>
+                                        <div class="superieur-card-top">
 
-                    </button>
+                                            <div class="superieur-icon">
 
-                @endif
+                                                @if(!empty($formation->icon))
+                                                    {{ $formation->icon }}
+                                                @else
+                                                    <i class="bi bi-mortarboard-fill"></i>
+                                                @endif
 
-            </div>
+                                            </div>
 
-        @else
+                                            <span class="superieur-arrow">
+                                                <i class="bi bi-arrow-up-right"></i>
+                                            </span>
 
-            <div class="superieur-empty">
+                                        </div>
 
-                <div class="superieur-empty-icon">
-                    <i class="bi bi-folder-x"></i>
+
+                                        <div class="superieur-card-body">
+
+                                            <h3>
+                                                {{ $formation->name }}
+                                            </h3>
+
+                                            @if(!empty($formation->description))
+
+                                                <p>
+                                                    <i class="bi bi-info-circle-fill"></i>
+                                                    {{ $formation->description }}
+                                                </p>
+
+                                            @endif
+
+                                        </div>
+
+
+                                        <div class="superieur-card-footer">
+
+                                            <span>
+                                                Voir les filières
+                                            </span>
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+
+                    @if($formations->count() > 1)
+
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#superieurFormationsCarousel"
+                            data-bs-slide="prev"
+                        >
+                            <span
+                                class="carousel-control-prev-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                            <span class="visually-hidden">
+                                Précédent
+                            </span>
+                        </button>
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#superieurFormationsCarousel"
+                            data-bs-slide="next"
+                        >
+                            <span
+                                class="carousel-control-next-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                            <span class="visually-hidden">
+                                Suivant
+                            </span>
+                        </button>
+
+                    @endif
+
                 </div>
 
-                <h3>
-                    Aucune formation disponible
-                </h3>
+            @else
 
-                <p>
-                    Aucune formation n'est actuellement disponible
-                    dans ce domaine.
-                </p>
+                <div class="superieur-empty">
 
-            </div>
+                    <div class="superieur-empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
 
-        @endif
+                    <h3>
+                        Aucune formation disponible
+                    </h3>
 
+                </div>
 
-        {{-- =========================================================
-             RETOUR
-             ========================================================= --}}
-
-        <div class="doc-type-back-container">
-
-            <a
-                href="{{ route('vitrine.superieur.domaines') }}"
-                class="doc-type-back-btn"
-            >
-                <i class="bi bi-arrow-left"></i>
-                Retour aux domaines
-            </a>
+            @endif
 
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 </div>
 

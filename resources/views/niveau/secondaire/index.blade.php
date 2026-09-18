@@ -1,232 +1,250 @@
 @extends('layouts.app')
 
-@section('title', 'Enseignement secondaire')
+@section('title', 'Enseignement général')
 
 @section('content')
 
-<div class="formation-page">
+<div class="secondaire-page">
 
-{{-- HEADER --}}
-<section class="formation-hero">
-    <div class="container">
+    {{-- HEADER --}}
+    <section class="secondaire-hero">
+        <div class="container">
 
-        <div class="formation-badge">
-            <i class="bi bi-mortarboard-fill"></i>
-            Enseignement géneral
-        </div>
-
-        <h1>
-            Enseignement géneral
-        </h1>
-
-        <p>
-            Explorez les formations de l’enseignement secondaire
-            et accédez aux ressources pédagogiques adaptées
-            à chaque niveau d’étude.
-        </p>
-
-    </div>
-</section>
-
-{{-- CONTENU --}}
-<section class="formation-content">
-
-    <div class="container">
-
-        <div class="section-heading">
-
-            <div>
-                <span class="section-kicker">
-                    PARCOURS PÉDAGOGIQUE
-                </span>
-
-                <h2>
-                    Formations disponibles
-                </h2>
+            <div class="secondaire-badge">
+                <i class="bi bi-mortarboard-fill"></i>
+                Enseignement général
             </div>
 
-            <span class="class-count">
-                {{ $formations->count() }}
-                {{ $formations->count() > 1 ? 'formations' : 'formation' }}
-            </span>
+            <h1>
+                Enseignement général
+            </h1>
+
+            <p>
+                Explorez les formations de l’enseignement secondaire
+                et accédez aux ressources pédagogiques adaptées
+                à chaque niveau d’étude.
+            </p>
 
         </div>
+    </section>
 
-        @if($formations->count())
+
+    {{-- CONTENU --}}
+    <section class="secondaire-content">
+
+        <div class="container">
+            {{-- RETOUR --}}
+            <div class="secondaire-back-wrapper">
+
+                <a
+                    href="{{ url('/') }}"
+                    class="professionnel-back"
+                    aria-label="Retour à l'accueil">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour a l'acceuil</span>
+                </a>
+
+            </div>
+
+            {{-- TITRE --}}
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-kicker">
+                        PARCOURS PÉDAGOGIQUE
+                    </span>
+
+                    <h2>
+                        Formations disponibles
+                    </h2>
+                </div>
+
+                <span class="class-count">
+                    {{ $formations->count() }}
+                    {{ $formations->count() > 1 ? 'formations' : 'formation' }}
+                </span>
+
+            </div>
+
+
+            @if($formations->count())
 
             {{-- DESKTOP / TABLET --}}
-            <div class="classes-grid">
+            <div class="secondaire-grid">
 
                 @foreach($formations as $formation)
 
-                    <a
-                        href="{{ route(
-                            'vitrine.secondaire.formation',
-                            [
-                                'formation' => $formation->slug,
-                            ]
-                        ) }}"
-                        class="class-card"
-                    >
+                <a
+                    href="{{ route(
+                                'vitrine.secondaire.formation',
+                                [
+                                    'formation' => $formation->slug,
+                                ]
+                            ) }}"
+                    class="secondaire-card">
 
-                        <div class="class-card-top">
+                    <div class="secondaire-card-top">
 
-                            <div class="class-icon">
-                                <i class="bi bi-mortarboard-fill"></i>
-                            </div>
-
-                            <span class="class-arrow">
-                                <i class="bi bi-arrow-up-right"></i>
-                            </span>
-
+                        <div class="secondaire-icon">
+                            <i class="bi bi-mortarboard-fill"></i>
                         </div>
 
-                        <div class="class-card-body">
+                        <span class="secondaire-arrow">
+                            <i class="bi bi-arrow-up-right"></i>
+                        </span>
 
-                            <h3>
-                                {{ $formation->name }}
-                            </h3>
+                    </div>
 
-                            <p>
-                                <i class="bi bi-layers"></i>
 
-                                {{ $formation->levels_count }}
+                    <div class="secondaire-card-body">
 
-                                {{ $formation->levels_count > 1
-                                    ? 'niveaux disponibles'
-                                    : 'niveau disponible'
-                                }}
-                            </p>
+                        <h3>
+                            {{ $formation->name }}
+                        </h3>
 
-                        </div>
+                        <p>
+                            <i class="bi bi-layers"></i>
 
-                        <div class="class-card-footer">
+                            {{ $formation->levels_count }}
 
-                            <span>
-                                Consulter les niveaux
-                            </span>
+                            {{ $formation->levels_count > 1
+                                        ? 'niveaux disponibles'
+                                        : 'niveau disponible'
+                                    }}
+                        </p>
 
-                            <i class="bi bi-arrow-right"></i>
+                    </div>
 
-                        </div>
 
-                    </a>
+                    <div class="secondaire-card-footer">
+
+                        <span>
+                            Consulter les niveaux
+                        </span>
+
+                        <i class="bi bi-arrow-right"></i>
+
+                    </div>
+
+                </a>
 
                 @endforeach
 
             </div>
 
+
             {{-- MOBILE CAROUSEL --}}
             <div
                 id="formationsCarousel"
-                class="carousel slide classes-carousel"
-                data-bs-ride="false"
-            >
+                class="carousel slide secondaire-carousel"
+                data-bs-ride="false">
 
                 <div class="carousel-inner">
 
                     @foreach($formations as $index => $formation)
 
-                        <div
-                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
-                        >
+                    <div
+                        class="carousel-item secondaire-carousel-item {{ $index === 0 ? 'active' : '' }}">
 
-                            <a
-                                href="{{ route(
-                                    'vitrine.secondaire.formation',
-                                    [
-                                        'formation' => $formation->slug,
-                                    ]
-                                ) }}"
-                                class="class-card mobile-class-card"
-                            >
+                        <a
+                            href="{{ route(
+                                        'vitrine.secondaire.formation',
+                                        [
+                                            'formation' => $formation->slug,
+                                        ]
+                                    ) }}"
+                            class="secondaire-mobile-card">
 
-                                <div class="class-card-top">
+                            <div class="secondaire-card-top">
 
-                                    <div class="class-icon">
-                                        <i class="bi bi-mortarboard-fill"></i>
-                                    </div>
-
-                                    <span class="class-arrow">
-                                        <i class="bi bi-arrow-up-right"></i>
-                                    </span>
-
+                                <div class="secondaire-icon">
+                                    <i class="bi bi-mortarboard-fill"></i>
                                 </div>
 
-                                <div class="class-card-body">
+                                <span class="secondaire-arrow">
+                                    <i class="bi bi-arrow-up-right"></i>
+                                </span>
 
-                                    <h3>
-                                        {{ $formation->name }}
-                                    </h3>
+                            </div>
 
-                                    <p>
-                                        <i class="bi bi-layers"></i>
 
-                                        {{ $formation->levels_count }}
+                            <div class="secondaire-card-body">
 
-                                        {{ $formation->levels_count > 1
-                                            ? 'niveaux disponibles'
-                                            : 'niveau disponible'
-                                        }}
-                                    </p>
+                                <h3>
+                                    {{ $formation->name }}
+                                </h3>
 
-                                </div>
+                                <p>
+                                    <i class="bi bi-layers"></i>
 
-                                <div class="class-card-footer">
+                                    {{ $formation->levels_count }}
 
-                                    <span>
-                                        Consulter les niveaux
-                                    </span>
+                                    {{ $formation->levels_count > 1
+                                                ? 'niveaux disponibles'
+                                                : 'niveau disponible'
+                                            }}
+                                </p>
 
-                                    <i class="bi bi-arrow-right"></i>
+                            </div>
 
-                                </div>
 
-                            </a>
+                            <div class="secondaire-card-footer">
 
-                        </div>
+                                <span>
+                                    Consulter les niveaux
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+                        </a>
+
+                    </div>
 
                     @endforeach
 
                 </div>
 
+
                 @if($formations->count() > 1)
 
-                    <button
-                        class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#formationsCarousel"
-                        data-bs-slide="prev"
-                    >
-                        <span class="carousel-control-prev-icon"></span>
+                <button
+                    class="carousel-control-prev"
+                    type="button"
+                    data-bs-target="#formationsCarousel"
+                    data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
 
-                        <span class="visually-hidden">
-                            Précédent
-                        </span>
-                    </button>
+                    <span class="visually-hidden">
+                        Précédent
+                    </span>
+                </button>
 
-                    <button
-                        class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#formationsCarousel"
-                        data-bs-slide="next"
-                    >
-                        <span class="carousel-control-next-icon"></span>
 
-                        <span class="visually-hidden">
-                            Suivant
-                        </span>
-                    </button>
+                <button
+                    class="carousel-control-next"
+                    type="button"
+                    data-bs-target="#formationsCarousel"
+                    data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+
+                    <span class="visually-hidden">
+                        Suivant
+                    </span>
+                </button>
 
                 @endif
 
             </div>
 
-        @else
 
-            <div class="empty-state">
+            @else
 
-                <div class="empty-icon">
+            {{-- AUCUNE FORMATION --}}
+            <div class="secondaire-empty">
+
+                <div class="secondaire-icon">
                     <i class="bi bi-mortarboard"></i>
                 </div>
 
@@ -235,30 +253,19 @@
                 </h3>
 
                 <p>
-                    Les formations de l’enseignement général et technique
+                    Les formations de l’enseignement général
                     apparaîtront ici lorsqu’elles seront disponibles.
                 </p>
 
             </div>
 
-        @endif
+            @endif
 
-    </div>
+        </div>
 
-</section>
+    </section>
 
-{{-- RETOUR --}}
-<div class="container">
 
-    <a
-        href="{{ route('vitrine.secondaire.index') }}"
-        class="vitrine-back"
-    >
-        <i class="bi bi-arrow-left"></i>
-        Retour aux formations
-    </a>
-
-</div>
 
 </div>
 

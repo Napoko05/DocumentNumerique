@@ -76,7 +76,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])
         ->middleware('throttle:5,1');
 
-
     // =========================
     // INSCRIPTION
     // =========================
@@ -87,7 +86,6 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisterController::class, 'register'])
         ->middleware('throttle:5,1');
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -101,34 +99,117 @@ Route::post('/logout', [LoginController::class, 'logout'])
 
 /*
 |--------------------------------------------------------------------------
-| UTILISATEUR CONNECTÉ
+| RÉCUPÉRATION DU MOT DE PASSE — UTILISATEUR STANDARD
 |--------------------------------------------------------------------------
 */
 
+Route::middleware('web')
+    ->controller(ProfileController::class)
+    ->group(function () {
+
+        Route::get(
+            '/mot-de-passe-oublie',
+            'showForgotPasswordForm'
+        )->name('password.request');
+
+        Route::post(
+            '/mot-de-passe-oublie',
+            'sendResetLink'
+        )->name('password.email');
+
+        Route::get(
+            '/reinitialiser-mot-de-passe/{token}',
+            'showResetPasswordForm'
+        )->name('password.reset');
+
+        Route::post(
+            '/reinitialiser-mot-de-passe',
+            'resetPassword'
+        )->name('password.update');
+    });
+
+// =========================================================
+// JOURNALISTE — ESPACE CONNECTÉ
+// =========================================================
+
 Route::prefix('journaliste')
     ->name('journaliste.')
-    ->middleware(['auth:staff', 'role:journalist'])
+    ->middleware([
+        'auth:staff',
+        'role:journalist',
+    ])
     ->controller(JournalistController::class)
     ->group(function () {
+
+        // =====================================================
+        // TABLEAU DE BORD
+        // =====================================================
 
         Route::get('/dashboard', 'dashboard')
             ->name('dashboard');
 
+        // =====================================================
+        // UTILISATEURS
+        // =====================================================
+
         Route::get('/users', 'users')
             ->name('users');
 
+        // =====================================================
+        // DOCUMENTS
+        // =====================================================
 
         Route::get('/documents', 'documents')
             ->name('documents');
 
+        // =====================================================
+        // STATISTIQUES
+        // =====================================================
 
         Route::get('/statistiques', 'statistiques')
             ->name('statistiques');
 
-
         Route::get('/profil', 'profil')
             ->name('profil');
+
+        Route::put('/profil', 'updateProfil')
+            ->name('profil.update');
+
+        Route::get('/profil/password', 'editPassword')
+            ->name('profil.password.edit');
+
+        Route::put('/profil/password', 'updatePassword')
+            ->name('profil.password.update');
     });
+
+
+// =========================================================
+// MOT DE PASSE OUBLIÉ — JOURNALISTE
+// =========================================================
+
+Route::prefix('journaliste')
+    ->name('journaliste.')
+    ->controller(JournalistController::class)
+    ->group(function () {
+
+
+        Route::get('/mot-de-passe-oublie', 'showForgotPasswordForm')
+            ->name('password.request');
+
+        Route::post('/mot-de-passe-oublie', 'sendResetLink')
+            ->name('password.email');
+
+        Route::get(
+            '/reinitialiser-mot-de-passe/{token}',
+            'showResetPasswordForm'
+        )->name('password.reset');
+
+        Route::post(
+            '/reinitialiser-mot-de-passe',
+            'resetPassword'
+        )->name('password.update');
+    });
+
 
 /*
 |--------------------------------------------------------------------------
@@ -244,9 +325,6 @@ Route::prefix('admin')
         Route::post('/roles/edit', [RoleController::class, 'edit'])
             ->name('roles.edit');
 
-
-
-
         /*
         |--------------------------------------------------------------------------
         | PERMISSIONS
@@ -288,6 +366,31 @@ Route::prefix('admin')
             ->name('products.destroy');
     });
 
+
+/*==========================
+     Edition du profile user
+     =========================
+     */
+
+Route::middleware('auth')->group(function () {
+
+
+    // Informations personnelles
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    // Mot de passe — page séparée
+    Route::get('/profile/password', [ProfileController::class, 'editPassword'])
+        ->name('profile.password.edit');
+
+    Route::patch('/profile/password', [ProfileController::class, 'updatePassword'])
+        ->name('profile.password.update');
+});
+
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN — ENSEIGNEMENT SECONDAIRE
@@ -315,13 +418,11 @@ Route::prefix('admin/secondaire')
             [LevelController::class, 'toggle']
         )->name('classes.toggle');
 
-
         /*
         |--------------------------------------------------------------------------
         | MATIÈRES
         |--------------------------------------------------------------------------
         */
-
         Route::resource('matieres', SubjectController::class);
 
         Route::patch(
@@ -387,37 +488,6 @@ Route::prefix('admin/superieur')
         )->name('modules.destroy');
     });
 
-/*====================================
-      profil personnel journaliste
-    */
-
-Route::middleware(['auth', 'verified'])->group(function () {
-
-    Route::get('/profil', [
-        JournalistController::class,
-        'profile'
-    ])->name('profil');
-
-    Route::get('/profil/edit', [
-        JournalistController::class,
-        'edit'
-    ])->name('profile.edit');
-
-    Route::put('/profil', [
-        JournalistController::class,
-        'updateProfile'
-    ])->name('profile.update');
-
-    Route::put('/profil/password', [
-        JournalistController::class,
-        'updatePassword'
-    ])->name('journaliste.password.update');
-
-    Route::delete('/profil', [
-        JournalistController::class,
-        'destroy'
-    ])->name('profile.destroy');
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -776,10 +846,13 @@ Route::prefix('journaliste')
             [DocumentController::class, 'getSubjectsByLevel']
         )->name('ajax.subjects');
     });
-/*
+
+
+/*================================================
 |--------------------------------------------------------------------------
 | DOCUMENTS PUBLICS
 |--------------------------------------------------------------------------
+==================================================
 */
 Route::get('/documents', [PublicDocumentController::class, 'index'])
     ->name('documents.index');
@@ -789,8 +862,10 @@ Route::get('/documents/{document}', [PublicDocumentController::class, 'show'])
 
 Route::get('/documents/{document}/read', [PublicDocumentController::class, 'read'])
     ->name('documents.read');
-
-
+Route::get(
+    '/documents/{document}/download',
+    [PublicDocumentController::class, 'download']
+)->name('documents.download');
 
 /*
 |--------------------------------------------------------------------------

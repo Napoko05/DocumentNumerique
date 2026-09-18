@@ -1,307 +1,280 @@
 @extends('layouts.app')
 
+@section('title', $domaine->name . ' — Filières')
+
 @section('content')
 
 <div class="superieur-page">
 
-<section class="superieur-hero">
-    <div class="container">
+    {{-- HERO --}}
+    <section class="superieur-hero">
+        <div class="container">
 
-        <span class="superieur-badge">
-            <i class="bi bi-diagram-3-fill"></i>
-            FILIÈRES
-        </span>
+            <span class="superieur-badge">
+                <i class="bi bi-diagram-3-fill"></i>
+                Filières
+            </span>
 
-        <h1>
-            @if(!empty($domaine->icon))
-                {{ $domaine->icon }}
-            @else
-                <i class="bi bi-mortarboard-fill"></i>
-            @endif
-            {{ $domaine->name }}
-        </h1>
+            <h1>
+                @if(!empty($domaine->icon))
+                    {{ $domaine->icon }}
+                @else
+                    <i class="bi bi-mortarboard-fill"></i>
+                @endif
+                {{ $domaine->name }}
+            </h1>
 
-        <p>
-            Découvrez les filières disponibles dans ce domaine académique.
-        </p>
-
-    </div>
-</section>
+        </div>
+    </section>
 
 
-<section class="superieur-content">
-    <div class="container">
+    {{-- CONTENU --}}
+    <section class="superieur-content">
+        <div class="container">
 
-        <div class="section-heading">
+            {{-- RETOUR --}}
+            <div class="superieur-back-wrapper">
+                <a
+                    href="{{ route('vitrine.superieur.domaines') }}"
+                    class="superieur-back"
+                    aria-label="Retour aux domaines"
+                >
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Retour aux domaines</span>
+                </a>
+            </div>
 
-            <div>
 
-                <span class="section-kicker">
-                    PARCOURS ACADÉMIQUE
+            {{-- EN-TÊTE --}}
+            <div class="section-heading">
+
+                <div>
+                    <span class="section-kicker">
+                        Parcours académique
+                    </span>
+
+                    <h2>
+                        Choisissez une filière
+                    </h2>
+                </div>
+
+                <span class="class-count">
+                    {{ $filieres->count() }}
+                    filière{{ $filieres->count() > 1 ? 's' : '' }}
                 </span>
-
-                <h2>
-                    Choisissez une filière
-                </h2>
 
             </div>
 
-            <span class="class-count">
-                {{ $filieres->count() }}
-                filière{{ $filieres->count() > 1 ? 's' : '' }}
-            </span>
 
-        </div>
+            @if($filieres->isNotEmpty())
+
+                {{-- GRILLE --}}
+                <div class="superieur-grid">
+
+                    @foreach($filieres as $filiere)
+
+                        <a
+                            href="{{ route(
+                                'vitrine.superieur.niveaux',
+                                [
+                                    'domaineSlug' => $domaine->slug,
+                                    'filiereSlug' => $filiere->slug
+                                ]
+                            ) }}"
+                            class="superieur-card"
+                        >
+
+                            <div class="superieur-card-top">
+
+                                <div class="superieur-icon">
+                                    @if(!empty($filiere->icon))
+                                        {{ $filiere->icon }}
+                                    @else
+                                        <i class="bi bi-diagram-3-fill"></i>
+                                    @endif
+                                </div>
+
+                                <span class="superieur-arrow">
+                                    <i class="bi bi-arrow-up-right"></i>
+                                </span>
+
+                            </div>
 
 
-        @if($filieres->isNotEmpty())
+                            <div class="superieur-card-body">
 
-            <div class="superieur-grid">
+                                <h3>
+                                    {{ $filiere->name }}
+                                </h3>
 
-                @foreach($filieres as $filiere)
-
-                    <a
-                        href="{{ route(
-                            'vitrine.superieur.niveaux',
-                            [
-                                'domaineSlug' => $domaine->slug,
-                                'filiereSlug' => $filiere->slug
-                            ]
-                        ) }}"
-                        class="superieur-card"
-                    >
-
-                        <div class="superieur-card-top">
-
-                            <div class="superieur-icon">
-
-                                @if(!empty($filiere->icon))
-                                    {{ $filiere->icon }}
-                                @else
-                                    <i class="bi bi-diagram-3-fill"></i>
+                                @if(!empty($filiere->description))
+                                    <p>
+                                        <i class="bi bi-info-circle-fill"></i>
+                                        {{ $filiere->description }}
+                                    </p>
                                 @endif
 
                             </div>
 
-                            <div class="superieur-arrow">
+
+                            <div class="superieur-card-footer">
+
+                                <span>
+                                    Voir les niveaux
+                                </span>
+
                                 <i class="bi bi-arrow-right"></i>
-                            </div>
-
-                        </div>
-
-
-                        <div class="superieur-card-body">
-
-                            <h3>
-                                {{ $filiere->name }}
-                            </h3>
-
-                            <p>
-                                <i class="bi bi-diagram-3-fill"></i>
-                                Filière de formation
-                            </p>
-
-                            @if(!empty($filiere->description))
-
-                                <p class="superieur-description">
-                                    {{ $filiere->description }}
-                                </p>
-
-                            @endif
-
-                        </div>
-
-
-                        <div class="superieur-card-footer">
-
-                            <span>
-                                Voir les niveaux
-                            </span>
-
-                            <i class="bi bi-arrow-right"></i>
-
-                        </div>
-
-                    </a>
-
-                @endforeach
-
-            </div>
-
-
-            <div
-                id="superieurFilieresCarousel"
-                class="carousel slide superieur-carousel"
-                data-bs-ride="false"
-            >
-
-                <div class="carousel-inner">
-
-                    @foreach($filieres as $index => $filiere)
-
-                        <div
-                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
-                        >
-
-                            <div class="superieur-carousel-item">
-
-                                <a
-                                    href="{{ route(
-                                        'vitrine.superieur.niveaux',
-                                        [
-                                            'domaineSlug' => $domaine->slug,
-                                            'filiereSlug' => $filiere->slug
-                                        ]
-                                    ) }}"
-                                    class="superieur-card superieur-mobile-card"
-                                >
-
-                                    <div class="superieur-card-top">
-
-                                        <div class="superieur-icon">
-
-                                            @if(!empty($filiere->icon))
-                                                {{ $filiere->icon }}
-                                            @else
-                                                <i class="bi bi-diagram-3-fill"></i>
-                                            @endif
-
-                                        </div>
-
-                                        <div class="superieur-arrow">
-                                            <i class="bi bi-arrow-right"></i>
-                                        </div>
-
-                                    </div>
-
-
-                                    <div class="superieur-card-body">
-
-                                        <h3>
-                                            {{ $filiere->name }}
-                                        </h3>
-
-                                        <p>
-                                            <i class="bi bi-diagram-3-fill"></i>
-                                            Filière de formation
-                                        </p>
-
-                                        @if(!empty($filiere->description))
-
-                                            <p class="superieur-description">
-                                                {{ $filiere->description }}
-                                            </p>
-
-                                        @endif
-
-                                    </div>
-
-
-                                    <div class="superieur-card-footer">
-
-                                        <span>
-                                            Voir les niveaux
-                                        </span>
-
-                                        <i class="bi bi-arrow-right"></i>
-
-                                    </div>
-
-                                </a>
 
                             </div>
 
-                        </div>
+                        </a>
 
                     @endforeach
 
                 </div>
 
 
-                @if($filieres->count() > 1)
+                {{-- CAROUSEL MOBILE --}}
+                <div
+                    id="superieurFilieresCarousel"
+                    class="carousel slide superieur-carousel"
+                    data-bs-ride="false"
+                >
 
-                    <button
-                        class="carousel-control-prev"
-                        type="button"
-                        data-bs-target="#superieurFilieresCarousel"
-                        data-bs-slide="prev"
-                    >
+                    <div class="carousel-inner">
 
-                        <span
-                            class="carousel-control-prev-icon"
-                            aria-hidden="true"
-                        ></span>
+                        @foreach($filieres as $index => $filiere)
 
-                        <span class="visually-hidden">
-                            Précédent
-                        </span>
+                            <div
+                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
+                            >
 
-                    </button>
+                                <div class="superieur-carousel-item">
+
+                                    <a
+                                        href="{{ route(
+                                            'vitrine.superieur.niveaux',
+                                            [
+                                                'domaineSlug' => $domaine->slug,
+                                                'filiereSlug' => $filiere->slug
+                                            ]
+                                        ) }}"
+                                        class="superieur-card superieur-mobile-card"
+                                    >
+
+                                        <div class="superieur-card-top">
+
+                                            <div class="superieur-icon">
+                                                @if(!empty($filiere->icon))
+                                                    {{ $filiere->icon }}
+                                                @else
+                                                    <i class="bi bi-diagram-3-fill"></i>
+                                                @endif
+                                            </div>
+
+                                            <span class="superieur-arrow">
+                                                <i class="bi bi-arrow-up-right"></i>
+                                            </span>
+
+                                        </div>
 
 
-                    <button
-                        class="carousel-control-next"
-                        type="button"
-                        data-bs-target="#superieurFilieresCarousel"
-                        data-bs-slide="next"
-                    >
+                                        <div class="superieur-card-body">
 
-                        <span
-                            class="carousel-control-next-icon"
-                            aria-hidden="true"
-                        ></span>
+                                            <h3>
+                                                {{ $filiere->name }}
+                                            </h3>
 
-                        <span class="visually-hidden">
-                            Suivant
-                        </span>
+                                            @if(!empty($filiere->description))
+                                                <p>
+                                                    <i class="bi bi-info-circle-fill"></i>
+                                                    {{ $filiere->description }}
+                                                </p>
+                                            @endif
 
-                    </button>
+                                        </div>
 
-                @endif
 
-            </div>
+                                        <div class="superieur-card-footer">
 
-        @else
+                                            <span>
+                                                Voir les niveaux
+                                            </span>
 
-            <div class="superieur-empty">
+                                            <i class="bi bi-arrow-right"></i>
 
-                <div class="superieur-empty-icon">
-                    <i class="bi bi-folder-x"></i>
+                                        </div>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+
+                    @if($filieres->count() > 1)
+
+                        <button
+                            class="carousel-control-prev"
+                            type="button"
+                            data-bs-target="#superieurFilieresCarousel"
+                            data-bs-slide="prev"
+                        >
+                            <span
+                                class="carousel-control-prev-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                            <span class="visually-hidden">
+                                Précédent
+                            </span>
+                        </button>
+
+
+                        <button
+                            class="carousel-control-next"
+                            type="button"
+                            data-bs-target="#superieurFilieresCarousel"
+                            data-bs-slide="next"
+                        >
+                            <span
+                                class="carousel-control-next-icon"
+                                aria-hidden="true"
+                            ></span>
+
+                            <span class="visually-hidden">
+                                Suivant
+                            </span>
+                        </button>
+
+                    @endif
+
                 </div>
 
-                <h3>
-                    Aucune filière disponible
-                </h3>
 
-                <p>
-                    Aucune filière académique n'est actuellement disponible
-                    dans ce domaine.
-                </p>
+            @else
 
-            </div>
+                {{-- ÉTAT VIDE --}}
+                <div class="superieur-empty">
 
-        @endif
+                    <div class="superieur-empty-icon">
+                        <i class="bi bi-folder-x"></i>
+                    </div>
 
+                    <h3>
+                        Aucune filière disponible
+                    </h3>
 
-        <div class="superieur-back-container">
+                </div>
 
-            <a
-                href="{{ route(
-                    'vitrine.superieur.domaines'
-                ) }}"
-                class="superieur-back-btn"
-            >
-
-                <i class="bi bi-arrow-left"></i>
-
-                Retour aux domaines
-
-            </a>
+            @endif
 
         </div>
-
-    </div>
-</section>
+    </section>
 
 </div>
 

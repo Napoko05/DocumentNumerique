@@ -1,14 +1,18 @@
+
 @extends('layouts.app')
 
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    <section class="formation-hero">
+    {{-- =========================================================
+         HERO
+    ========================================================== --}}
+    <section class="professionnel-hero">
 
         <div class="container">
 
-            <span class="formation-badge">
+            <span class="professionnel-badge">
                 <i class="bi bi-file-earmark-text-fill"></i>
                 DOCUMENTS ENEP
             </span>
@@ -30,15 +34,22 @@
 
     </section>
 
-    <section class="formation-content">
+
+    {{-- =========================================================
+         CONTENU
+    ========================================================== --}}
+    <section class="professionnel-content">
 
         <div class="container">
 
-            <div class="section-heading">
+            {{-- =================================================
+                 EN-TÊTE
+            ================================================== --}}
+            <div class="professionnel-section-heading">
 
                 <div>
 
-                    <span class="section-kicker">
+                    <span class="professionnel-section-kicker">
                         RESSOURCES PÉDAGOGIQUES
                     </span>
 
@@ -48,7 +59,7 @@
 
                 </div>
 
-                <span class="class-count">
+                <span class="professionnel-count">
 
                     {{ $documents->count() }}
 
@@ -58,86 +69,128 @@
 
             </div>
 
+
+            {{-- =================================================
+                 DOCUMENTS
+            ================================================== --}}
             @if($documents->isNotEmpty())
 
-            <div class="classes-grid">
+                <div class="professionnel-grid">
 
-                @foreach($documents as $document)
-                <a
-                    href="{{ route('vitrine.professionnel.enep.show', [
-        'formationSlug' => $formation->slug,
-        'niveauSlug' => $niveau->slug,
-        'moduleSlug' => $module->slug,
-        'typeSlug' => $documentType->slug,
-        'documentSlug' => $document->slug
-    ]) }}"
-                    class="class-card">
-                    <div class="class-card-top">
+                    @foreach($documents as $document)
 
-                        <div class="class-icon">
-                            📄
+                        <div class="professionnel-card">
+
+                            {{-- =================================================
+                                 HAUT DE LA CARTE
+                            ================================================== --}}
+                            <div class="professionnel-card-top">
+
+                                <div class="professionnel-icon">
+                                    📄
+                                </div>
+
+
+                                {{-- STATUT --}}
+                                @if($document->isPremium())
+
+                                    <span class="document-premium-badge">
+                                        <i class="bi bi-lock-fill"></i>
+                                        PREMIUM
+                                    </span>
+
+                                @else
+
+                                    <span class="document-free-badge">
+                                        GRATUIT
+                                    </span>
+
+                                @endif
+
+                            </div>
+
+
+                            {{-- =================================================
+                                 CORPS
+                            ================================================== --}}
+                            <div class="professionnel-card-body">
+
+                                <h3>
+                                    {{ $document->title }}
+                                </h3>
+
+                                <p>
+
+                                    <i class="bi bi-info-circle"></i>
+
+                                    {{ $document->description ?: 'Document pédagogique disponible.' }}
+
+                                </p>
+
+                            </div>
+
+
+                            {{-- =================================================
+                                 BOUTONS D'ACTION
+                            ================================================== --}}
+                            <div class="professionnel-card-footer document-actions">
+
+                                <a
+                                    href="{{ route('documents.read', $document) }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="document-view-btn"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                    Ouvrir
+                                </a>
+
+
+                                <a
+                                    href="{{ route('documents.download', $document) }}"
+                                    class="document-download-btn"
+                                >
+                                    <i class="bi bi-download"></i>
+                                    Télécharger
+                                </a>
+
+                            </div>
+
                         </div>
 
-                        <div class="class-arrow">
-                            <i class="bi bi-arrow-right"></i>
-                        </div>
+                    @endforeach
 
-                    </div>
-
-                    <div class="class-card-body">
-
-                        <h3>
-                            {{ $document->title }}
-                        </h3>
-
-                        <p>
-
-                            <i class="bi bi-info-circle"></i>
-
-                            {{ $document->description ?: 'Document pédagogique disponible.' }}
-
-                        </p>
-
-                    </div>
-
-                    <div class="class-card-footer">
-
-                        <span>
-                            Consulter le document
-                        </span>
-
-                        <i class="bi bi-arrow-right"></i>
-
-                    </div>
-
-                </a>
-
-                @endforeach
-
-            </div>
+                </div>
 
             @else
 
-            <div class="empty-state">
+                {{-- =================================================
+                     ÉTAT VIDE
+                ================================================== --}}
+                <div class="professionnel-empty">
 
-                <div class="empty-icon">
-                    <i class="bi bi-file-earmark-x"></i>
+                    <div class="professionnel-empty-icon">
+                        <i class="bi bi-file-earmark-x"></i>
+                    </div>
+
+                    <h3>
+                        Aucun document disponible
+                    </h3>
+
+                    <p>
+                        Aucun document n'est actuellement disponible
+                        pour ce type de document.
+                    </p>
+
                 </div>
-
-                <h3>
-                    Aucun document disponible
-                </h3>
-
-                <p>
-                    Aucun document n'est actuellement disponible
-                    pour ce type de document.
-                </p>
-
-            </div>
 
             @endif
 
-            <div class="doc-type-back-container">
+
+            {{-- =================================================
+                 RETOUR
+            ================================================== --}}
+            <div class="professionnel-back-wrapper">
 
                 <a
                     href="{{ route(
@@ -148,11 +201,15 @@
                             'moduleSlug' => $module->slug
                         ]
                     ) }}"
-                    class="doc-type-back-btn">
+                    class="professionnel-back"
+                    aria-label="Retour aux types de documents"
+                >
 
                     <i class="bi bi-arrow-left"></i>
 
-                    Retour aux types de documents
+                    <span>
+                        Retour aux types de documents
+                    </span>
 
                 </a>
 

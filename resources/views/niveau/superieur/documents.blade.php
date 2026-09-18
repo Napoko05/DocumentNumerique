@@ -1,17 +1,18 @@
 @extends('layouts.app')
 
+@section('title', $subject->name)
+
 @section('content')
 
 <div class="superieur-page">
 
-
+{{-- HERO --}}
 <section class="superieur-hero">
-
     <div class="container">
 
         <span class="superieur-badge">
-            <i class="bi bi-file-earmark-text-fill"></i>
-            DOCUMENTS
+            <i class="bi bi-book-fill"></i>
+            Matière
         </span>
 
         <h1>
@@ -27,20 +28,42 @@
         </p>
 
     </div>
-
 </section>
 
 
+{{-- CONTENU --}}
 <section class="superieur-content">
-
     <div class="container">
 
+        {{-- RETOUR --}}
+        <div class="superieur-back-wrapper">
+
+            <a
+                href="{{ route(
+                    'vitrine.superieur.modules',
+                    [
+                        'domaineSlug' => $domaine->slug,
+                        'filiereSlug' => $filiere->slug,
+                        'niveauSlug' => $niveau->slug
+                    ]
+                ) }}"
+                class="superieur-back"
+                aria-label="Retour aux modules"
+            >
+                <i class="bi bi-arrow-left"></i>
+                <span>Retour aux modules</span>
+            </a>
+
+        </div>
+
+
+        {{-- EN-TÊTE --}}
         <div class="section-heading">
 
             <div>
 
                 <span class="section-kicker">
-                    RESSOURCES PÉDAGOGIQUES
+                    Ressources pédagogiques
                 </span>
 
                 <h2>
@@ -50,11 +73,8 @@
             </div>
 
             <span class="class-count">
-
                 {{ $documents->count() }}
-
                 document{{ $documents->count() > 1 ? 's' : '' }}
-
             </span>
 
         </div>
@@ -62,23 +82,12 @@
 
         @if($documents->isNotEmpty())
 
+            {{-- GRILLE --}}
             <div class="superieur-grid">
 
                 @foreach($documents as $document)
 
-                    <a
-                        href="{{ route(
-                            'vitrine.superieur.show',
-                            [
-                                'domaineSlug' => $domaine->slug,
-                                'filiereSlug' => $filiere->slug,
-                                'niveauSlug' => $niveau->slug,
-                                'subjectSlug' => $subject->slug,
-                                'documentSlug' => $document->slug
-                            ]
-                        ) }}"
-                        class="superieur-card"
-                    >
+                    <article class="superieur-card document-card">
 
                         <div class="superieur-card-top">
 
@@ -86,9 +95,9 @@
                                 <i class="bi bi-file-earmark-pdf-fill"></i>
                             </div>
 
-                            <div class="superieur-arrow">
-                                <i class="bi bi-arrow-right"></i>
-                            </div>
+                            <span class="superieur-arrow">
+                                <i class="bi bi-arrow-up-right"></i>
+                            </span>
 
                         </div>
 
@@ -99,10 +108,22 @@
                                 {{ $document->title }}
                             </h3>
 
-                            <p>
-                                <i class="bi bi-book-fill"></i>
-                                {{ $subject->name }}
-                            </p>
+                            @if($document->access_type === 'premium')
+
+                                <p>
+                                    <i class="bi bi-lock-fill"></i>
+                                    {{ number_format((float) $document->price, 0, ',', ' ') }}
+                                    FCFA
+                                </p>
+
+                            @else
+
+                                <p>
+                                    <i class="bi bi-unlock-fill"></i>
+                                    Gratuit
+                                </p>
+
+                            @endif
 
                             @if(!empty($document->description))
 
@@ -115,27 +136,62 @@
                         </div>
 
 
-                        <div class="superieur-card-footer">
+                        {{-- ACTIONS --}}
+                        <div class="document-actions">
 
-                            <span>
-                                Consulter le document
-                            </span>
+                            @if($document->access_type === 'premium')
 
-                            <i class="bi bi-arrow-right"></i>
+                                {{-- PREMIUM : PAIEMENT --}}
+                                <a
+                                    href="{{ route(
+                                        'payments.create',
+                                        ['document' => $document->id]
+                                    ) }}"
+                                    class="btn-document-download"
+                                >
+                                    <i class="bi bi-credit-card"></i>
+                                    Payer
+                                </a>
+
+                            @else
+
+                                {{-- GRATUIT : VOIR --}}
+                                <a
+                                    href="{{ route(
+                                        'documents.read',
+                                        $document
+                                    ) }}"
+                                    target="_blank"
+                                    class="btn-document-view"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                    Voir
+                                </a>
+
+                                {{-- GRATUIT : TÉLÉCHARGER --}}
+                                <a
+                                    href="{{ route(
+                                        'documents.download',
+                                        $document
+                                    ) }}"
+                                    class="btn-document-download"
+                                >
+                                    <i class="bi bi-download"></i>
+                                    Télécharger
+                                </a>
+
+                            @endif
 
                         </div>
 
-                    </a>
+                    </article>
 
                 @endforeach
 
             </div>
 
 
-            {{-- =====================================================
-                 CAROUSEL MOBILE
-                 ===================================================== --}}
-
+            {{-- CAROUSEL MOBILE --}}
             <div
                 id="superieurDocumentsCarousel"
                 class="carousel slide superieur-carousel"
@@ -152,19 +208,7 @@
 
                             <div class="superieur-carousel-item">
 
-                                <a
-                                    href="{{ route(
-                                        'vitrine.superieur.show',
-                                        [
-                                            'domaineSlug' => $domaine->slug,
-                                            'filiereSlug' => $filiere->slug,
-                                            'niveauSlug' => $niveau->slug,
-                                            'subjectSlug' => $subject->slug,
-                                            'documentSlug' => $document->slug
-                                        ]
-                                    ) }}"
-                                    class="superieur-card superieur-mobile-card"
-                                >
+                                <article class="superieur-card superieur-mobile-card">
 
                                     <div class="superieur-card-top">
 
@@ -172,9 +216,9 @@
                                             <i class="bi bi-file-earmark-pdf-fill"></i>
                                         </div>
 
-                                        <div class="superieur-arrow">
-                                            <i class="bi bi-arrow-right"></i>
-                                        </div>
+                                        <span class="superieur-arrow">
+                                            <i class="bi bi-arrow-up-right"></i>
+                                        </span>
 
                                     </div>
 
@@ -185,10 +229,22 @@
                                             {{ $document->title }}
                                         </h3>
 
-                                        <p>
-                                            <i class="bi bi-book-fill"></i>
-                                            {{ $subject->name }}
-                                        </p>
+                                        @if($document->access_type === 'premium')
+
+                                            <p>
+                                                <i class="bi bi-lock-fill"></i>
+                                                {{ number_format((float) $document->price, 0, ',', ' ') }}
+                                                FCFA
+                                            </p>
+
+                                        @else
+
+                                            <p>
+                                                <i class="bi bi-unlock-fill"></i>
+                                                Gratuit
+                                            </p>
+
+                                        @endif
 
                                         @if(!empty($document->description))
 
@@ -201,17 +257,55 @@
                                     </div>
 
 
-                                    <div class="superieur-card-footer">
+                                    {{-- ACTIONS --}}
+                                    <div class="document-actions">
 
-                                        <span>
-                                            Consulter le document
-                                        </span>
+                                        @if($document->access_type === 'premium')
 
-                                        <i class="bi bi-arrow-right"></i>
+                                            {{-- PREMIUM : PAIEMENT --}}
+                                            <a
+                                                href="{{ route(
+                                                    'payments.create',
+                                                    ['document' => $document->id]
+                                                ) }}"
+                                                class="btn-document-download"
+                                            >
+                                                <i class="bi bi-credit-card"></i>
+                                                Payer
+                                            </a>
+
+                                        @else
+
+                                            {{-- GRATUIT : VOIR --}}
+                                            <a
+                                                href="{{ route(
+                                                    'documents.read',
+                                                    $document
+                                                ) }}"
+                                                target="_blank"
+                                                class="btn-document-view"
+                                            >
+                                                <i class="bi bi-eye"></i>
+                                                Voir
+                                            </a>
+
+                                            {{-- GRATUIT : TÉLÉCHARGER --}}
+                                            <a
+                                                href="{{ route(
+                                                    'documents.download',
+                                                    $document
+                                                ) }}"
+                                                class="btn-document-download"
+                                            >
+                                                <i class="bi bi-download"></i>
+                                                Télécharger
+                                            </a>
+
+                                        @endif
 
                                     </div>
 
-                                </a>
+                                </article>
 
                             </div>
 
@@ -230,7 +324,6 @@
                         data-bs-target="#superieurDocumentsCarousel"
                         data-bs-slide="prev"
                     >
-
                         <span
                             class="carousel-control-prev-icon"
                             aria-hidden="true"
@@ -239,7 +332,6 @@
                         <span class="visually-hidden">
                             Précédent
                         </span>
-
                     </button>
 
 
@@ -249,7 +341,6 @@
                         data-bs-target="#superieurDocumentsCarousel"
                         data-bs-slide="next"
                     >
-
                         <span
                             class="carousel-control-next-icon"
                             aria-hidden="true"
@@ -258,15 +349,16 @@
                         <span class="visually-hidden">
                             Suivant
                         </span>
-
                     </button>
 
                 @endif
 
             </div>
 
+
         @else
 
+            {{-- ÉTAT VIDE --}}
             <div class="superieur-empty">
 
                 <div class="superieur-empty-icon">
@@ -277,41 +369,11 @@
                     Aucun document disponible
                 </h3>
 
-                <p>
-                    Aucun document publié n'est actuellement disponible
-                    pour la matière
-                    <strong>{{ $subject->name }}</strong>.
-                </p>
-
             </div>
 
         @endif
 
-
-        <div class="superieur-back-container">
-
-            <a
-                href="{{ route(
-                    'vitrine.superieur.modules',
-                    [
-                        'domaineSlug' => $domaine->slug,
-                        'filiereSlug' => $filiere->slug,
-                        'niveauSlug' => $niveau->slug
-                    ]
-                ) }}"
-                class="superieur-back-btn"
-            >
-
-                <i class="bi bi-arrow-left"></i>
-
-                Retour aux modules
-
-            </a>
-
-        </div>
-
     </div>
-
 </section>
 
 </div>

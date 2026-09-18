@@ -1,4 +1,3 @@
-
 @extends('layouts.app')
 
 @section('title', 'Formations professionnelles')
@@ -7,85 +6,277 @@
 
 <div class="professionnel-page">
 
-    {{-- =========================================================
-         HERO
-    ========================================================== --}}
-    <section class="professionnel-hero">
 
-        <div class="container">
+{{-- =========================================================
+     HERO
+========================================================== --}}
+<section class="professionnel-hero">
 
-            <span class="professionnel-badge">
-                <i class="bi bi-mortarboard-fill"></i>
-                Enseignement professionnel
-            </span>
+    <div class="container">
 
-            <h1>
-                Formations professionnelles
-            </h1>
+        <span class="professionnel-badge">
+            <i class="bi bi-mortarboard-fill"></i>
+            Enseignement professionnel
+        </span>
 
-            <p>
-                Explorez les formations, spécialités, niveaux et ressources
-                pédagogiques disponibles sur Scientia.
-            </p>
+        <h1>
+            Formations professionnelles
+        </h1>
+
+        <p>
+            Explorez les formations, spécialités, niveaux et ressources
+            pédagogiques disponibles sur Scientia.
+        </p>
+
+    </div>
+
+</section>
+
+
+{{-- =========================================================
+     CONTENT
+========================================================== --}}
+<main class="professionnel-content">
+
+    <div class="container">
+
+        {{-- =================================================
+             BOUTON RETOUR
+        ================================================== --}}
+        <div class="professionnel-back-wrapper">
+
+            <a
+                href="{{ url('/') }}"
+                class="professionnel-back"
+                aria-label="Retour à l'accueil"
+            >
+                <i class="bi bi-arrow-left"></i>
+
+                <span>
+                    Retour à l'accueil
+                </span>
+            </a>
 
         </div>
 
-    </section>
 
+        @if($formations->isNotEmpty())
 
-    {{-- =========================================================
-         CONTENT
-    ========================================================== --}}
-    <main class="professionnel-content">
+            {{-- =================================================
+                 EN-TÊTE
+            ================================================== --}}
+            <div class="section-heading">
 
-        <div class="container">
+                <div>
 
-            @if($formations->isNotEmpty())
+                    <span class="section-kicker">
+                        NOS FORMATIONS
+                    </span>
 
-                {{-- =================================================
-                     EN-TÊTE
-                ================================================== --}}
-                <div class="section-heading">
+                    <h2>
+                        Choisissez votre établissement
+                    </h2>
 
-                    <div>
-
-                        <span class="section-kicker">
-                            NOS FORMATIONS
-                        </span>
-
-                        <h2>
-                            Choisissez votre établissement
-                        </h2>
-
-                        <p>
-                            {{ $formations->count() }}
-                            formation{{ $formations->count() > 1 ? 's' : '' }}
-                            professionnelle disponible{{ $formations->count() > 1 ? 's' : '' }}.
-                        </p>
-
-                    </div>
+                    <p>
+                        {{ $formations->count() }}
+                        formation{{ $formations->count() > 1 ? 's' : '' }}
+                        professionnelle disponible{{ $formations->count() > 1 ? 's' : '' }}.
+                    </p>
 
                 </div>
 
+            </div>
 
-                {{-- =================================================
-                     GRILLE
-                ================================================== --}}
-                <div class="professionnel-grid">
 
-                    @foreach($formations as $formation)
+            {{-- =================================================
+                 GRILLE
+            ================================================== --}}
+            <div class="professionnel-grid">
 
-                        @php
+                @foreach($formations as $formation)
+
+                    @php
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | DÉTERMINATION DE LA PROCHAINE ÉTAPE
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if ($formation->slug === 'ens') {
+
+                            // ENS : Formation → Programme
+                            $formationUrl = route(
+                                'vitrine.professionnel.ens.programmes'
+                            );
+
+                            $icon = 'bi-mortarboard-fill';
+
+                            $nextLabel = 'Voir les programmes';
+
+                        } elseif ($formation->slug === 'enep') {
+
+                            // ENEP : Formation → Niveau
+                            $formationUrl = route(
+                                'vitrine.professionnel.formation.niveaux',
+                                [
+                                    'formationSlug' => $formation->slug
+                                ]
+                            );
+
+                            $icon = 'bi-person-workspace';
+
+                            $nextLabel = 'Voir les niveaux';
+
+                        } elseif (in_array($formation->slug, ['ids', 'uit', 'ensp'])) {
+
+                            // IDS / UIT / ENSP : Formation → Spécialité
+                            $formationUrl = route(
+                                'vitrine.professionnel.specialites',
+                                [
+                                    'formationSlug' => $formation->slug
+                                ]
+                            );
+
+                            $icon = 'bi-building';
+
+                            $nextLabel = 'Voir les spécialités';
+
+                        } else {
 
                             /*
                             |--------------------------------------------------------------------------
-                            | DÉTERMINATION DE LA PROCHAINE ÉTAPE
+                            | SÉCURITÉ
                             |--------------------------------------------------------------------------
                             */
 
+                            $formationUrl = null;
+
+                            $icon = 'bi-mortarboard';
+
+                            $nextLabel = 'Formation disponible';
+
+                        }
+
+                    @endphp
+
+
+                    @if($formationUrl)
+
+                        <a
+                            href="{{ $formationUrl }}"
+                            class="professionnel-card"
+                        >
+
+                    @else
+
+                        <div class="professionnel-card">
+
+                    @endif
+
+
+                            {{-- =====================================
+                                 CARD TOP
+                            ====================================== --}}
+                            <div class="professionnel-card-top">
+
+                                <div class="professionnel-icon">
+
+                                    <i class="bi {{ $icon }}"></i>
+
+                                </div>
+
+                                <div class="professionnel-arrow">
+
+                                    <i class="bi bi-arrow-right"></i>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- =====================================
+                                 CARD BODY
+                            ====================================== --}}
+                            <div class="professionnel-card-body">
+
+                                <h3>
+                                    {{ $formation->name }}
+                                </h3>
+
+                                <p>
+
+                                    <i class="bi bi-diagram-3"></i>
+
+                                    @if($formation->slug === 'ens')
+
+                                        Formation → Programme
+
+                                    @elseif($formation->slug === 'enep')
+
+                                        Formation → Niveau
+
+                                    @elseif(in_array($formation->slug, ['ids', 'uit', 'ensp']))
+
+                                        Formation → Spécialité
+
+                                    @else
+
+                                        Formation professionnelle
+
+                                    @endif
+
+                                </p>
+
+                            </div>
+
+
+                            {{-- =====================================
+                                 CARD FOOTER
+                            ====================================== --}}
+                            <div class="professionnel-card-footer">
+
+                                <span>
+                                    {{ $nextLabel }}
+                                </span>
+
+                                <i class="bi bi-arrow-right"></i>
+
+                            </div>
+
+
+                    @if($formationUrl)
+
+                        </a>
+
+                    @else
+
+                        </div>
+
+                    @endif
+
+                @endforeach
+
+            </div>
+
+
+            {{-- =================================================
+                 MOBILE CAROUSEL
+            ================================================== --}}
+            <div
+                id="professionnelCarousel"
+                class="carousel slide professionnel-carousel"
+                data-bs-ride="false"
+            >
+
+                <div class="carousel-inner">
+
+                    @foreach($formations as $key => $formation)
+
+                        @php
+
                             if ($formation->slug === 'ens') {
 
-                                // ENS : Formation → Programme
                                 $formationUrl = route(
                                     'vitrine.professionnel.ens.programmes'
                                 );
@@ -94,9 +285,10 @@
 
                                 $nextLabel = 'Voir les programmes';
 
+                                $description = 'Formation → Programme';
+
                             } elseif ($formation->slug === 'enep') {
 
-                                // ENEP : Formation → Niveau
                                 $formationUrl = route(
                                     'vitrine.professionnel.formation.niveaux',
                                     [
@@ -108,9 +300,10 @@
 
                                 $nextLabel = 'Voir les niveaux';
 
+                                $description = 'Formation → Niveau';
+
                             } elseif (in_array($formation->slug, ['ids', 'uit', 'ensp'])) {
 
-                                // IDS / UIT / ENSP : Formation → Spécialité
                                 $formationUrl = route(
                                     'vitrine.professionnel.specialites',
                                     [
@@ -122,16 +315,9 @@
 
                                 $nextLabel = 'Voir les spécialités';
 
-                            } else {
+                                $description = 'Formation → Spécialité';
 
-                                /*
-                                |--------------------------------------------------------------------------
-                                | SÉCURITÉ
-                                |--------------------------------------------------------------------------
-                                | Une formation ajoutée en base mais qui n'a pas
-                                | encore de parcours spécifique n'est pas cliquable
-                                | vers une mauvaise route.
-                                */
+                            } else {
 
                                 $formationUrl = null;
 
@@ -139,339 +325,171 @@
 
                                 $nextLabel = 'Formation disponible';
 
+                                $description = 'Formation professionnelle';
+
                             }
 
                         @endphp
 
 
-                        @if($formationUrl)
+                        <div
+                            class="carousel-item {{ $key === 0 ? 'active' : '' }}"
+                        >
 
-                            <a
-                                href="{{ $formationUrl }}"
-                                class="professionnel-card"
-                            >
+                            <div class="professionnel-carousel-item">
 
-                        @else
+                                @if($formationUrl)
 
-                            <div class="professionnel-card">
+                                    <a
+                                        href="{{ $formationUrl }}"
+                                        class="professionnel-card professionnel-mobile-card"
+                                    >
 
-                        @endif
+                                @else
+
+                                    <div class="professionnel-card professionnel-mobile-card">
+
+                                @endif
 
 
-                                {{-- =====================================
-                                     CARD TOP
-                                ====================================== --}}
-                                <div class="professionnel-card-top">
+                                        <div class="professionnel-card-top">
 
-                                    <div class="professionnel-icon">
+                                            <div class="professionnel-icon">
 
-                                        <i class="bi {{ $icon }}"></i>
+                                                <i class="bi {{ $icon }}"></i>
+
+                                            </div>
+
+                                            <div class="professionnel-arrow">
+
+                                                <i class="bi bi-arrow-right"></i>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="professionnel-card-body">
+
+                                            <h3>
+                                                {{ $formation->name }}
+                                            </h3>
+
+                                            <p>
+
+                                                <i class="bi bi-diagram-3"></i>
+
+                                                {{ $description }}
+
+                                            </p>
+
+                                        </div>
+
+
+                                        <div class="professionnel-card-footer">
+
+                                            <span>
+                                                {{ $nextLabel }}
+                                            </span>
+
+                                            <i class="bi bi-arrow-right"></i>
+
+                                        </div>
+
+
+                                @if($formationUrl)
+
+                                    </a>
+
+                                @else
 
                                     </div>
 
-                                    <div class="professionnel-arrow">
-
-                                        <i class="bi bi-arrow-right"></i>
-
-                                    </div>
-
-                                </div>
-
-
-                                {{-- =====================================
-                                     CARD BODY
-                                ====================================== --}}
-                                <div class="professionnel-card-body">
-
-                                    <h3>
-                                        {{ $formation->name }}
-                                    </h3>
-
-                                    <p>
-
-                                        <i class="bi bi-diagram-3"></i>
-
-                                        @if($formation->slug === 'ens')
-
-                                            Formation → Programme
-
-                                        @elseif($formation->slug === 'enep')
-
-                                            Formation → Niveau
-
-                                        @elseif(in_array($formation->slug, ['ids', 'uit', 'ensp']))
-
-                                            Formation → Spécialité
-
-                                        @else
-
-                                            Formation professionnelle
-
-                                        @endif
-
-                                    </p>
-
-                                </div>
-
-
-                                {{-- =====================================
-                                     CARD FOOTER
-                                ====================================== --}}
-                                <div class="professionnel-card-footer">
-
-                                    <span>
-                                        {{ $nextLabel }}
-                                    </span>
-
-                                    <i class="bi bi-arrow-right"></i>
-
-                                </div>
-
-
-                        @if($formationUrl)
-
-                            </a>
-
-                        @else
+                                @endif
 
                             </div>
 
-                        @endif
+                        </div>
 
                     @endforeach
 
                 </div>
 
 
-                {{-- =================================================
-                     MOBILE CAROUSEL
-                ================================================== --}}
-                <div
-                    id="professionnelCarousel"
-                    class="carousel slide professionnel-carousel"
-                    data-bs-ride="false"
-                >
+                @if($formations->count() > 1)
 
-                    <div class="carousel-inner">
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#professionnelCarousel"
+                        data-bs-slide="prev"
+                    >
 
-                        @foreach($formations as $key => $formation)
+                        <span
+                            class="carousel-control-prev-icon"
+                            aria-hidden="true"
+                        ></span>
 
-                            @php
+                        <span class="visually-hidden">
+                            Précédent
+                        </span>
 
-                                if ($formation->slug === 'ens') {
+                    </button>
 
-                                    $formationUrl = route(
-                                        'vitrine.professionnel.ens.programmes'
-                                    );
 
-                                    $icon = 'bi-mortarboard-fill';
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#professionnelCarousel"
+                        data-bs-slide="next"
+                    >
 
-                                    $nextLabel = 'Voir les programmes';
+                        <span
+                            class="carousel-control-next-icon"
+                            aria-hidden="true"
+                        ></span>
 
-                                    $description = 'Formation → Programme';
+                        <span class="visually-hidden">
+                            Suivant
+                        </span>
 
-                                } elseif ($formation->slug === 'enep') {
+                    </button>
 
-                                    $formationUrl = route(
-                                        'vitrine.professionnel.formation.niveaux',
-                                        [
-                                            'formationSlug' => $formation->slug
-                                        ]
-                                    );
+                @endif
 
-                                    $icon = 'bi-person-workspace';
+            </div>
 
-                                    $nextLabel = 'Voir les niveaux';
 
-                                    $description = 'Formation → Niveau';
+        @else
 
-                                } elseif (in_array($formation->slug, ['ids', 'uit', 'ensp'])) {
+            {{-- =================================================
+                 EMPTY STATE
+            ================================================== --}}
+            <div class="professionnel-empty">
 
-                                    $formationUrl = route(
-                                        'vitrine.professionnel.specialites',
-                                        [
-                                            'formationSlug' => $formation->slug
-                                        ]
-                                    );
+                <div class="professionnel-empty-icon">
 
-                                    $icon = 'bi-building';
-
-                                    $nextLabel = 'Voir les spécialités';
-
-                                    $description = 'Formation → Spécialité';
-
-                                } else {
-
-                                    $formationUrl = null;
-
-                                    $icon = 'bi-mortarboard';
-
-                                    $nextLabel = 'Formation disponible';
-
-                                    $description = 'Formation professionnelle';
-
-                                }
-
-                            @endphp
-
-
-                            <div
-                                class="carousel-item {{ $key === 0 ? 'active' : '' }}"
-                            >
-
-                                <div class="professionnel-carousel-item">
-
-                                    @if($formationUrl)
-
-                                        <a
-                                            href="{{ $formationUrl }}"
-                                            class="professionnel-card professionnel-mobile-card"
-                                        >
-
-                                    @else
-
-                                        <div class="professionnel-card professionnel-mobile-card">
-
-                                    @endif
-
-
-                                            <div class="professionnel-card-top">
-
-                                                <div class="professionnel-icon">
-
-                                                    <i class="bi {{ $icon }}"></i>
-
-                                                </div>
-
-                                                <div class="professionnel-arrow">
-
-                                                    <i class="bi bi-arrow-right"></i>
-
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="professionnel-card-body">
-
-                                                <h3>
-                                                    {{ $formation->name }}
-                                                </h3>
-
-                                                <p>
-
-                                                    <i class="bi bi-diagram-3"></i>
-
-                                                    {{ $description }}
-
-                                                </p>
-
-                                            </div>
-
-
-                                            <div class="professionnel-card-footer">
-
-                                                <span>
-                                                    {{ $nextLabel }}
-                                                </span>
-
-                                                <i class="bi bi-arrow-right"></i>
-
-                                            </div>
-
-
-                                    @if($formationUrl)
-
-                                        </a>
-
-                                    @else
-
-                                        </div>
-
-                                    @endif
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
-                    </div>
-
-
-                    @if($formations->count() > 1)
-
-                        <button
-                            class="carousel-control-prev"
-                            type="button"
-                            data-bs-target="#professionnelCarousel"
-                            data-bs-slide="prev"
-                        >
-
-                            <span
-                                class="carousel-control-prev-icon"
-                                aria-hidden="true"
-                            ></span>
-
-                            <span class="visually-hidden">
-                                Précédent
-                            </span>
-
-                        </button>
-
-
-                        <button
-                            class="carousel-control-next"
-                            type="button"
-                            data-bs-target="#professionnelCarousel"
-                            data-bs-slide="next"
-                        >
-
-                            <span
-                                class="carousel-control-next-icon"
-                                aria-hidden="true"
-                            ></span>
-
-                            <span class="visually-hidden">
-                                Suivant
-                            </span>
-
-                        </button>
-
-                    @endif
+                    <i class="bi bi-folder2-open"></i>
 
                 </div>
 
+                <h3>
+                    Aucune formation disponible
+                </h3>
 
-            @else
+                <p>
+                    Aucune formation professionnelle active n'est
+                    actuellement disponible.
+                </p>
 
-                {{-- =================================================
-                     EMPTY STATE
-                ================================================== --}}
-                <div class="professionnel-empty">
+            </div>
 
-                    <div class="professionnel-empty-icon">
+        @endif
 
-                        <i class="bi bi-folder2-open"></i>
+    </div>
 
-                    </div>
+</main>
 
-                    <h3>
-                        Aucune formation disponible
-                    </h3>
-
-                    <p>
-                        Aucune formation professionnelle active n'est
-                        actuellement disponible.
-                    </p>
-
-                </div>
-
-            @endif
-
-        </div>
-
-    </main>
 
 </div>
 

@@ -2,362 +2,371 @@
 
 @section('content')
 
-<div class="formation-page">
+<div class="professionnel-page">
 
-    {{-- =========================================================
-         HERO
-    ========================================================== --}}
+{{-- =========================================================
+     HERO
+========================================================== --}}
 
-    <section class="formation-hero">
+<section class="professionnel-hero">
 
-        <div class="container">
+    <div class="container">
 
-            <div class="formation-badge">
-                <i class="bi bi-mortarboard-fill"></i>
-                NIVEAUX DE FORMATION
-            </div>
+        <span class="professionnel-badge">
+            <i class="bi bi-mortarboard-fill"></i>
+            NIVEAUX DE FORMATION
+        </span>
 
-            <div class="formation-icon">
-                {{ $specialite->icon ?? '📚' }}
-            </div>
+        <div class="professionnel-hero-icon">
+            {{ $specialite->icon ?? '📚' }}
+        </div>
 
-            <h1>
-                {{ $specialite->name }}
-            </h1>
+        <h1>
+            {{ $specialite->name }}
+        </h1>
 
-            <p>
-                {{ $specialite->description
-                    ?? 'Choisissez votre niveau de formation.' }}
-            </p>
+        <p>
+            {{ $specialite->description
+                ?? 'Choisissez votre niveau de formation.' }}
+        </p>
+
+    </div>
+
+</section>
+
+
+{{-- =========================================================
+     CONTENU
+========================================================== --}}
+
+<section class="professionnel-content">
+
+    <div class="container">
+
+        {{-- =================================================
+             RETOUR
+        ================================================== --}}
+
+        <div class="professionnel-back-wrapper">
+
+            <a
+                href="{{ route(
+                    'vitrine.professionnel.ens.specialites',
+                    [
+                        'programmeSlug' => $programme->slug
+                    ]
+                ) }}"
+                class="professionnel-back"
+                aria-label="Retour aux spécialités"
+            >
+                <i class="bi bi-arrow-left"></i>
+
+                <span>Retour aux spécialités</span>
+            </a>
 
         </div>
 
-    </section>
 
-    {{-- =========================================================
-         CONTENU
-    ========================================================== --}}
+        {{-- =================================================
+             FIL D'ARIANE
+        ================================================== --}}
 
-    <section class="formation-content">
+        <div class="professionnel-breadcrumb">
 
-        <div class="container">
+            <span>
+                {{ $formation->name }}
+            </span>
 
-            {{-- =================================================
-                 FIL D'ARIANE
-            ================================================== --}}
+            <i class="bi bi-chevron-right"></i>
 
-            <div class="formation-breadcrumb">
+            <span>
+                {{ $programme->name }}
+            </span>
 
-                <span>
-                    {{ $formation->name }}
+            <i class="bi bi-chevron-right"></i>
+
+            <strong>
+                {{ $specialite->name }}
+            </strong>
+
+        </div>
+
+
+        {{-- =================================================
+             EN-TÊTE
+        ================================================== --}}
+
+        <div class="professionnel-section-heading">
+
+            <div>
+
+                <span class="professionnel-section-kicker">
+                    NIVEAUX
                 </span>
 
-                <i class="bi bi-chevron-right"></i>
-
-                <span>
-                    {{ $programme->name }}
-                </span>
-
-                <i class="bi bi-chevron-right"></i>
-
-                <strong>
-                    {{ $specialite->name }}
-                </strong>
+                <h2>
+                    Choisissez votre niveau
+                </h2>
 
             </div>
 
+            <span class="professionnel-count">
+
+                {{ $niveaux->count() }}
+
+                niveau{{ $niveaux->count() > 1 ? 'x' : '' }}
+
+            </span>
+
+        </div>
+
+
+        {{-- =================================================
+             NIVEAUX
+        ================================================== --}}
+
+        @if($niveaux->isNotEmpty())
+
             {{-- =================================================
-                 EN-TÊTE
+                 DESKTOP
             ================================================== --}}
 
-            <div class="section-heading">
+            <div class="professionnel-grid">
 
-                <div>
+                @foreach($niveaux as $niveau)
 
-                    <span class="section-kicker">
-                        NIVEAUX
-                    </span>
+                    <a
+                        href="{{ route(
+                            'vitrine.professionnel.ens.modules',
+                            [
+                                'programmeSlug' => $programme->slug,
+                                'specialiteSlug' => $specialite->slug,
+                                'niveauSlug' => $niveau->slug
+                            ]
+                        ) }}"
+                        class="professionnel-card"
+                    >
 
-                    <h2>
-                        Choisissez votre niveau
-                    </h2>
+                        {{-- CARD TOP --}}
 
-                </div>
+                        <div class="professionnel-card-top">
 
-                <span class="class-count">
+                            <div class="professionnel-icon">
+                                {{ $niveau->icon ?? '📘' }}
+                            </div>
 
-                    {{ $niveaux->count() }}
+                            <div class="professionnel-arrow">
+                                <i class="bi bi-arrow-right"></i>
+                            </div>
 
-                    niveau{{ $niveaux->count() > 1 ? 'x' : '' }}
+                        </div>
 
-                </span>
+
+                        {{-- CARD BODY --}}
+
+                        <div class="professionnel-card-body">
+
+                            <h3>
+                                {{ $niveau->name }}
+                            </h3>
+
+                            <p>
+                                <i class="bi bi-book-fill"></i>
+                                Modules et matières
+                            </p>
+
+                            @if(isset($niveau->documents_count))
+
+                                <small>
+
+                                    {{ $niveau->documents_count }}
+
+                                    document{{ $niveau->documents_count > 1 ? 's' : '' }}
+
+                                </small>
+
+                            @endif
+
+                        </div>
+
+
+                        {{-- CARD FOOTER --}}
+
+                        <div class="professionnel-card-footer">
+
+                            <span>
+                                Voir les modules
+                            </span>
+
+                            <i class="bi bi-arrow-right"></i>
+
+                        </div>
+
+                    </a>
+
+                @endforeach
 
             </div>
 
+
             {{-- =================================================
-                 NIVEAUX
+                 MOBILE CAROUSEL
             ================================================== --}}
 
-            @if($niveaux->isNotEmpty())
+            <div
+                id="ensNiveauxCarousel"
+                class="carousel slide professionnel-carousel"
+                data-bs-ride="false"
+            >
 
-                <div class="classes-grid">
+                <div class="carousel-inner">
 
-                    @foreach($niveaux as $niveau)
+                    @foreach($niveaux as $index => $niveau)
 
-                        <a
-                            href="{{ route(
-                                'vitrine.professionnel.ens.modules',
-                                [
-                                    'programmeSlug' => $programme->slug,
-                                    'specialiteSlug' => $specialite->slug,
-                                    'niveauSlug' => $niveau->slug
-                                ]
-                            ) }}"
-                            class="class-card"
+                        <div
+                            class="carousel-item {{ $index === 0 ? 'active' : '' }}"
                         >
 
-                            {{-- CARD TOP --}}
+                            <div class="professionnel-mobile-card">
 
-                            <div class="class-card-top">
+                                <a
+                                    href="{{ route(
+                                        'vitrine.professionnel.ens.modules',
+                                        [
+                                            'programmeSlug' => $programme->slug,
+                                            'specialiteSlug' => $specialite->slug,
+                                            'niveauSlug' => $niveau->slug
+                                        ]
+                                    ) }}"
+                                    class="professionnel-card"
+                                >
 
-                                <div class="class-icon">
-                                    {{ $niveau->icon ?? '📘' }}
-                                </div>
+                                    <div class="professionnel-card-top">
 
-                                <div class="class-arrow">
-                                    <i class="bi bi-arrow-right"></i>
-                                </div>
+                                        <div class="professionnel-icon">
+                                            {{ $niveau->icon ?? '📘' }}
+                                        </div>
+
+                                        <div class="professionnel-arrow">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-body">
+
+                                        <h3>
+                                            {{ $niveau->name }}
+                                        </h3>
+
+                                        <p>
+                                            <i class="bi bi-book-fill"></i>
+                                            Modules et matières
+                                        </p>
+
+                                        @if(isset($niveau->documents_count))
+
+                                            <small>
+
+                                                {{ $niveau->documents_count }}
+
+                                                document{{ $niveau->documents_count > 1 ? 's' : '' }}
+
+                                            </small>
+
+                                        @endif
+
+                                    </div>
+
+
+                                    <div class="professionnel-card-footer">
+
+                                        <span>
+                                            Voir les modules
+                                        </span>
+
+                                        <i class="bi bi-arrow-right"></i>
+
+                                    </div>
+
+                                </a>
 
                             </div>
 
-                            {{-- CARD BODY --}}
-
-                            <div class="class-card-body">
-
-                                <h3>
-                                    {{ $niveau->name }}
-                                </h3>
-
-                                <p>
-
-                                    <i class="bi bi-book-fill"></i>
-
-                                    Modules et matières
-
-                                </p>
-
-                                @if(isset($niveau->documents_count))
-
-                                    <small>
-
-                                        {{ $niveau->documents_count }}
-
-                                        document{{ $niveau->documents_count > 1 ? 's' : '' }}
-
-                                    </small>
-
-                                @endif
-
-                            </div>
-
-                            {{-- CARD FOOTER --}}
-
-                            <div class="class-card-footer">
-
-                                <span>
-                                    Voir les modules
-                                </span>
-
-                                <i class="bi bi-arrow-right"></i>
-
-                            </div>
-
-                        </a>
+                        </div>
 
                     @endforeach
 
                 </div>
 
-                {{-- =================================================
-                     MOBILE CAROUSEL
-                ================================================== --}}
-
-                <div
-                    id="ensNiveauxCarousel"
-                    class="carousel slide classes-carousel"
-                    data-bs-ride="false"
-                >
-
-                    <div class="carousel-inner">
-
-                        @foreach($niveaux as $index => $niveau)
-
-                            <div
-                                class="carousel-item {{ $index === 0 ? 'active' : '' }}"
-                            >
-
-                                <div class="mobile-class-card">
-
-                                    <a
-                                        href="{{ route(
-                                            'vitrine.professionnel.ens.modules',
-                                            [
-                                                'programmeSlug' => $programme->slug,
-                                                'specialiteSlug' => $specialite->slug,
-                                                'niveauSlug' => $niveau->slug
-                                            ]
-                                        ) }}"
-                                        class="class-card"
-                                    >
-
-                                        <div class="class-card-top">
-
-                                            <div class="class-icon">
-                                                {{ $niveau->icon ?? '📘' }}
-                                            </div>
-
-                                            <div class="class-arrow">
-                                                <i class="bi bi-arrow-right"></i>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="class-card-body">
-
-                                            <h3>
-                                                {{ $niveau->name }}
-                                            </h3>
-
-                                            <p>
-
-                                                <i class="bi bi-book-fill"></i>
-
-                                                Modules et matières
-
-                                            </p>
-
-                                            @if(isset($niveau->documents_count))
-
-                                                <small>
-
-                                                    {{ $niveau->documents_count }}
-
-                                                    document{{ $niveau->documents_count > 1 ? 's' : '' }}
-
-                                                </small>
-
-                                            @endif
-
-                                        </div>
-
-                                        <div class="class-card-footer">
-
-                                            <span>
-                                                Voir les modules
-                                            </span>
-
-                                            <i class="bi bi-arrow-right"></i>
-
-                                        </div>
-
-                                    </a>
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
-                    </div>
-
-                    @if($niveaux->count() > 1)
-
-                        <button
-                            class="carousel-control-prev"
-                            type="button"
-                            data-bs-target="#ensNiveauxCarousel"
-                            data-bs-slide="prev"
-                        >
-
-                            <span class="carousel-control-prev-icon"></span>
-
-                            <span class="visually-hidden">
-                                Précédent
-                            </span>
-
-                        </button>
-
-                        <button
-                            class="carousel-control-next"
-                            type="button"
-                            data-bs-target="#ensNiveauxCarousel"
-                            data-bs-slide="next"
-                        >
-
-                            <span class="carousel-control-next-icon"></span>
-
-                            <span class="visually-hidden">
-                                Suivant
-                            </span>
-
-                        </button>
-
-                    @endif
-
-                </div>
-
-            @else
 
                 {{-- =================================================
-                     EMPTY STATE
+                     CAROUSEL CONTROLS
                 ================================================== --}}
 
-                <div class="empty-state">
+                @if($niveaux->count() > 1)
 
-                    <div class="empty-icon">
-                        <i class="bi bi-folder-x"></i>
-                    </div>
+                    <button
+                        class="carousel-control-prev"
+                        type="button"
+                        data-bs-target="#ensNiveauxCarousel"
+                        data-bs-slide="prev"
+                    >
+                        <span class="carousel-control-prev-icon"></span>
 
-                    <h3>
-                        Aucun niveau disponible
-                    </h3>
+                        <span class="visually-hidden">
+                            Précédent
+                        </span>
+                    </button>
 
-                    <p>
-                        Aucun niveau n'est actuellement disponible
-                        pour cette spécialité.
-                    </p>
 
-                </div>
+                    <button
+                        class="carousel-control-next"
+                        type="button"
+                        data-bs-target="#ensNiveauxCarousel"
+                        data-bs-slide="next"
+                    >
+                        <span class="carousel-control-next-icon"></span>
 
-            @endif
+                        <span class="visually-hidden">
+                            Suivant
+                        </span>
+                    </button>
 
-            {{-- =================================================
-                 RETOUR
-            ================================================== --}}
-
-            <div class="doc-type-back-container">
-
-                <a
-                    href="{{ route(
-                        'vitrine.professionnel.ens.specialites',
-                        [
-                            'programmeSlug' => $programme->slug
-                        ]
-                    ) }}"
-                    class="doc-type-back-btn"
-                >
-
-                    <i class="bi bi-arrow-left"></i>
-
-                    Retour aux spécialités
-
-                </a>
+                @endif
 
             </div>
 
-        </div>
 
-    </section>
+        @else
+
+            {{-- =================================================
+                 EMPTY STATE
+            ================================================== --}}
+
+            <div class="professionnel-empty">
+
+                <div class="professionnel-empty-icon">
+                    <i class="bi bi-folder-x"></i>
+                </div>
+
+                <h3>
+                    Aucun niveau disponible
+                </h3>
+
+                <p>
+                    Aucun niveau n'est actuellement disponible
+                    pour cette spécialité.
+                </p>
+
+            </div>
+
+        @endif
+
+    </div>
+
+</section>
 
 </div>
 
