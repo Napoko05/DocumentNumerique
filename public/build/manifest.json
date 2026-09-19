@@ -57,6 +57,11 @@
     "src": "resources/css/auth.css",
     "isEntry": true
   },
+  "resources/css/contact.css": {
+    "file": "assets/contact-DJqNwO2y.css",
+    "src": "resources/css/contact.css",
+    "isEntry": true
+  },
   "resources/css/formation/professionnel/formation.css": {
     "file": "assets/formation-DHR1e2g7.css",
     "src": "resources/css/formation/professionnel/formation.css",
@@ -142,6 +147,11 @@
     "src": "resources/css/login/style_register.css",
     "isEntry": true
   },
+  "resources/css/profile.css": {
+    "file": "assets/profile-C_uTnPrY.css",
+    "src": "resources/css/profile.css",
+    "isEntry": true
+  },
   "resources/css/yaascientia-home.css": {
     "file": "assets/yaascientia-home-DiqbuE8-.css",
     "src": "resources/css/yaascientia-home.css",
@@ -170,6 +180,12 @@
     "file": "assets/script_journaliste-DCWJaJu-.js",
     "name": "script_journaliste",
     "src": "resources/js/journaliste/script_journaliste.js",
+    "isEntry": true
+  },
+  "resources/js/scrit_profil_menu.js": {
+    "file": "assets/scrit_profil_menu-C-tuqTjv.js",
+    "name": "scrit_profil_menu",
+    "src": "resources/js/scrit_profil_menu.js",
     "isEntry": true
   },
   "resources/js/yaascientia-home.js": {
