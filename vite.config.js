@@ -29,6 +29,7 @@ export default defineConfig({
                 'resources/css/admin/style_edit_journaliste.css',
                 'resources/css/admin/style_ajout_matiere.css',
                 'resources/css/admin/create_matieres.css',
+                'resources/css/admin/edit_user.css',
                 'resources/css/profile.css',
                 'resources/css/contact.css',
 
@@ -47,6 +48,7 @@ export default defineConfig({
                 'resources/css/journaliste/edit_profil.css',
                 'resources/css/journaliste/password.css',
                 'resources/css/journaliste/profile.css',
+                
 
                 // =========================================================
                 // FORMATION SECONDAIRE

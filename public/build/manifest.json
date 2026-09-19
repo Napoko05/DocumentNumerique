@@ -12,6 +12,11 @@
     "src": "resources/css/admin/create_matieres.css",
     "isEntry": true
   },
+  "resources/css/admin/edit_user.css": {
+    "file": "assets/edit_user-DUwuBiL_.css",
+    "src": "resources/css/admin/edit_user.css",
+    "isEntry": true
+  },
   "resources/css/admin/layout.css": {
     "file": "assets/layout-DvSc3M4I.css",
     "src": "resources/css/admin/layout.css",
