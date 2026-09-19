@@ -5,7 +5,7 @@
 @php
     $isPaid = false;
 
-    if(auth()->check()){
+    if (auth()->check()) {
         $isPaid = \App\Models\Payment::where('user_id', auth()->id())
             ->where('document_id', $document->id)
             ->where('status', 'paid')
@@ -43,7 +43,8 @@
 
                         <img
                             src="{{ asset('storage/'.$document->cover_image) }}"
-                            class="w-full h-auto object-cover">
+                            class="w-full h-auto object-cover"
+                            alt="{{ $document->title }}">
 
                     @else
 
@@ -106,46 +107,64 @@
 
                     <div class="grid md:grid-cols-4 gap-4 mb-8">
 
+                        {{-- Niveau --}}
                         <div class="bg-slate-50 rounded-xl p-4">
+
                             <div class="text-slate-500 text-sm">
                                 Niveau
                             </div>
+
                             <div class="font-semibold">
-                                {{ $document->level }}
+                                {{ $document->level?->name ?? '-' }}
                             </div>
+
                         </div>
 
+                        {{-- Cycle --}}
                         <div class="bg-slate-50 rounded-xl p-4">
+
                             <div class="text-slate-500 text-sm">
                                 Cycle
                             </div>
+
                             <div class="font-semibold">
                                 {{ $document->cycle ?? '-' }}
                             </div>
+
                         </div>
 
+                        {{-- Vues --}}
                         <div class="bg-slate-50 rounded-xl p-4">
+
                             <div class="text-slate-500 text-sm">
                                 Vues
                             </div>
+
                             <div class="font-semibold">
-                                {{ number_format($document->views) }}
+                                {{ number_format($document->views ?? 0) }}
                             </div>
+
                         </div>
 
+                        {{-- Prix --}}
                         <div class="bg-slate-50 rounded-xl p-4">
+
                             <div class="text-slate-500 text-sm">
                                 Prix
                             </div>
 
                             @if($document->access_type == 'free')
+
                                 <div class="font-bold text-green-600">
                                     Gratuit
                                 </div>
+
                             @else
+
                                 <div class="font-bold text-orange-600">
-                                    {{ number_format($document->price,0,' ',' ') }} FCFA
+                                    {{ number_format((float) $document->price, 0, ' ', ' ') }} FCFA
                                 </div>
+
                             @endif
 
                         </div>
@@ -157,7 +176,7 @@
 
                         <div class="flex flex-wrap gap-4">
 
-                            <a href="{{ route('documents.read',$document) }}"
+                            <a href="{{ route('documents.read', $document) }}"
                                class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold">
 
                                 Lire le document
@@ -214,7 +233,7 @@
 
                             <div class="flex flex-wrap gap-4">
 
-                                <a href="{{ route('documents.read',$document) }}"
+                                <a href="{{ route('documents.read', $document) }}"
                                    class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-semibold">
 
                                     Lire le document
@@ -253,11 +272,8 @@
                                     <ul class="space-y-3 text-slate-600">
 
                                         <li>📱 Orange Money</li>
-
                                         <li>📱 Moov Money</li>
-
                                         <li>📱 Telecel Money</li>
-
                                         <li>💳 Carte bancaire</li>
 
                                     </ul>
@@ -266,7 +282,7 @@
 
                                 @auth
 
-                                    <a href="{{ route('payments.create',$document) }}"
+                                    <a href="{{ route('payments.create', $document) }}"
                                        class="inline-flex bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-xl font-bold">
 
                                         Procéder au paiement
