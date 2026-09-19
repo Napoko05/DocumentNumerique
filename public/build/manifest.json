@@ -1,0 +1,181 @@
+{
+  "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff": {
+    "file": "assets/bootstrap-icons-BeopsB42.woff",
+    "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff"
+  },
+  "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2": {
+    "file": "assets/bootstrap-icons-mSm7cUeB.woff2",
+    "src": "node_modules/bootstrap-icons/font/fonts/bootstrap-icons.woff2"
+  },
+  "resources/css/admin/create_matieres.css": {
+    "file": "assets/create_matieres-zVSMsnUA.css",
+    "src": "resources/css/admin/create_matieres.css",
+    "isEntry": true
+  },
+  "resources/css/admin/layout.css": {
+    "file": "assets/layout-DvSc3M4I.css",
+    "src": "resources/css/admin/layout.css",
+    "isEntry": true
+  },
+  "resources/css/admin/sidebar.css": {
+    "file": "assets/sidebar-DxkZc1co.css",
+    "src": "resources/css/admin/sidebar.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_agent.css": {
+    "file": "assets/style_agent-DQfXO-1x.css",
+    "src": "resources/css/admin/style_agent.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_ajout_matiere.css": {
+    "file": "assets/style_ajout_matiere-CTZXPNFN.css",
+    "src": "resources/css/admin/style_ajout_matiere.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_dashboard.css": {
+    "file": "assets/style_dashboard-xWO7Fi8J.css",
+    "src": "resources/css/admin/style_dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_edit_journaliste.css": {
+    "file": "assets/style_edit_journaliste-D6WEg54v.css",
+    "src": "resources/css/admin/style_edit_journaliste.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_list_user.css": {
+    "file": "assets/style_list_user-r6ExlOpW.css",
+    "src": "resources/css/admin/style_list_user.css",
+    "isEntry": true
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-CaQPiKHu.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/auth.css": {
+    "file": "assets/auth-DI_frEJC.css",
+    "src": "resources/css/auth.css",
+    "isEntry": true
+  },
+  "resources/css/formation/professionnel/formation.css": {
+    "file": "assets/formation-DHR1e2g7.css",
+    "src": "resources/css/formation/professionnel/formation.css",
+    "isEntry": true
+  },
+  "resources/css/formation/secondaire/vitrine_secondaire.css": {
+    "file": "assets/vitrine_secondaire-CAcxhVS9.css",
+    "src": "resources/css/formation/secondaire/vitrine_secondaire.css",
+    "isEntry": true
+  },
+  "resources/css/formation/superieur/vitrine_superieur.css": {
+    "file": "assets/vitrine_superieur-DX8WLoby.css",
+    "src": "resources/css/formation/superieur/vitrine_superieur.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/document-wizard.css": {
+    "file": "assets/document-wizard-CMHHdMle.css",
+    "src": "resources/css/journaliste/document-wizard.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/document_edit.css": {
+    "file": "assets/document_edit-CSH_dMAM.css",
+    "src": "resources/css/journaliste/document_edit.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/document_index.css": {
+    "file": "assets/document_index-Buu0n0kA.css",
+    "src": "resources/css/journaliste/document_index.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/edit_profil.css": {
+    "file": "assets/edit_profil-ChBTlBbt.css",
+    "src": "resources/css/journaliste/edit_profil.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/journale_statistique.css": {
+    "file": "assets/journale_statistique-BUyUOMTT.css",
+    "src": "resources/css/journaliste/journale_statistique.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/journaliste_documents.css": {
+    "file": "assets/journaliste_documents-DYHM8Kb0.css",
+    "src": "resources/css/journaliste/journaliste_documents.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/layout.css": {
+    "file": "assets/layout-B71mzyiG.css",
+    "src": "resources/css/journaliste/layout.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/password.css": {
+    "file": "assets/password-dQNodrNy.css",
+    "src": "resources/css/journaliste/password.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/profile.css": {
+    "file": "assets/profile-DGtd8qkG.css",
+    "src": "resources/css/journaliste/profile.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/show.css": {
+    "file": "assets/show-DbyYLblj.css",
+    "src": "resources/css/journaliste/show.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/sidebar.css": {
+    "file": "assets/sidebar-DM42_PJ8.css",
+    "src": "resources/css/journaliste/sidebar.css",
+    "isEntry": true
+  },
+  "resources/css/journaliste/style_dashboard.css": {
+    "file": "assets/style_dashboard-BWGSvadq.css",
+    "src": "resources/css/journaliste/style_dashboard.css",
+    "isEntry": true
+  },
+  "resources/css/layout.css": {
+    "file": "assets/layout-Cdwoo0tQ.css",
+    "src": "resources/css/layout.css",
+    "isEntry": true
+  },
+  "resources/css/login/style_register.css": {
+    "file": "assets/style_register-B1YoqvJf.css",
+    "src": "resources/css/login/style_register.css",
+    "isEntry": true
+  },
+  "resources/css/yaascientia-home.css": {
+    "file": "assets/yaascientia-home-DiqbuE8-.css",
+    "src": "resources/css/yaascientia-home.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-CT29BviE.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-BI69yjDX.css"
+    ],
+    "assets": [
+      "assets/bootstrap-icons-mSm7cUeB.woff2",
+      "assets/bootstrap-icons-BeopsB42.woff"
+    ]
+  },
+  "resources/js/journaliste/document-wizard.js": {
+    "file": "assets/document-wizard-D3mYXBwv.js",
+    "name": "document-wizard",
+    "src": "resources/js/journaliste/document-wizard.js",
+    "isEntry": true
+  },
+  "resources/js/journaliste/script_journaliste.js": {
+    "file": "assets/script_journaliste-DCWJaJu-.js",
+    "name": "script_journaliste",
+    "src": "resources/js/journaliste/script_journaliste.js",
+    "isEntry": true
+  },
+  "resources/js/yaascientia-home.js": {
+    "file": "assets/yaascientia-home-BGRCFFuC.js",
+    "name": "yaascientia-home",
+    "src": "resources/js/yaascientia-home.js",
+    "isEntry": true
+  }
+}
