@@ -61,7 +61,6 @@
     'resources/css/journaliste/profile.css',
     'resources/css/profile.css',
      'resources/css/contact.css',
-       'resources/css/journaliste/style_profil_user.css',
     'resources/css/formation/secondaire/vitrine_secondaire.css',
     'resources/css/formation/superieur/vitrine_superieur.css',
     'resources/css/formation/professionnel/formation.css',
