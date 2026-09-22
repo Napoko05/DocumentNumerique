@@ -18,7 +18,7 @@
     'resources/css/app.css',
     'resources/css/yaascientia-home.css',
     'resources/js/app.js',
-    'resources/js/yaascientia-home.js'
+   
     
     ])
 </head>
