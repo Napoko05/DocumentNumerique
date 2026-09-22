@@ -1,0 +1,405 @@
+/* =========================================================
+   RESPONSIVE — GRAND ÉCRAN
+   ========================================================= */
+
+@media (min-width: 1400px) {
+
+    .public-document-container {
+        max-width: 1240px;
+    }
+
+    .public-document-layout {
+        grid-template-columns: 350px minmax(0, 1fr);
+        gap: 40px;
+    }
+
+    .public-document-content {
+        padding: 40px;
+    }
+
+    .public-document-title {
+        font-size: 44px;
+    }
+}
+
+
+/* =========================================================
+   LAPTOP / DESKTOP
+   ========================================================= */
+
+@media (max-width: 1199px) {
+
+    .public-document-page {
+        padding: 40px 20px 60px;
+    }
+
+    .public-document-layout {
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 28px;
+    }
+
+    .public-document-content {
+        padding: 30px;
+    }
+
+    .public-document-title {
+        font-size: 36px;
+    }
+
+    .public-document-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   TABLETTE PAYSAGE
+   ========================================================= */
+
+@media (max-width: 991px) {
+
+    .public-document-page {
+        padding: 32px 18px 55px;
+    }
+
+    .public-document-layout {
+        grid-template-columns: 250px minmax(0, 1fr);
+        gap: 22px;
+    }
+
+    .public-document-content {
+        padding: 26px;
+    }
+
+    .public-document-title {
+        font-size: 32px;
+    }
+
+    .public-document-description {
+        font-size: 15px;
+    }
+
+    .public-document-info {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .public-document-access {
+        padding: 21px;
+    }
+}
+
+
+/* =========================================================
+   TABLETTE PORTRAIT
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .public-document-page {
+        padding: 25px 14px 45px;
+    }
+
+    .public-document-container {
+        width: 100%;
+    }
+
+    .public-document-breadcrumb {
+        margin-bottom: 20px;
+        font-size: 13px;
+        gap: 6px;
+    }
+
+    .public-document-layout {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .public-document-cover-card {
+        position: static;
+        width: 100%;
+    }
+
+    .public-document-cover {
+        width: min(300px, 100%);
+        margin: 0 auto;
+        border-radius: 18px;
+    }
+
+    .public-document-cover img {
+        width: 100%;
+        max-height: 390px;
+        object-fit: cover;
+    }
+
+    .public-document-cover-placeholder {
+        height: 300px;
+    }
+
+    .public-document-content {
+        width: 100%;
+        padding: 23px 18px;
+        border-radius: 18px;
+    }
+
+    .public-document-title {
+        font-size: 29px;
+        line-height: 1.2;
+    }
+
+    .public-document-description {
+        margin-bottom: 22px;
+        font-size: 14px;
+        line-height: 1.65;
+    }
+
+    .public-document-info {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 23px;
+    }
+
+    .public-document-info-item {
+        padding: 13px;
+    }
+
+    .public-document-access {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .public-document-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .public-document-button {
+        width: 100%;
+        min-height: 50px;
+    }
+
+    .public-document-back {
+        text-align: center;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 575px) {
+
+    .public-document-page {
+        padding: 20px 10px 40px;
+    }
+
+    .public-document-breadcrumb {
+        margin-bottom: 16px;
+        font-size: 12px;
+    }
+
+    .public-document-breadcrumb span:last-child {
+        max-width: 150px;
+    }
+
+    .public-document-content {
+        padding: 20px 15px;
+    }
+
+    .public-document-badges {
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+
+    .public-document-badge {
+        padding: 6px 10px;
+        font-size: 11px;
+    }
+
+    .public-document-title {
+        font-size: 25px;
+        letter-spacing: -0.3px;
+    }
+
+    .public-document-description {
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
+    .public-document-info {
+        grid-template-columns: 1fr;
+        gap: 9px;
+    }
+
+    .public-document-info-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+    }
+
+    .public-document-info-label {
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+
+    .public-document-info-item strong {
+        text-align: right;
+    }
+
+    .public-document-access {
+        padding: 16px;
+    }
+
+    .public-document-access-header {
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .public-document-access-header h2 {
+        font-size: 17px;
+    }
+
+    .public-document-access-header p {
+        font-size: 13px;
+    }
+
+    .public-document-access-icon {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        font-size: 18px;
+    }
+
+    .public-document-button {
+        width: 100%;
+        min-height: 49px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .public-document-price {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .public-document-payment-info {
+        padding: 14px;
+    }
+
+    .public-document-back {
+        margin-top: 18px;
+    }
+}
+
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+    .public-document-page {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    .public-document-content {
+        padding: 17px 13px;
+    }
+
+    .public-document-title {
+        font-size: 22px;
+    }
+
+    .public-document-breadcrumb {
+        font-size: 11px;
+    }
+
+    .public-document-breadcrumb span:last-child {
+        max-width: 110px;
+    }
+
+    .public-document-info-item {
+        display: block;
+    }
+
+    .public-document-info-label {
+        margin-bottom: 5px;
+    }
+
+    .public-document-info-item strong {
+        text-align: left;
+    }
+
+    .public-document-access {
+        padding: 14px;
+    }
+
+    .public-document-access-header h2 {
+        font-size: 16px;
+    }
+
+    .public-document-access-header p {
+        font-size: 12px;
+    }
+
+    .public-document-button {
+        font-size: 13px;
+    }
+}
+
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS — 320 PX
+   ========================================================= */
+
+@media (max-width: 320px) {
+
+    .public-document-page {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .public-document-content {
+        padding: 15px 11px;
+    }
+
+    .public-document-title {
+        font-size: 20px;
+    }
+
+    .public-document-description {
+        font-size: 13px;
+    }
+
+    .public-document-access {
+        padding: 12px;
+    }
+
+    .public-document-button {
+        min-height: 47px;
+        padding-left: 10px;
+        padding-right: 10px;
+        font-size: 12px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ — RÉDUCTION DES ANIMATIONS
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .public-document-button {
+        transition: none;
+    }
+
+    .public-document-button:hover {
+        transform: none;
+    }
+}

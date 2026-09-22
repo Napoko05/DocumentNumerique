@@ -59,6 +59,7 @@
     'resources/css/auth.css',
     'resources/css/login/style_register.css',
     'resources/css/journaliste/profile.css',
+    'resources/css/show_doc_public_document.css',
     'resources/css/profile.css',
      'resources/css/contact.css',
     'resources/css/formation/secondaire/vitrine_secondaire.css',
