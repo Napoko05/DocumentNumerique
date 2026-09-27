@@ -10,57 +10,88 @@ use App\Models\Staff;
 
 class LoginController extends Controller
 {
+    /**
+     * URL par défaut après connexion.
+     */
     protected $redirectTo = '/home';
 
+    /**
+     * Constructeur.
+     */
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
     }
 
-    // =========================
-    // FORM LOGIN
-    // =========================
+    // =========================================================
+    // FORMULAIRE DE CONNEXION
+    // =========================================================
+
     public function showLoginForm()
     {
         return view('auth.login');
     }
 
-    // =========================
-    // LOGIN PRINCIPAL
-    // =========================
+    // =========================================================
+    // CONNEXION PRINCIPALE
+    // =========================================================
+
     public function login(Request $request)
     {
         $request->validate([
-            'login'    => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'login' => [
+                'required',
+                'string',
+            ],
+
+            'password' => [
+                'required',
+                'string',
+            ],
+        ], [
+            'login.required' => 'Veuillez saisir votre email, numéro de téléphone ou matricule.',
+            'password.required' => 'Veuillez saisir votre mot de passe.',
         ]);
 
         $user = $this->attemptLogin($request);
 
+        // =====================================================
+        // CONNEXION RÉUSSIE
+        // =====================================================
+
         if ($user) {
 
+            // Régénération de session pour la sécurité
             $request->session()->regenerate();
 
             return $this->authenticated($request, $user);
         }
 
+        // =====================================================
+        // ÉCHEC DE CONNEXION
+        // =====================================================
+
         return back()
             ->withErrors([
                 'login' => 'Identifiants incorrects.',
             ])
-            ->onlyInput('login');
+            ->withInput($request->only('login'));
     }
 
-    // =========================
+    // =========================================================
     // TENTATIVE DE CONNEXION
-    // =========================
+    // =========================================================
+
     protected function attemptLogin(Request $request)
     {
         $login = trim($request->login);
 
-        // =========================
-        // USER (EMAIL)
-        // =========================
+        $remember = $request->boolean('remember');
+
+        // =====================================================
+        // 1. USER : EMAIL
+        // =====================================================
+
         if (filter_var($login, FILTER_VALIDATE_EMAIL)) {
 
             if (
@@ -69,87 +100,129 @@ class LoginController extends Controller
                         'email' => $login,
                         'password' => $request->password,
                     ],
-                    $request->boolean('remember')
+                    $remember
                 )
             ) {
                 return Auth::guard('web')->user();
             }
         }
 
-        // =========================
-        // STAFF (MATRICULE)
-        // =========================
+        // =====================================================
+        // 2. USER : NUMÉRO DE TÉLÉPHONE
+        // =====================================================
+
+        if (
+            Auth::guard('web')->attempt(
+                [
+                    'numero' => $login,
+                    'password' => $request->password,
+                ],
+                $remember
+            )
+        ) {
+            return Auth::guard('web')->user();
+        }
+
+        // =====================================================
+        // 3. STAFF : MATRICULE
+        // =====================================================
+
         if (
             Auth::guard('staff')->attempt(
                 [
                     'matricule' => $login,
                     'password' => $request->password,
                 ],
-                $request->boolean('remember')
+                $remember
             )
         ) {
-
             return Auth::guard('staff')->user();
         }
+
+        // =====================================================
+        // AUCUNE CORRESPONDANCE
+        // =====================================================
 
         return null;
     }
 
-    // =========================
-    // REDIRECTION APRES LOGIN
-    // =========================
-   // =========================
-// REDIRECTION APRES LOGIN
-// =========================
-protected function authenticated(Request $request, $user)
-{
-    session()->flash('success', 'Connexion réussie !');
+    // =========================================================
+    // REDIRECTION APRÈS CONNEXION
+    // =========================================================
 
-    // =========================
-    // UTILISATEUR SIMPLE
-    // =========================
-    if ($user instanceof User) {
-        return redirect()->intended(route('home'));
-    }
+    protected function authenticated(Request $request, $user)
+    {
+        session()->flash('success', 'Connexion réussie !');
 
-    // =========================
-    // STAFF
-    // =========================
-    if ($user instanceof Staff) {
+        // =====================================================
+        // UTILISATEUR SIMPLE
+        // =====================================================
 
-        if (empty($user->role_alias)) {
+        if ($user instanceof User) {
 
-            Auth::guard('staff')->logout();
-
-            return redirect()
-                ->route('login')
-                ->withErrors([
-                    'login' => 'Aucun rôle attribué à ce compte.',
-                ]);
+            return redirect()->intended(
+                route('home')
+            );
         }
 
-        return match ($user->role_alias) {
+        // =====================================================
+        // STAFF
+        // =====================================================
 
-            'admin' => redirect()->route('admin.dashboard'),
+        if ($user instanceof Staff) {
 
-            'journalist' => redirect()->route('journaliste.dashboard'),
+            // Vérification du rôle
+            if (empty($user->role_alias)) {
 
-            default => redirect()->route('home'),
-        };
+                Auth::guard('staff')->logout();
+
+                return redirect()
+                    ->route('login')
+                    ->withErrors([
+                        'login' => 'Aucun rôle attribué à ce compte.',
+                    ]);
+            }
+
+            // =================================================
+            // REDIRECTION SELON LE RÔLE
+            // =================================================
+
+            return match ($user->role_alias) {
+
+                'admin' =>
+                    redirect()->route('admin.dashboard'),
+
+                'journalist' =>
+                    redirect()->route('journaliste.dashboard'),
+
+                default =>
+                    redirect()->route('home'),
+            };
+        }
+
+        // =====================================================
+        // CAS PAR DÉFAUT
+        // =====================================================
+
+        return redirect()->route('home');
     }
 
-    return redirect()->route('home');
-}
+    // =========================================================
+    // DÉCONNEXION
+    // =========================================================
 
-    // =========================
-    // LOGOUT
-    // =========================
     public function logout(Request $request)
     {
+        // Déconnexion User
         Auth::guard('web')->logout();
+
+        // Déconnexion Staff
         Auth::guard('staff')->logout();
 
+        // Invalidation de la session
         $request->session()->invalidate();
+
+        // Nouveau token CSRF
         $request->session()->regenerateToken();
 
         return redirect()->route('home');

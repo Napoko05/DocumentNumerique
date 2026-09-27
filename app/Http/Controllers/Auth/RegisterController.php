@@ -25,9 +25,32 @@ class RegisterController extends Controller
         // VALIDATION
         // =========================
         $request->validate([
-            'nom' => ['required', 'string', 'max:255'],
-            'prenom' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'nom' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'prenom' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                'unique:users,email',
+            ],
+
+            'numero' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:users,numero',
+            ],
+
             'password' => [
                 'required',
                 'string',
@@ -36,10 +59,27 @@ class RegisterController extends Controller
                 'regex:/[a-z]/',
                 'regex:/[A-Z]/',
                 'regex:/[0-9]/',
-                'regex:/[@$!%*#?&]/'
+                'regex:/[@$!%*#?&]/',
             ],
+
         ], [
-            'password.regex' => 'Le mot de passe doit contenir majuscule, minuscule, chiffre et caractère spécial.',
+
+            'nom.required' => 'Le nom est obligatoire.',
+            'prenom.required' => 'Le prénom est obligatoire.',
+
+            'email.required' => 'L’adresse e-mail est obligatoire.',
+            'email.email' => 'Veuillez saisir une adresse e-mail valide.',
+            'email.unique' => 'Cette adresse e-mail est déjà utilisée.',
+
+            'numero.required' => 'Le numéro de téléphone est obligatoire.',
+            'numero.unique' => 'Ce numéro de téléphone est déjà utilisé.',
+
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'La confirmation du mot de passe ne correspond pas.',
+
+            'password.regex' =>
+                'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.',
         ]);
 
         // =========================
@@ -49,9 +89,15 @@ class RegisterController extends Controller
             'nom' => $request->nom,
             'prenom' => $request->prenom,
             'email' => $request->email,
+
+            // NUMÉRO DE TÉLÉPHONE
+            'numero' => $request->numero,
+
             'password' => Hash::make($request->password),
 
-            // 🔥 ALIAS SYSTEM
+            // =========================
+            // ALIAS SYSTEM
+            // =========================
             'role_alias' => 'user',
             'role_label' => 'Utilisateur',
 
@@ -60,7 +106,7 @@ class RegisterController extends Controller
         ]);
 
         // =========================
-        // ROLE SPATIE (toujours utile)
+        // ROLE SPATIE
         // =========================
         $user->assignRole('user');
 
@@ -69,7 +115,14 @@ class RegisterController extends Controller
         // =========================
         auth()->logout();
 
-        return redirect()->route('login')
-            ->with('success', 'Compte créé avec succès. Connectez-vous.');
+        // =========================
+        // REDIRECTION
+        // =========================
+        return redirect()
+            ->route('login')
+            ->with(
+                'success',
+                'Compte créé avec succès. Connectez-vous.'
+            );
     }
 }

@@ -247,12 +247,11 @@
             <div>
 
                 <h3>
-                    Paiement avec LigdiCash
+                    Continuer votre paiement
                 </h3>
 
                 <p>
-                    Vous serez redirigé vers la plateforme sécurisée
-                    LigdiCash pour effectuer votre paiement.
+                    Continuer pour faire le choix de mobile de paiement (MOOV MONEY? ORNAGE MONEY ..).
                 </p>
 
             </div>
@@ -275,12 +274,12 @@
             <div class="ligdicash-content">
 
                 <strong>
-                    Paiement sécurisé par LigdiCash
+                    Paiement sécurisé et rapide
                 </strong>
 
                 <p>
                     Après avoir cliqué sur le bouton ci-dessous,
-                    vous serez redirigé vers LigdiCash.
+                    vous serez redirigé vers la page de paiement.
                     Vous pourrez alors sélectionner le moyen de
                     paiement disponible et finaliser votre transaction
                     directement sur leur plateforme.
@@ -355,7 +354,7 @@
                     </strong>
 
                     <span>
-                        Vous êtes redirigé vers LigdiCash.
+                        Vous êtes redirigé vers la page de paiement.
                     </span>
 
                 </div>
@@ -376,8 +375,8 @@
                     </strong>
 
                     <span>
-                        Vous choisissez votre moyen de paiement
-                        sur LigdiCash.
+                        Vous choisissez votre moyen de paiement.
+                        
                     </span>
 
                 </div>
@@ -464,7 +463,7 @@
             ></i>
 
             <span id="paymentSubmitText">
-                Continuer vers LigdiCash
+                Continuer le paiement
             </span>
 
             <i class="bi bi-arrow-right"></i>
@@ -492,14 +491,13 @@
 
             <i class="bi bi-shield-lock"></i>
 
-            Paiement sécurisé par LigdiCash
+            Paiement sécurisé et rapide
 
         </div>
 
     </div>
 
 </div>
-```
 
 </div>
 

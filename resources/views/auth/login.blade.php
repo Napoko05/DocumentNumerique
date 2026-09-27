@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Connexion | YAA\'Scientia')
@@ -19,7 +20,6 @@
         <section class="auth-intro">
 
             {{-- Logo --}}
-
             <div class="auth-brand">
 
                 <img
@@ -35,7 +35,6 @@
 
 
             {{-- Présentation --}}
-
             <div class="auth-intro-content">
 
                 <span class="auth-intro-badge">
@@ -53,16 +52,16 @@
                 </p>
 
 
-                {{-- =================================================
-                     AVANTAGES
-                ================================================== --}}
-
+                {{-- AVANTAGES --}}
                 <div class="auth-features">
 
                     <div class="auth-feature">
 
                         <span class="auth-feature-icon">
-                            <i class="bi bi-check-lg"></i>
+                            <i
+                                class="bi bi-check-lg"
+                                aria-hidden="true"
+                            ></i>
                         </span>
 
                         <span>
@@ -75,7 +74,10 @@
                     <div class="auth-feature">
 
                         <span class="auth-feature-icon">
-                            <i class="bi bi-shield-lock"></i>
+                            <i
+                                class="bi bi-shield-lock"
+                                aria-hidden="true"
+                            ></i>
                         </span>
 
                         <span>
@@ -88,7 +90,10 @@
                     <div class="auth-feature">
 
                         <span class="auth-feature-icon">
-                            <i class="bi bi-book"></i>
+                            <i
+                                class="bi bi-book"
+                                aria-hidden="true"
+                            ></i>
                         </span>
 
                         <span>
@@ -112,10 +117,7 @@
 
             <div class="auth-form">
 
-                {{-- =================================================
-                     TITRE
-                ================================================== --}}
-
+                {{-- TITRE --}}
                 <h2 class="auth-title">
                     Bon retour !
                 </h2>
@@ -125,15 +127,13 @@
                 </p>
 
 
-                {{-- =================================================
-                     MESSAGE SUCCÈS
-                ================================================== --}}
-
+                {{-- MESSAGE SUCCÈS --}}
                 @if(session('success'))
 
                     <div
                         class="auth-alert auth-alert-success"
                         role="alert"
+                        aria-live="polite"
                     >
                         {{ session('success') }}
                     </div>
@@ -141,15 +141,13 @@
                 @endif
 
 
-                {{-- =================================================
-                     ERREURS
-                ================================================== --}}
-
+                {{-- ERREURS --}}
                 @if($errors->any())
 
                     <div
                         class="auth-alert auth-alert-error"
                         role="alert"
+                        aria-live="polite"
                     >
                         {{ $errors->first() }}
                     </div>
@@ -157,21 +155,18 @@
                 @endif
 
 
-                {{-- =================================================
-                     FORMULAIRE
-                ================================================== --}}
-
+                {{-- FORMULAIRE --}}
                 <form
                     method="POST"
                     action="{{ route('login') }}"
-                    novalidate
+                    autocomplete="on"
                 >
 
                     @csrf
 
 
                     {{-- =================================================
-                         EMAIL / MATRICULE
+                         EMAIL / TÉLÉPHONE / MATRICULE
                     ================================================== --}}
 
                     <div class="auth-field">
@@ -180,7 +175,7 @@
                             for="login"
                             class="auth-label"
                         >
-                            Email ou matricule
+                            Email, numéro de téléphone ou matricule
                         </label>
 
                         <input
@@ -191,13 +186,17 @@
                             required
                             autofocus
                             autocomplete="username"
+                            maxlength="255"
                             class="auth-input @error('login') is-invalid @enderror"
-                            placeholder="email@exemple.com"
+                            placeholder="Email, téléphone ou matricule"
                         >
 
                         @error('login')
 
-                            <div class="auth-error">
+                            <div
+                                class="auth-error"
+                                role="alert"
+                            >
                                 {{ $message }}
                             </div>
 
@@ -219,6 +218,8 @@
                             Mot de passe
                         </label>
 
+
+                        {{-- Conteneur du champ + œil --}}
                         <div class="auth-input-wrapper">
 
                             <input
@@ -227,29 +228,39 @@
                                 name="password"
                                 required
                                 autocomplete="current-password"
+                                maxlength="255"
                                 class="auth-input auth-password-input @error('password') is-invalid @enderror"
                                 placeholder="Votre mot de passe"
                             >
 
+
+                            {{-- Bouton afficher / masquer --}}
                             <button
                                 type="button"
                                 id="togglePassword"
                                 class="auth-password-toggle"
                                 aria-label="Afficher le mot de passe"
                                 aria-pressed="false"
+                                title="Afficher le mot de passe"
                             >
+
                                 <i
                                     id="passwordIcon"
                                     class="bi bi-eye"
                                     aria-hidden="true"
                                 ></i>
+
                             </button>
 
                         </div>
 
+
                         @error('password')
 
-                            <div class="auth-error">
+                            <div
+                                class="auth-error"
+                                role="alert"
+                            >
                                 {{ $message }}
                             </div>
 
@@ -314,7 +325,9 @@
 
                 <div class="auth-register">
 
-                    Vous n'avez pas encore de compte ?
+                    <span>
+                        Vous n'avez pas encore de compte ?
+                    </span>
 
                     <a href="{{ route('register') }}">
                         Créer un compte
@@ -331,8 +344,14 @@
                     href="{{ url('/') }}"
                     class="auth-back"
                 >
-                    <i class="bi bi-arrow-left me-1"></i>
+
+                    <i
+                        class="bi bi-arrow-left me-1"
+                        aria-hidden="true"
+                    ></i>
+
                     Retour à l'accueil
+
                 </a>
 
             </div>
@@ -343,59 +362,154 @@
 
 </div>
 
-@endsection
-
 
 {{-- =============================================================
-     JAVASCRIPT
+     JAVASCRIPT — AFFICHER / MASQUER MOT DE PASSE
+     
+     Le script est directement dans la vue afin de ne pas dépendre
+     de @stack('scripts') dans layouts.app.
 ============================================================= --}}
 
-@push('scripts')
-
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+(function () {
 
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordIcon = document.getElementById('passwordIcon');
+    'use strict';
 
-    if (!passwordInput || !togglePassword || !passwordIcon) {
-        return;
+    function initializePasswordToggle() {
+
+        const passwordInput =
+            document.getElementById('password');
+
+        const togglePassword =
+            document.getElementById('togglePassword');
+
+        const passwordIcon =
+            document.getElementById('passwordIcon');
+
+
+        /*
+         * Vérification des éléments.
+         */
+        if (
+            !passwordInput ||
+            !togglePassword ||
+            !passwordIcon
+        ) {
+            return;
+        }
+
+
+        /*
+         * Évite d'enregistrer deux fois
+         * le même événement.
+         */
+        if (
+            togglePassword.dataset.initialized === 'true'
+        ) {
+            return;
+        }
+
+        togglePassword.dataset.initialized = 'true';
+
+
+        /*
+         * CLIC SUR L'ŒIL
+         */
+        togglePassword.addEventListener(
+            'click',
+            function (event) {
+
+                /*
+                 * Le bouton ne doit jamais
+                 * envoyer le formulaire.
+                 */
+                event.preventDefault();
+                event.stopPropagation();
+
+
+                /*
+                 * État actuel du champ.
+                 */
+                const isHidden =
+                    passwordInput.type === 'password';
+
+
+                /*
+                 * Afficher / masquer.
+                 */
+                passwordInput.type = isHidden
+                    ? 'text'
+                    : 'password';
+
+
+                /*
+                 * Changer l'icône.
+                 */
+                passwordIcon.classList.toggle(
+                    'bi-eye',
+                    !isHidden
+                );
+
+                passwordIcon.classList.toggle(
+                    'bi-eye-slash',
+                    isHidden
+                );
+
+
+                /*
+                 * Accessibilité.
+                 */
+                const label = isHidden
+                    ? 'Masquer le mot de passe'
+                    : 'Afficher le mot de passe';
+
+                togglePassword.setAttribute(
+                    'aria-label',
+                    label
+                );
+
+                togglePassword.setAttribute(
+                    'title',
+                    label
+                );
+
+                togglePassword.setAttribute(
+                    'aria-pressed',
+                    isHidden
+                        ? 'true'
+                        : 'false'
+                );
+
+
+                /*
+                 * Remet le curseur dans le champ.
+                 */
+                passwordInput.focus();
+
+            }
+        );
+
     }
 
-    togglePassword.addEventListener('click', function () {
 
-        const isPassword = passwordInput.type === 'password';
+    /*
+     * Initialisation immédiate si le DOM
+     * est déjà chargé.
+     */
+    if (document.readyState === 'loading') {
 
-        passwordInput.type = isPassword
-            ? 'text'
-            : 'password';
-
-        passwordIcon.classList.toggle(
-            'bi-eye',
-            !isPassword
+        document.addEventListener(
+            'DOMContentLoaded',
+            initializePasswordToggle
         );
 
-        passwordIcon.classList.toggle(
-            'bi-eye-slash',
-            isPassword
-        );
+    } else {
 
-        togglePassword.setAttribute(
-            'aria-label',
-            isPassword
-                ? 'Masquer le mot de passe'
-                : 'Afficher le mot de passe'
-        );
+        initializePasswordToggle();
 
-        togglePassword.setAttribute(
-            'aria-pressed',
-            isPassword ? 'true' : 'false'
-        );
+    }
 
-    });
-
-});
+})();
 </script>
 
-@endpush
+@endsection

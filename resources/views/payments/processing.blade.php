@@ -115,7 +115,7 @@ $isCancelled = $status === 'cancelled';
 
         <p class="status-description">
 
-            Votre paiement a été lancé via LigdiCash.
+            Votre paiement a été lancé.
             La confirmation de votre transaction est en cours.
 
         </p>
@@ -298,7 +298,7 @@ $isCancelled = $status === 'cancelled';
 
                     <i class="bi bi-activity"></i>
 
-                    Statut LigdiCash
+                    Statut Paiement
 
                 </span>
 
@@ -362,7 +362,7 @@ $isCancelled = $status === 'cancelled';
 
                 <p>
 
-                    Votre paiement est traité par LigdiCash.
+                    Votre paiement sera très vite traité,
                     Une fois la transaction confirmée,
                     l'accès au document sera automatiquement autorisé.
 
