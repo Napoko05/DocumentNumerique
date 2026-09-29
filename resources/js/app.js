@@ -25,7 +25,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-
+import './admin/sidebar';
 /*
 |--------------------------------------------------------------------------
 | DOM READY

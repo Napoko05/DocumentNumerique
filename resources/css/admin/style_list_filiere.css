@@ -1,0 +1,964 @@
+/* =========================================================
+   YAA'SCIENTIA
+   GESTION DES FILIÈRES — ENSEIGNEMENT SUPÉRIEUR
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.admin-filieres-page {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.filieres-header {
+    margin-bottom: 22px;
+}
+
+
+.filieres-header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+
+.filieres-eyebrow {
+    margin-bottom: 6px;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+
+.filieres-title {
+    margin: 0;
+    color: #0f172a;
+    font-size: 27px;
+    font-weight: 750;
+    line-height: 1.25;
+}
+
+
+.filieres-subtitle {
+    max-width: 700px;
+    margin: 8px 0 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   BOUTON AJOUTER
+========================================================= */
+
+.filieres-add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 44px;
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    white-space: nowrap;
+
+    box-shadow: 0 5px 14px rgba(37, 99, 235, .18);
+
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.filieres-add-btn:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(37, 99, 235, .23);
+}
+
+
+.filieres-add-btn i {
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   BARRE DE RECHERCHE
+========================================================= */
+
+.filieres-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    margin-bottom: 20px;
+    padding: 14px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+
+    box-shadow:
+        0 1px 3px rgba(15, 23, 42, .04);
+}
+
+
+.filieres-search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+}
+
+
+.filieres-search {
+    height: 43px;
+
+    padding: 0 43px 0 42px;
+
+    border: 1px solid #dbe2ea;
+    border-radius: 9px;
+
+    background: #f8fafc;
+
+    color: #0f172a;
+
+    font-size: 13px;
+
+    box-shadow: none !important;
+}
+
+
+.filieres-search:focus {
+    border-color: #93c5fd;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, .08) !important;
+}
+
+
+.filieres-search::placeholder {
+    color: #94a3b8;
+}
+
+
+.filieres-search-icon {
+    position: absolute;
+
+    top: 50%;
+    left: 15px;
+
+    z-index: 2;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+}
+
+
+.filieres-search-clear {
+    position: absolute;
+
+    top: 50%;
+    right: 9px;
+
+    width: 28px;
+    height: 28px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 7px;
+
+    background: #e2e8f0;
+    color: #475569;
+
+    cursor: pointer;
+
+    transform: translateY(-50%);
+}
+
+
+.filieres-search-clear:hover {
+    background: #cbd5e1;
+    color: #0f172a;
+}
+
+
+.filieres-search-clear i {
+    font-size: 11px;
+}
+
+
+.filieres-result-info {
+    flex-shrink: 0;
+
+    color: #64748b;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   CONTENEUR
+========================================================= */
+
+.filieres-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+/* =========================================================
+   CARTE DOMAINE
+========================================================= */
+
+.filiere-domain-card {
+    overflow: hidden;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    box-shadow:
+        0 2px 5px rgba(15, 23, 42, .035);
+}
+
+
+/* =========================================================
+   HEADER DOMAINE
+========================================================= */
+
+.filiere-domain-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 18px 20px;
+
+    border-bottom: 1px solid #eef2f7;
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f8fafc 100%
+        );
+}
+
+
+.filiere-domain-title {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    min-width: 0;
+}
+
+
+.filiere-domain-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+.filiere-domain-icon i {
+    font-size: 19px;
+}
+
+
+.filiere-domain-label {
+    margin-bottom: 2px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+
+.filiere-domain-title h2 {
+    margin: 0;
+
+    overflow: hidden;
+
+    color: #0f172a;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    line-height: 1.35;
+
+    text-overflow: ellipsis;
+}
+
+
+.filiere-domain-count {
+    flex-shrink: 0;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    padding: 6px 10px;
+
+    border-radius: 20px;
+
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    font-size: 11px;
+    font-weight: 600;
+}
+
+
+.domain-count-number {
+    color: #2563eb;
+    font-weight: 750;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.filiere-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+
+.filiere-table {
+    width: 100%;
+    min-width: 620px;
+
+    margin: 0;
+
+    vertical-align: middle;
+}
+
+
+.filiere-table thead th {
+    padding: 12px 20px;
+
+    border-bottom: 1px solid #e5e7eb;
+
+    background: #f8fafc;
+
+    color: #64748b;
+
+    font-size: 10px;
+    font-weight: 750;
+
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+
+.filiere-table tbody td {
+    padding: 14px 20px;
+
+    border-bottom: 1px solid #f1f5f9;
+
+    color: #334155;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+}
+
+
+.filiere-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+
+.filiere-row {
+    transition: background .18s ease;
+}
+
+
+.filiere-row:hover {
+    background: #f8fbff;
+}
+
+
+/* =========================================================
+   NOM FILIÈRE
+========================================================= */
+
+.filiere-name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    min-width: 0;
+}
+
+
+.filiere-icon {
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+.filiere-icon i {
+    font-size: 15px;
+}
+
+
+.filiere-name {
+    color: #1e293b;
+
+    font-size: 13px;
+    font-weight: 650;
+
+    line-height: 1.4;
+}
+
+
+.filiere-domain-mobile {
+    display: none;
+
+    margin-top: 2px;
+
+    color: #94a3b8;
+
+    font-size: 10px;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.filiere-actions-column {
+    width: 220px;
+
+    text-align: right;
+}
+
+
+.filiere-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 7px;
+}
+
+
+.filiere-delete-form {
+    margin: 0;
+}
+
+
+.filiere-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-height: 34px;
+
+    padding: 0 10px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+    font-weight: 650;
+
+    cursor: pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+
+.filiere-action-btn i {
+    font-size: 13px;
+}
+
+
+.filiere-edit-btn {
+    border: 1px solid #bfdbfe;
+
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+
+.filiere-edit-btn:hover {
+    border-color: #93c5fd;
+
+    background: #dbeafe;
+    color: #1e40af;
+
+    transform: translateY(-1px);
+}
+
+
+.filiere-delete-btn {
+    border: 1px solid #fecaca;
+
+    background: #fff1f2;
+    color: #dc2626;
+}
+
+
+.filiere-delete-btn:hover {
+    border-color: #fca5a5;
+
+    background: #fee2e2;
+    color: #b91c1c;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   ÉTAT VIDE
+========================================================= */
+
+.filiere-empty {
+    min-height: 150px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    padding: 25px;
+
+    text-align: center;
+}
+
+
+.filiere-empty-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 4px;
+
+    border-radius: 10px;
+
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+
+.filiere-empty-icon i {
+    font-size: 18px;
+}
+
+
+.filiere-empty strong {
+    color: #475569;
+
+    font-size: 13px;
+}
+
+
+.filiere-empty span {
+    color: #94a3b8;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   AUCUN RÉSULTAT DANS UN DOMAINE
+========================================================= */
+
+.filiere-no-search-result {
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    padding: 22px;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   AUCUN DOMAINE
+========================================================= */
+
+.filieres-global-empty,
+.filieres-global-search-empty {
+    min-height: 300px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    text-align: center;
+}
+
+
+.filieres-global-empty-icon {
+    width: 60px;
+    height: 60px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 15px;
+
+    border-radius: 15px;
+
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+
+.filieres-global-empty-icon i {
+    font-size: 25px;
+}
+
+
+.filieres-global-empty h3,
+.filieres-global-search-empty h3 {
+    margin: 0 0 7px;
+
+    color: #1e293b;
+
+    font-size: 16px;
+    font-weight: 700;
+}
+
+
+.filieres-global-empty p,
+.filieres-global-search-empty p {
+    max-width: 500px;
+
+    margin: 0 0 18px;
+
+    color: #64748b;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   TABLETTE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .filieres-header-content {
+        align-items: flex-start;
+    }
+
+
+    .filieres-title {
+        font-size: 24px;
+    }
+
+
+    .filiere-actions-column {
+        width: 200px;
+    }
+
+
+    .filiere-table thead th,
+    .filiere-table tbody td {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .filieres-header {
+        margin-bottom: 17px;
+    }
+
+
+    .filieres-header-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+
+    .filieres-title {
+        font-size: 22px;
+    }
+
+
+    .filieres-subtitle {
+        font-size: 12px;
+    }
+
+
+    .filieres-add-btn {
+        width: 100%;
+    }
+
+
+    .filieres-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+
+        gap: 10px;
+
+        padding: 11px;
+    }
+
+
+    .filieres-search-wrapper {
+        max-width: none;
+    }
+
+
+    .filieres-result-info {
+        padding-left: 3px;
+    }
+
+
+    .filiere-domain-header {
+        padding: 15px;
+    }
+
+
+    .filiere-domain-count {
+        align-self: flex-start;
+    }
+
+
+    .filiere-table {
+        min-width: 0;
+    }
+
+
+    .filiere-table thead {
+        display: none;
+    }
+
+
+    .filiere-table,
+    .filiere-table tbody,
+    .filiere-table tr,
+    .filiere-table td {
+        display: block;
+        width: 100%;
+    }
+
+
+    .filiere-table tbody tr.filiere-row {
+        padding: 13px 15px;
+
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+
+    .filiere-table tbody tr:last-child {
+        border-bottom: 0;
+    }
+
+
+    .filiere-table tbody td {
+        padding: 0;
+
+        border: 0;
+    }
+
+
+    .filiere-table tbody td.filiere-actions-column {
+        width: 100%;
+
+        margin-top: 11px;
+    }
+
+
+    .filiere-name-wrapper {
+        width: 100%;
+    }
+
+
+    .filiere-domain-mobile {
+        display: block;
+    }
+
+
+    .filiere-actions {
+        justify-content: flex-start;
+
+        width: 100%;
+    }
+
+
+    .filiere-action-btn {
+        flex: 1;
+
+        min-height: 36px;
+    }
+
+}
+
+
+/* =========================================================
+   PETIT MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .filieres-title {
+        font-size: 20px;
+    }
+
+
+    .filieres-subtitle {
+        display: none;
+    }
+
+
+    .filiere-domain-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+
+    .filiere-domain-count {
+        align-self: flex-start;
+    }
+
+
+    .filiere-actions {
+        gap: 6px;
+    }
+
+
+    .filiere-action-btn {
+        padding: 0 7px;
+
+        font-size: 10px;
+    }
+
+
+    .filiere-action-btn i {
+        font-size: 12px;
+    }
+
+}
+
+
+/* =========================================================
+   TRÈS PETIT MOBILE
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .filiere-action-btn span {
+        display: none;
+    }
+
+
+    .filiere-action-btn {
+        flex: 0 0 38px;
+
+        width: 38px;
+        padding: 0;
+    }
+
+}

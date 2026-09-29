@@ -1,11 +1,20 @@
 /* =========================================================
-   ADMIN SIDEBAR
    YAA'SCIENTIA
-   VERSION SANS TAILWIND
+   ADMIN SIDEBAR
+   VERSION BOOTSTRAP / SANS TAILWIND
+   RESPONSIVE TOUS ÉCRANS
+========================================================= */
+
+
+/* =========================================================
+   VARIABLES
 ========================================================= */
 
 :root {
+
     --admin-sidebar-width: 256px;
+    --admin-sidebar-mobile-width: 285px;
+    --admin-sidebar-small-width: 270px;
 
     --admin-sidebar-bg: #111827;
     --admin-sidebar-bg-deep: #0f172a;
@@ -24,11 +33,28 @@
     --admin-sidebar-danger-hover: rgba(239, 68, 68, 0.10);
 
     --admin-brand: #2563eb;
+
+    --admin-sidebar-radius: 8px;
+
+    --admin-sidebar-transition: 0.25s ease;
 }
 
 
 /* =========================================================
-   SIDEBAR PRINCIPALE
+   RESET LOCAL DU SIDEBAR
+========================================================= */
+
+.admin-sidebar,
+.admin-sidebar *,
+.admin-sidebar *::before,
+.admin-sidebar *::after {
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   SIDEBAR PRINCIPAL
 ========================================================= */
 
 .admin-sidebar {
@@ -38,13 +64,17 @@
     top: 0;
     left: 0;
 
-    z-index: 1030;
+    z-index: 1050;
 
     width: var(--admin-sidebar-width);
     height: 100vh;
+    height: 100dvh;
 
     display: flex;
     flex-direction: column;
+
+    margin: 0;
+    padding: 0;
 
     background:
         linear-gradient(
@@ -55,26 +85,38 @@
 
     color: var(--admin-sidebar-text);
 
+    border: 0;
+
     box-shadow:
         8px 0 30px rgba(0, 0, 0, 0.08);
+
+    overflow: hidden;
+
+    transform: translateX(0);
 
     transition:
         transform 0.3s ease,
         box-shadow 0.3s ease;
 
-    overflow: hidden;
+    isolation: isolate;
 }
 
 
 /* =========================================================
-   HEADER / LOGO
+   HEADER
 ========================================================= */
 
 .admin-sidebar-header {
 
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+    min-height: 64px;
     height: 64px;
 
-    flex-shrink: 0;
+    flex: 0 0 64px;
 
     display: flex;
     align-items: center;
@@ -82,18 +124,27 @@
     padding: 0 20px;
 
     border-bottom: 1px solid var(--admin-sidebar-border);
+
+    background:
+        rgba(15, 23, 42, 0.45);
 }
 
 
+/* =========================================================
+   BRAND
+========================================================= */
+
 .admin-sidebar-brand {
 
-    display: flex;
+    width: 100%;
+    min-width: 0;
 
+    display: flex;
     align-items: center;
 
     gap: 12px;
 
-    min-width: 0;
+    text-decoration: none;
 }
 
 
@@ -102,7 +153,9 @@
     width: 34px;
     height: 34px;
 
-    flex-shrink: 0;
+    flex: 0 0 34px;
+
+    display: block;
 
     object-fit: contain;
 
@@ -118,7 +171,11 @@
 
     min-width: 0;
 
+    flex: 1;
+
     line-height: 1.2;
+
+    overflow: hidden;
 }
 
 
@@ -132,7 +189,13 @@
 
     font-weight: 700;
 
+    line-height: 1.2;
+
     white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
@@ -146,7 +209,13 @@
 
     font-size: 11px;
 
+    line-height: 1.2;
+
     white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 
@@ -156,11 +225,18 @@
 
 .admin-sidebar-nav {
 
-    flex: 1;
+    position: relative;
 
-    overflow-y: auto;
+    z-index: 1;
+
+    flex: 1 1 auto;
+
+    min-height: 0;
+
+    width: 100%;
 
     overflow-x: hidden;
+    overflow-y: auto;
 
     padding: 16px 12px;
 
@@ -169,6 +245,8 @@
     scrollbar-color:
         rgba(255, 255, 255, 0.12)
         transparent;
+
+    -webkit-overflow-scrolling: touch;
 }
 
 
@@ -192,6 +270,12 @@
 }
 
 
+.admin-sidebar-nav::-webkit-scrollbar-thumb:hover {
+
+    background: rgba(255, 255, 255, 0.20);
+}
+
+
 /* =========================================================
    TITRES DE SECTION
 ========================================================= */
@@ -199,7 +283,6 @@
 .admin-sidebar-section-title {
 
     margin-top: 20px;
-
     margin-bottom: 7px;
 
     padding: 0 12px;
@@ -210,9 +293,26 @@
 
     font-weight: 700;
 
+    line-height: 1.3;
+
     letter-spacing: 0.08em;
 
     text-transform: uppercase;
+}
+
+
+/* =========================================================
+   GROUPES
+========================================================= */
+
+.admin-sidebar-group {
+
+    position: relative;
+
+    width: 100%;
+
+    margin: 0;
+    padding: 0;
 }
 
 
@@ -225,22 +325,19 @@
     position: relative;
 
     width: 100%;
-
     min-height: 42px;
 
     display: flex;
-
     align-items: center;
 
     gap: 12px;
 
     padding: 10px 12px;
 
-    margin-bottom: 2px;
+    margin: 0 0 2px 0;
 
     border: 0;
-
-    border-radius: 8px;
+    border-radius: var(--admin-sidebar-radius);
 
     background: transparent;
 
@@ -249,17 +346,18 @@
     font-family: inherit;
 
     font-size: 13px;
-
     font-weight: 500;
+
+    line-height: 1.25;
 
     text-decoration: none;
 
     cursor: pointer;
 
     transition:
-        background-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
+        background-color var(--admin-sidebar-transition),
+        color var(--admin-sidebar-transition),
+        transform var(--admin-sidebar-transition);
 }
 
 
@@ -270,6 +368,20 @@
     background: var(--admin-sidebar-hover);
 
     text-decoration: none;
+}
+
+
+.admin-nav-link:focus {
+
+    outline: none;
+}
+
+
+.admin-nav-link:focus-visible {
+
+    outline: 2px solid rgba(147, 197, 253, 0.55);
+
+    outline-offset: -2px;
 }
 
 
@@ -298,7 +410,6 @@
     left: 0;
 
     top: 9px;
-
     bottom: 9px;
 
     width: 3px;
@@ -310,28 +421,137 @@
 
 
 /* =========================================================
-   BOUTONS NAVIGATION
+   BOUTONS PRINCIPAUX
+   UTILISATEURS
+   JOURNALISTES
+   SECONDAIRE
+   SUPÉRIEUR
+   PROFESSIONNEL
 ========================================================= */
 
 .admin-nav-button {
 
-    appearance: none;
+    position: relative;
+
+    width: 100%;
+    min-height: 42px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 10px 12px;
+
+    margin: 0 0 2px 0;
+
+    border: 0;
+    border-radius: var(--admin-sidebar-radius);
+
+    background: transparent !important;
+
+    color: var(--admin-sidebar-text);
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 500;
+
+    line-height: 1.25;
 
     text-align: left;
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    box-shadow: none;
+
+    outline: none;
+
+    transition:
+        background-color var(--admin-sidebar-transition),
+        color var(--admin-sidebar-transition);
+}
+
+
+/*
+   Important :
+   empêche Bootstrap ou le navigateur
+   de donner un fond blanc au bouton.
+*/
+
+.admin-nav-button:hover {
+
+    color: var(--admin-sidebar-text-hover);
+
+    background:
+        var(--admin-sidebar-hover) !important;
+
+    text-decoration: none;
+}
+
+
+.admin-nav-button:active {
+
+    color: #ffffff;
+
+    background:
+        rgba(255, 255, 255, 0.10) !important;
 }
 
 
 .admin-nav-button:focus {
 
-    outline: none;
+    outline: none !important;
+
+    box-shadow: none !important;
 }
 
 
+.admin-nav-button:focus-visible {
+
+    outline: 2px solid rgba(147, 197, 253, 0.55) !important;
+
+    outline-offset: -2px;
+}
+
+
+/*
+   Quand le sous-menu est ouvert
+*/
+
+.admin-nav-button[aria-expanded="true"] {
+
+    color: #ffffff;
+
+    background:
+        rgba(255, 255, 255, 0.07) !important;
+}
+
+
+/* =========================================================
+   TEXTE NAVIGATION
+========================================================= */
+
 .admin-nav-text {
 
-    flex: 1;
+    min-width: 0;
+
+    flex: 1 1 auto;
+
+    overflow: hidden;
 
     text-align: left;
+
+    color: inherit;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
 }
 
 
@@ -344,11 +564,35 @@
     width: 17px;
     height: 17px;
 
-    flex-shrink: 0;
+    flex: 0 0 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: inherit;
+
+    font-size: 15px;
+
+    line-height: 1;
 
     stroke-width: 1.8;
 
     opacity: 0.9;
+}
+
+
+.admin-nav-icon i {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    line-height: 1;
+
+    color: inherit;
 }
 
 
@@ -361,12 +605,35 @@
     width: 15px;
     height: 15px;
 
-    flex-shrink: 0;
+    flex: 0 0 15px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: inherit;
+
+    font-size: 12px;
+
+    line-height: 1;
 
     transition:
         transform 0.25s ease;
 }
 
+
+.admin-nav-arrow i {
+
+    display: block;
+
+    line-height: 1;
+}
+
+
+/*
+   JS ajoute .rotate
+*/
 
 .admin-nav-arrow.rotate {
 
@@ -375,22 +642,27 @@
 
 
 /* =========================================================
-   SOUS-MENU
+   SOUS-MENUS
 ========================================================= */
 
 .admin-submenu {
 
     position: relative;
 
+    width: auto;
+
     margin-left: 16px;
 
+    padding-top: 3px;
+    padding-right: 0;
+    padding-bottom: 4px;
     padding-left: 13px;
 
-    padding-top: 3px;
-
-    padding-bottom: 4px;
+    overflow: visible;
 }
 
+
+/* Ligne verticale */
 
 .admin-submenu::before {
 
@@ -401,7 +673,6 @@
     left: 0;
 
     top: 5px;
-
     bottom: 8px;
 
     width: 1px;
@@ -410,23 +681,31 @@
 }
 
 
+/* =========================================================
+   LIENS DES SOUS-MENUS
+========================================================= */
+
 .admin-submenu-link {
 
     position: relative;
 
-    display: flex;
+    width: 100%;
 
+    min-height: 36px;
+
+    display: flex;
     align-items: center;
 
     gap: 9px;
 
-    min-height: 36px;
-
     padding: 8px 10px;
 
-    margin-bottom: 2px;
+    margin: 0 0 2px 0;
 
+    border: 0;
     border-radius: 7px;
+
+    background: transparent;
 
     color: #7f8da3;
 
@@ -434,7 +713,11 @@
 
     font-weight: 500;
 
+    line-height: 1.25;
+
     text-decoration: none;
+
+    cursor: pointer;
 
     transition:
         background-color 0.2s ease,
@@ -455,6 +738,20 @@
 }
 
 
+.admin-submenu-link:focus {
+
+    outline: none;
+}
+
+
+.admin-submenu-link:focus-visible {
+
+    outline: 2px solid rgba(147, 197, 253, 0.45);
+
+    outline-offset: -2px;
+}
+
+
 .admin-submenu-link.active {
 
     color: #bfdbfe;
@@ -463,13 +760,24 @@
 }
 
 
-.admin-submenu-link span:first-child {
+.admin-submenu-link .admin-nav-icon {
 
     width: 18px;
+    height: 18px;
 
-    text-align: center;
+    flex: 0 0 18px;
 
     font-size: 13px;
+}
+
+
+.admin-submenu-link .admin-nav-text {
+
+    min-width: 0;
+
+    flex: 1;
+
+    white-space: normal;
 }
 
 
@@ -479,17 +787,17 @@
 
 .admin-nav-disabled {
 
+    width: 100%;
     min-height: 42px;
 
     display: flex;
-
     align-items: center;
 
     gap: 12px;
 
     padding: 10px 12px;
 
-    margin-bottom: 2px;
+    margin: 0 0 2px 0;
 
     border-radius: 8px;
 
@@ -498,6 +806,8 @@
     font-size: 13px;
 
     font-weight: 500;
+
+    line-height: 1.25;
 
     cursor: not-allowed;
 
@@ -511,7 +821,13 @@
 }
 
 
+/* =========================================================
+   BADGE "BIENTÔT"
+========================================================= */
+
 .admin-coming-soon {
+
+    flex-shrink: 0;
 
     margin-left: auto;
 
@@ -527,6 +843,8 @@
 
     font-weight: 600;
 
+    line-height: 1.2;
+
     white-space: nowrap;
 }
 
@@ -537,7 +855,13 @@
 
 .admin-sidebar-footer {
 
-    flex-shrink: 0;
+    position: relative;
+
+    z-index: 2;
+
+    flex: 0 0 auto;
+
+    width: 100%;
 
     padding: 14px 12px;
 
@@ -553,17 +877,17 @@
 
 .admin-sidebar-user {
 
-    display: flex;
+    width: 100%;
+    min-width: 0;
 
+    display: flex;
     align-items: center;
 
     gap: 10px;
 
-    min-width: 0;
-
     padding: 7px 10px;
 
-    margin-bottom: 7px;
+    margin: 0 0 7px 0;
 }
 
 
@@ -572,7 +896,7 @@
     width: 34px;
     height: 34px;
 
-    flex-shrink: 0;
+    flex: 0 0 34px;
 
     display: flex;
 
@@ -594,6 +918,8 @@
 
     font-weight: 700;
 
+    line-height: 1;
+
     box-shadow:
         0 3px 8px rgba(37, 99, 235, 0.25);
 }
@@ -602,6 +928,8 @@
 .admin-user-info {
 
     min-width: 0;
+
+    flex: 1;
 
     overflow: hidden;
 }
@@ -616,6 +944,8 @@
     font-size: 12px;
 
     font-weight: 600;
+
+    line-height: 1.25;
 
     white-space: nowrap;
 
@@ -635,6 +965,8 @@
 
     font-size: 10px;
 
+    line-height: 1.25;
+
     white-space: nowrap;
 
     overflow: hidden;
@@ -650,19 +982,18 @@
 .admin-logout-button {
 
     width: 100%;
-
     min-height: 39px;
 
     display: flex;
-
     align-items: center;
 
     gap: 10px;
 
     padding: 9px 12px;
 
-    border: 0;
+    margin: 0;
 
+    border: 0;
     border-radius: 8px;
 
     background: transparent;
@@ -675,7 +1006,14 @@
 
     font-weight: 600;
 
+    line-height: 1.2;
+
+    text-align: left;
+
     cursor: pointer;
+
+    appearance: none;
+    -webkit-appearance: none;
 
     transition:
         background-color 0.2s ease,
@@ -697,62 +1035,729 @@
 }
 
 
-/* =========================================================
-   RESPONSIVE
-========================================================= */
+.admin-logout-button:focus-visible {
 
-@media (max-width: 991.98px) {
+    outline: 2px solid rgba(248, 113, 113, 0.45);
 
-    .admin-sidebar {
-
-        transform: translateX(-100%);
-
-    }
-
-
-    .admin-sidebar.admin-sidebar-open {
-
-        transform: translateX(0);
-
-    }
-
+    outline-offset: -2px;
 }
 
+
+/* =========================================================
+   OVERLAY MOBILE
+========================================================= */
+
+.admin-sidebar-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1040;
+
+    width: 100%;
+    height: 100%;
+
+    background:
+        rgba(15, 23, 42, 0.58);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/*
+   JS ajoute admin-sidebar-open au BODY
+*/
+
+body.admin-sidebar-open .admin-sidebar-overlay {
+
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   BOUTON HAMBURGER MOBILE
+========================================================= */
+
+.admin-mobile-toggle {
+
+    position: fixed;
+
+    top: 14px;
+    left: 14px;
+
+    z-index: 1060;
+
+    width: 42px;
+    height: 42px;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: #1e40af;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 14px rgba(0, 0, 0, 0.20);
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.admin-mobile-toggle:hover {
+
+    background: #1d4ed8;
+}
+
+
+.admin-mobile-toggle:active {
+
+    transform: scale(0.96);
+}
+
+
+.admin-mobile-toggle:focus {
+
+    outline: none;
+}
+
+
+.admin-mobile-toggle:focus-visible {
+
+    outline: 2px solid #93c5fd;
+
+    outline-offset: 2px;
+}
+
+
+.admin-mobile-toggle svg {
+
+    width: 22px;
+    height: 22px;
+
+    display: block;
+}
+
+
+/* =========================================================
+   DESKTOP — >= 992px
+========================================================= */
 
 @media (min-width: 992px) {
 
     .admin-sidebar {
 
-        position: relative;
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: var(--admin-sidebar-width);
 
         transform: translateX(0);
 
+        pointer-events: auto;
     }
 
+
+    .admin-mobile-toggle {
+
+        display: none !important;
+    }
+
+
+    .admin-sidebar-overlay {
+
+        display: none !important;
+    }
+
+
+    body.admin-sidebar-open {
+
+        overflow: auto !important;
+    }
 }
 
 
 /* =========================================================
-   PETITS ÉCRANS
+   TABLETTES — 768px à 991px
+========================================================= */
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+
+    :root {
+
+        --admin-sidebar-width: 285px;
+    }
+
+
+    .admin-sidebar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: 285px;
+
+        height: 100vh;
+        height: 100dvh;
+
+        transform: translateX(-100%);
+
+        pointer-events: none;
+    }
+
+
+    /*
+       OUVERTURE MOBILE
+       La classe est sur BODY.
+    */
+
+    body.admin-sidebar-open .admin-sidebar {
+
+        transform: translateX(0);
+
+        pointer-events: auto;
+
+        box-shadow:
+            12px 0 35px rgba(0, 0, 0, 0.30);
+    }
+
+
+    .admin-mobile-toggle {
+
+        display: flex;
+    }
+
+
+    /*
+       Tous les éléments restent réellement cliquables.
+    */
+
+    body.admin-sidebar-open .admin-sidebar-nav,
+    body.admin-sidebar-open .admin-nav-link,
+    body.admin-sidebar-open .admin-nav-button,
+    body.admin-sidebar-open .admin-submenu-link,
+    body.admin-sidebar-open .admin-logout-button {
+
+        pointer-events: auto;
+    }
+}
+
+
+/* =========================================================
+   SMARTPHONE — <= 767px
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    :root {
+
+        --admin-sidebar-width: 285px;
+    }
+
+
+    .admin-sidebar {
+
+        position: fixed;
+
+        top: 0;
+        left: 0;
+
+        width: min(
+            var(--admin-sidebar-width),
+            88vw
+        );
+
+        max-width: 88vw;
+
+        height: 100vh;
+        height: 100dvh;
+
+        transform: translateX(-105%);
+
+        pointer-events: none;
+
+        box-shadow:
+            none;
+    }
+
+
+    /*
+       SIDEBAR OUVERT
+    */
+
+    body.admin-sidebar-open .admin-sidebar {
+
+        transform: translateX(0);
+
+        pointer-events: auto;
+
+        box-shadow:
+            12px 0 35px rgba(0, 0, 0, 0.32);
+    }
+
+
+    /*
+       HAMBURGER
+    */
+
+    .admin-mobile-toggle {
+
+        top: 12px;
+        left: 12px;
+
+        width: 42px;
+        height: 42px;
+
+        display: flex;
+    }
+
+
+    /*
+       HEADER
+    */
+
+    .admin-sidebar-header {
+
+        min-height: 60px;
+        height: 60px;
+
+        flex-basis: 60px;
+
+        padding: 0 16px;
+    }
+
+
+    .admin-sidebar-logo {
+
+        width: 32px;
+        height: 32px;
+
+        flex-basis: 32px;
+    }
+
+
+    .admin-sidebar-brand-text p {
+
+        font-size: 13px;
+    }
+
+
+    .admin-sidebar-brand-text span {
+
+        font-size: 10px;
+    }
+
+
+    /*
+       NAVIGATION
+    */
+
+    .admin-sidebar-nav {
+
+        padding: 13px 10px;
+
+        overscroll-behavior: contain;
+    }
+
+
+    /*
+       MENUS PRINCIPAUX
+    */
+
+    .admin-nav-link,
+    .admin-nav-button {
+
+        min-height: 44px;
+
+        padding: 10px 12px;
+
+        gap: 11px;
+
+        font-size: 13px;
+
+        touch-action: manipulation;
+    }
+
+
+    /*
+       SOUS-MENUS
+    */
+
+    .admin-submenu {
+
+        margin-left: 13px;
+
+        padding-left: 12px;
+
+        padding-top: 3px;
+
+        padding-bottom: 4px;
+    }
+
+
+    .admin-submenu-link {
+
+        min-height: 40px;
+
+        padding: 9px 10px;
+
+        font-size: 12px;
+
+        touch-action: manipulation;
+    }
+
+
+    /*
+       FOOTER
+    */
+
+    .admin-sidebar-footer {
+
+        padding: 11px 10px;
+
+        padding-bottom:
+            max(
+                11px,
+                env(safe-area-inset-bottom)
+            );
+    }
+
+
+    /*
+       AVATAR
+    */
+
+    .admin-user-avatar {
+
+        width: 32px;
+        height: 32px;
+
+        flex-basis: 32px;
+    }
+}
+
+
+/* =========================================================
+   PETITS SMARTPHONES — <= 575px
 ========================================================= */
 
 @media (max-width: 575.98px) {
 
     :root {
 
-        --admin-sidebar-width: 275px;
-
+        --admin-sidebar-small-width: 270px;
     }
+
+
+    .admin-sidebar {
+
+        width: min(
+            var(--admin-sidebar-small-width),
+            90vw
+        );
+
+        max-width: 90vw;
+    }
+
+
     .admin-sidebar-header {
 
-        padding: 0 18px;
-
+        padding-left: 14px;
+        padding-right: 14px;
     }
+
+
     .admin-sidebar-nav {
+
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+
+    .admin-sidebar-section-title {
+
+        margin-top: 16px;
 
         padding-left: 10px;
 
-        padding-right: 10px;
+        font-size: 9px;
+    }
 
+
+    .admin-nav-link,
+    .admin-nav-button {
+
+        min-height: 43px;
+
+        padding: 10px;
+
+        gap: 10px;
+
+        font-size: 12px;
+    }
+
+
+    .admin-nav-icon {
+
+        width: 17px;
+        height: 17px;
+
+        flex-basis: 17px;
+    }
+
+
+    .admin-nav-arrow {
+
+        width: 14px;
+        height: 14px;
+
+        flex-basis: 14px;
+    }
+
+
+    .admin-submenu {
+
+        margin-left: 11px;
+
+        padding-left: 11px;
+    }
+
+
+    .admin-submenu-link {
+
+        min-height: 39px;
+
+        padding: 8px 9px;
+
+        gap: 8px;
+
+        font-size: 11px;
+    }
+
+
+    .admin-sidebar-footer {
+
+        padding-left: 8px;
+        padding-right: 8px;
     }
 }
+
+
+/* =========================================================
+   TRÈS PETITS ÉCRANS — <= 380px
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .admin-sidebar {
+
+        width: 92vw;
+
+        max-width: 92vw;
+    }
+
+
+    .admin-sidebar-header {
+
+        min-height: 58px;
+        height: 58px;
+
+        flex-basis: 58px;
+
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+
+    .admin-sidebar-logo {
+
+        width: 30px;
+        height: 30px;
+
+        flex-basis: 30px;
+    }
+
+
+    .admin-sidebar-brand {
+
+        gap: 9px;
+    }
+
+
+    .admin-sidebar-brand-text p {
+
+        font-size: 12px;
+    }
+
+
+    .admin-sidebar-brand-text span {
+
+        font-size: 9px;
+    }
+
+
+    .admin-sidebar-nav {
+
+        padding-top: 10px;
+        padding-left: 7px;
+        padding-right: 7px;
+    }
+
+
+    .admin-nav-link,
+    .admin-nav-button {
+
+        min-height: 42px;
+
+        padding: 9px;
+
+        font-size: 11.5px;
+    }
+
+
+    .admin-submenu-link {
+
+        min-height: 37px;
+
+        font-size: 11px;
+    }
+
+
+    .admin-mobile-toggle {
+
+        width: 40px;
+        height: 40px;
+
+        top: 10px;
+        left: 10px;
+    }
+}
+
+
+/* =========================================================
+   ÉCRANS TRÈS BAS — hauteur réduite
+========================================================= */
+
+@media (max-height: 650px) {
+
+    .admin-sidebar-header {
+
+        min-height: 56px;
+        height: 56px;
+
+        flex-basis: 56px;
+    }
+
+
+    .admin-sidebar-nav {
+
+        padding-top: 9px;
+        padding-bottom: 9px;
+    }
+
+
+    .admin-nav-link,
+    .admin-nav-button {
+
+        min-height: 39px;
+
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+
+    .admin-submenu-link {
+
+        min-height: 34px;
+
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+
+    .admin-sidebar-footer {
+
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+
+
+    .admin-sidebar-section-title {
+
+        margin-top: 11px;
+        margin-bottom: 5px;
+    }
+}
+
+
+/* =========================================================
+   ACCESSIBILITÉ
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .admin-sidebar,
+    .admin-nav-link,
+    .admin-nav-button,
+    .admin-submenu-link,
+    .admin-nav-arrow,
+    .admin-sidebar-overlay,
+    .admin-mobile-toggle {
+
+        transition: none !important;
+    }
+}
+
+
+/* =========================================================
+   EMPÊCHE LES ÉLÉMENTS BOOTSTRAP DE CASSER LE SIDEBAR
+========================================================= */
+
+.admin-sidebar button {
+
+    margin-bottom: 2px;
+}
+
+.admin-sidebar a {
+
+    text-decoration: none;
+}
+
+.admin-sidebar a:hover {
+
+    text-decoration: none;
+}
+
+/* =========================================================
+   FIN SIDEBAR
+========================================================= */

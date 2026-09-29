@@ -4,338 +4,875 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="admin-modules-page">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- =========================================================
+         EN-TÊTE
+    ========================================================== --}}
 
-        <div>
-            <h3 class="mb-1">
-                Gestion des modules
-            </h3>
+    <div class="modules-page-header">
 
-            <p class="text-muted mb-0">
-                Domaines → Filières → Niveaux → Modules
-            </p>
-        </div>
+        <div class="modules-header-content">
 
-        <a
-            href="{{ route('admin.superieur.modules.create') }}"
-            class="btn btn-primary"
-        >
-            <i class="fas fa-plus"></i>
-            Ajouter un module
-        </a>
+            <div class="modules-header-text">
 
-    </div>
+                <div class="modules-eyebrow">
+                    Enseignement supérieur
+                </div>
 
+                <h1 class="modules-title">
+                    Gestion des modules
+                </h1>
 
-    {{-- MESSAGE SUCCESS --}}
-    @if(session('success'))
-
-        <div class="alert alert-success">
-
-            {{ session('success') }}
-
-        </div>
-
-    @endif
-
-
-    {{-- MESSAGE ERROR --}}
-    @if(session('error'))
-
-        <div class="alert alert-danger">
-
-            {{ session('error') }}
-
-        </div>
-
-    @endif
-
-
-    @forelse($domaines as $domaine)
-
-        <div class="card shadow-sm mb-4">
-
-            {{-- DOMAINE --}}
-            <div class="card-header bg-dark text-white">
-
-                <strong>
-
-                    {{ $domaine->name }}
-
-                </strong>
+                <p class="modules-subtitle">
+                    Gérez les modules par domaine, filière et niveau.
+                </p>
 
             </div>
 
 
-            <div class="card-body">
+            <a
+                href="{{ route('admin.superieur.modules.create') }}"
+                class="modules-add-btn"
+            >
 
-                @forelse($domaine->filieres as $filiere)
+                <i class="bi bi-plus-lg"></i>
 
-                    <div class="card border mb-4">
+                <span>
+                    Ajouter un module
+                </span>
 
-                        {{-- FILIERE --}}
-                        <div class="card-header bg-light">
+            </a>
 
-                            <strong>
+        </div>
 
-                                Filière :
+    </div>
 
-                            </strong>
 
-                            {{ $filiere->name }}
+    {{-- =========================================================
+         RECHERCHE
+    ========================================================== --}}
+
+    <div class="modules-search-bar">
+
+        <div class="modules-search-box">
+
+            <i class="bi bi-search modules-search-icon"></i>
+
+            <input
+                type="search"
+                id="moduleSearch"
+                class="modules-search-input"
+                placeholder="Rechercher un module, une filière, un niveau ou un domaine..."
+                autocomplete="off"
+            >
+
+            <button
+                type="button"
+                id="clearModuleSearch"
+                class="modules-search-clear"
+                aria-label="Effacer la recherche"
+            >
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+
+
+        <div class="modules-search-info">
+
+            <i class="bi bi-collection"></i>
+
+            <span id="moduleSearchResult">
+                Recherche dans les modules
+            </span>
+
+        </div>
+
+    </div>
+
+
+    {{-- =========================================================
+         MESSAGES
+    ========================================================== --}}
+
+    @if(session('success'))
+
+        <div class="modules-alert modules-alert-success">
+
+            <div class="modules-alert-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <span>
+                {{ session('success') }}
+            </span>
+
+        </div>
+
+    @endif
+
+
+    @if(session('error'))
+
+        <div class="modules-alert modules-alert-danger">
+
+            <div class="modules-alert-icon">
+                <i class="bi bi-exclamation-circle"></i>
+            </div>
+
+            <span>
+                {{ session('error') }}
+            </span>
+
+        </div>
+
+    @endif
+
+
+    {{-- =========================================================
+         DOMAINES
+    ========================================================== --}}
+
+    <div
+        class="modules-domain-list"
+        id="modulesDomainList"
+    >
+
+        @forelse($domaines as $domaine)
+
+            <section
+                class="modules-domain-card"
+                data-domaine="{{ $domaine->name }}"
+            >
+
+                {{-- =================================================
+                     DOMAINE
+                ================================================== --}}
+
+                <div class="modules-domain-header">
+
+                    <div class="modules-domain-heading">
+
+                        <div class="modules-domain-icon">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+
+                        <div>
+
+                            <div class="modules-label">
+                                Domaine
+                            </div>
+
+                            <h2>
+                                {{ $domaine->name }}
+                            </h2>
 
                         </div>
 
+                    </div>
 
-                        <div class="card-body p-0">
 
-                            @forelse($filiere->levels as $level)
+                    <div class="modules-domain-count">
 
-                                <div class="p-3 border-bottom">
+                        <i class="bi bi-collection"></i>
 
-                                    {{-- NIVEAU --}}
-                                    <h6 class="mb-3">
+                        <span>
+                            {{ $domaine->filieres->count() }}
+                            filière(s)
+                        </span>
 
-                                        Niveau :
+                    </div>
 
-                                        <span class="text-primary">
+                </div>
 
-                                            {{ $level->name }}
 
-                                        </span>
+                <div class="modules-domain-body">
 
-                                    </h6>
+                    {{-- =================================================
+                         FILIÈRES
+                    ================================================== --}}
 
+                    @forelse($domaine->filieres as $filiere)
 
-                                    <div class="table-responsive">
+                        <div
+                            class="modules-filiere-card"
+                            data-filiere="{{ $filiere->name }}"
+                        >
 
-                                        <table class="table table-hover mb-0">
+                            <div class="modules-filiere-header">
 
-                                            <thead>
+                                <div class="modules-filiere-heading">
 
-                                                <tr>
+                                    <div class="modules-filiere-icon">
+                                        <i class="bi bi-mortarboard"></i>
+                                    </div>
 
-                                                    <th>
+                                    <div>
 
-                                                        Ordre
+                                        <div class="modules-label">
+                                            Filière
+                                        </div>
 
-                                                    </th>
-
-                                                    <th>
-
-                                                        Module
-
-                                                    </th>
-
-                                                    <th>
-
-                                                        Statut
-
-                                                    </th>
-
-                                                    <th class="text-end">
-
-                                                        Actions
-
-                                                    </th>
-
-                                                </tr>
-
-                                            </thead>
-
-
-                                            <tbody>
-
-                                                @forelse($level->subjects as $subject)
-
-                                                    <tr>
-
-                                                        <td>
-
-                                                            {{ $subject->order }}
-
-                                                        </td>
-
-
-                                                        <td>
-
-                                                            {{ $subject->name }}
-
-                                                        </td>
-
-
-                                                        <td>
-
-                                                            @if(
-                                                                $subject->is_active
-                                                            )
-
-                                                                <span
-                                                                    class="badge bg-success"
-                                                                >
-
-                                                                    Actif
-
-                                                                </span>
-
-                                                            @else
-
-                                                                <span
-                                                                    class="badge bg-danger"
-                                                                >
-
-                                                                    Désactivé
-
-                                                                </span>
-
-                                                            @endif
-
-                                                        </td>
-
-
-                                                        <td class="text-end">
-
-                                                            {{-- MODIFIER --}}
-                                                            <a
-                                                                href="{{ route(
-                                                                    'admin.superieur.modules.edit',
-                                                                    $subject
-                                                                ) }}"
-                                                                class="btn btn-sm btn-warning"
-                                                            >
-
-                                                                Modifier
-
-                                                            </a>
-
-
-                                                            {{-- ACTIVER --}}
-                                                            <form
-                                                                action="{{ route(
-                                                                    'admin.superieur.modules.toggle',
-                                                                    $subject
-                                                                ) }}"
-                                                                method="POST"
-                                                                class="d-inline"
-                                                            >
-
-                                                                @csrf
-
-                                                                @method('PATCH')
-
-                                                                <button
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-secondary"
-                                                                >
-
-                                                                    {{ $subject->is_active
-                                                                        ? 'Désactiver'
-                                                                        : 'Activer'
-                                                                    }}
-
-                                                                </button>
-
-                                                            </form>
-
-
-                                                            {{-- SUPPRIMER --}}
-                                                            <form
-                                                                action="{{ route(
-                                                                    'admin.superieur.modules.destroy',
-                                                                    $subject
-                                                                ) }}"
-                                                                method="POST"
-                                                                class="d-inline"
-                                                                onsubmit="return confirm(
-                                                                    'Voulez-vous supprimer ce module ?'
-                                                                )"
-                                                            >
-
-                                                                @csrf
-
-                                                                @method('DELETE')
-
-                                                                <button
-                                                                    type="submit"
-                                                                    class="btn btn-sm btn-danger"
-                                                                >
-
-                                                                    Supprimer
-
-                                                                </button>
-
-                                                            </form>
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                @empty
-
-                                                    <tr>
-
-                                                        <td
-                                                            colspan="4"
-                                                            class="text-center text-muted"
-                                                        >
-
-                                                            Aucun module
-                                                            dans ce niveau.
-
-                                                        </td>
-
-                                                    </tr>
-
-                                                @endforelse
-
-                                            </tbody>
-
-                                        </table>
+                                        <h3>
+                                            {{ $filiere->name }}
+                                        </h3>
 
                                     </div>
 
                                 </div>
 
-                            @empty
 
-                                <div class="p-3 text-muted">
+                                <div class="modules-filiere-count">
 
-                                    Aucun niveau dans cette filière.
+                                    {{ $filiere->levels->count() }}
+
+                                    niveau(s)
 
                                 </div>
 
-                            @endforelse
+                            </div>
+
+
+                            <div class="modules-level-list">
+
+                                {{-- =================================================
+                                     NIVEAUX
+                                ================================================== --}}
+
+                                @forelse($filiere->levels as $level)
+
+                                    <div
+                                        class="modules-level-block"
+                                        data-niveau="{{ $level->name }}"
+                                    >
+
+                                        <div class="modules-level-header">
+
+                                            <div class="modules-level-title">
+
+                                                <span class="modules-level-icon">
+                                                    <i class="bi bi-layers"></i>
+                                                </span>
+
+                                                <div>
+
+                                                    <span class="modules-level-label">
+                                                        Niveau
+                                                    </span>
+
+                                                    <strong>
+                                                        {{ $level->name }}
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="modules-level-count">
+
+                                                <span>
+                                                    {{ $level->subjects->count() }}
+                                                    module(s)
+                                                </span>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        {{-- =================================================
+                                             TABLE
+                                        ================================================== --}}
+
+                                        <div class="modules-table-wrapper">
+
+                                            <table class="modules-table">
+
+                                                <thead>
+
+                                                    <tr>
+
+                                                        <th class="modules-order-column">
+                                                            Ordre
+                                                        </th>
+
+                                                        <th>
+                                                            Module
+                                                        </th>
+
+                                                        <th class="modules-status-column">
+                                                            Statut
+                                                        </th>
+
+                                                        <th class="modules-actions-column">
+                                                            Actions
+                                                        </th>
+
+                                                    </tr>
+
+                                                </thead>
+
+
+                                                <tbody>
+
+                                                    @forelse($level->subjects as $subject)
+
+                                                        <tr
+                                                            class="module-row"
+                                                            data-module="{{ $subject->name }}"
+                                                        >
+
+                                                            {{-- ORDRE --}}
+
+                                                            <td class="modules-order-column">
+
+                                                                <span class="modules-order-badge">
+                                                                    {{ $subject->order }}
+                                                                </span>
+
+                                                            </td>
+
+
+                                                            {{-- MODULE --}}
+
+                                                            <td>
+
+                                                                <div class="modules-name">
+
+                                                                    <span class="modules-subject-icon">
+
+                                                                        <i class="bi bi-journal-text"></i>
+
+                                                                    </span>
+
+                                                                    <span class="modules-subject-name">
+                                                                        {{ $subject->name }}
+                                                                    </span>
+
+                                                                </div>
+
+                                                            </td>
+
+
+                                                            {{-- STATUT --}}
+
+                                                            <td class="modules-status-column">
+
+                                                                @if($subject->is_active)
+
+                                                                    <span class="modules-status modules-status-active">
+
+                                                                        <span class="modules-status-dot"></span>
+
+                                                                        Actif
+
+                                                                    </span>
+
+                                                                @else
+
+                                                                    <span class="modules-status modules-status-disabled">
+
+                                                                        <span class="modules-status-dot"></span>
+
+                                                                        Désactivé
+
+                                                                    </span>
+
+                                                                @endif
+
+                                                            </td>
+
+
+                                                            {{-- ACTIONS --}}
+
+                                                            <td class="modules-actions-column">
+
+                                                                <div class="modules-actions">
+
+                                                                    <a
+                                                                        href="{{ route(
+                                                                            'admin.superieur.modules.edit',
+                                                                            $subject
+                                                                        ) }}"
+                                                                        class="modules-action-btn modules-edit-btn"
+                                                                    >
+
+                                                                        <i class="bi bi-pencil-square"></i>
+
+                                                                        <span>
+                                                                            Modifier
+                                                                        </span>
+
+                                                                    </a>
+
+
+                                                                    <form
+                                                                        action="{{ route(
+                                                                            'admin.superieur.modules.destroy',
+                                                                            $subject
+                                                                        ) }}"
+                                                                        method="POST"
+                                                                        class="modules-delete-form"
+                                                                        onsubmit="return confirm('Voulez-vous supprimer ce module ?')"
+                                                                    >
+
+                                                                        @csrf
+                                                                        @method('DELETE')
+
+                                                                        <button
+                                                                            type="submit"
+                                                                            class="modules-action-btn modules-delete-btn"
+                                                                        >
+
+                                                                            <i class="bi bi-trash3"></i>
+
+                                                                            <span>
+                                                                                Supprimer
+                                                                            </span>
+
+                                                                        </button>
+
+                                                                    </form>
+
+                                                                </div>
+
+                                                            </td>
+
+                                                        </tr>
+
+
+                                                    @empty
+
+                                                        <tr class="module-empty-row">
+
+                                                            <td
+                                                                colspan="4"
+                                                                class="modules-empty-cell"
+                                                            >
+
+                                                                <div class="modules-empty">
+
+                                                                    <i class="bi bi-journal-x"></i>
+
+                                                                    <span>
+                                                                        Aucun module dans ce niveau.
+                                                                    </span>
+
+                                                                </div>
+
+                                                            </td>
+
+                                                        </tr>
+
+                                                    @endforelse
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                @empty
+
+                                    <div class="modules-no-level">
+
+                                        <i class="bi bi-layers"></i>
+
+                                        <span>
+                                            Aucun niveau dans cette filière.
+                                        </span>
+
+                                    </div>
+
+                                @endforelse
+
+                            </div>
 
                         </div>
 
-                    </div>
+                    @empty
 
-                @empty
+                        <div class="modules-no-filiere">
 
-                    <div class="alert alert-light">
+                            <i class="bi bi-mortarboard"></i>
 
-                        Aucune filière dans ce domaine.
+                            <strong>
+                                Aucune filière
+                            </strong>
 
-                    </div>
+                            <span>
+                                Aucune filière n'est associée à ce domaine.
+                            </span>
 
-                @endforelse
+                        </div>
+
+                    @endforelse
+
+                </div>
+
+            </section>
+
+        @empty
+
+            <div class="modules-global-empty">
+
+                <div class="modules-global-empty-icon">
+
+                    <i class="bi bi-collection"></i>
+
+                </div>
+
+                <h3>
+                    Aucun domaine académique trouvé
+                </h3>
+
+                <p>
+                    Aucun domaine de l'enseignement supérieur
+                    n'est actuellement disponible.
+                </p>
 
             </div>
 
+        @endforelse
+
+    </div>
+
+
+    {{-- =========================================================
+         AUCUN RÉSULTAT DE RECHERCHE
+    ========================================================== --}}
+
+    <div
+        id="modulesSearchEmpty"
+        class="modules-search-empty"
+        style="display: none;"
+    >
+
+        <div class="modules-search-empty-icon">
+
+            <i class="bi bi-search"></i>
+
         </div>
 
-    @empty
+        <h3>
+            Aucun résultat
+        </h3>
 
-        <div class="alert alert-info">
+        <p>
+            Aucun module, niveau, filière ou domaine ne correspond
+            à votre recherche.
+        </p>
 
-            Aucun domaine académique trouvé.
-
-        </div>
-
-    @endforelse
+    </div>
 
 </div>
+
+
+{{-- =============================================================
+     JAVASCRIPT RECHERCHE
+============================================================= --}}
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+    const searchInput =
+        document.getElementById('moduleSearch');
+
+    const clearButton =
+        document.getElementById('clearModuleSearch');
+
+    const resultInfo =
+        document.getElementById('moduleSearchResult');
+
+    const emptyResult =
+        document.getElementById('modulesSearchEmpty');
+
+    const domainCards =
+        document.querySelectorAll('.modules-domain-card');
+
+
+    if (!searchInput) {
+        return;
+    }
+
+
+    function normalize(value) {
+
+        return (value || '')
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+    }
+
+
+    function searchModules() {
+
+        const search =
+            normalize(searchInput.value);
+
+
+        let totalModules = 0;
+
+
+        domainCards.forEach(function (domainCard) {
+
+            const domainName =
+                normalize(
+                    domainCard.dataset.domaine
+                );
+
+
+            let domainVisible = false;
+
+
+            const filiereCards =
+                domainCard.querySelectorAll(
+                    '.modules-filiere-card'
+                );
+
+
+            filiereCards.forEach(function (filiereCard) {
+
+                const filiereName =
+                    normalize(
+                        filiereCard.dataset.filiere
+                    );
+
+
+                let filiereVisible = false;
+
+
+                const levelBlocks =
+                    filiereCard.querySelectorAll(
+                        '.modules-level-block'
+                    );
+
+
+                levelBlocks.forEach(function (levelBlock) {
+
+                    const levelName =
+                        normalize(
+                            levelBlock.dataset.niveau
+                        );
+
+
+                    let levelVisible = false;
+
+
+                    const moduleRows =
+                        levelBlock.querySelectorAll(
+                            '.module-row'
+                        );
+
+
+                    moduleRows.forEach(function (row) {
+
+                        const moduleName =
+                            normalize(
+                                row.dataset.module
+                            );
+
+
+                        const match =
+                            search === '' ||
+                            moduleName.includes(search) ||
+                            levelName.includes(search) ||
+                            filiereName.includes(search) ||
+                            domainName.includes(search);
+
+
+                        if (match) {
+
+                            row.style.display = '';
+
+                            levelVisible = true;
+
+                            filiereVisible = true;
+
+                            domainVisible = true;
+
+                            totalModules++;
+
+                        } else {
+
+                            row.style.display = 'none';
+
+                        }
+
+                    });
+
+
+                    /*
+                    Si la recherche correspond au niveau,
+                    on affiche tous ses modules.
+                    */
+
+                    if (
+                        search !== '' &&
+                        levelName.includes(search)
+                    ) {
+
+                        moduleRows.forEach(function (row) {
+
+                            row.style.display = '';
+
+                            levelVisible = true;
+
+                            filiereVisible = true;
+
+                            domainVisible = true;
+
+                        });
+
+                    }
+
+
+                    /*
+                    Si la recherche correspond à la filière,
+                    on affiche tous ses niveaux.
+                    */
+
+                    if (
+                        search !== '' &&
+                        filiereName.includes(search)
+                    ) {
+
+                        levelBlock.style.display = '';
+
+                        filiereVisible = true;
+
+                        domainVisible = true;
+
+                        moduleRows.forEach(function (row) {
+
+                            row.style.display = '';
+
+                            totalModules++;
+
+                        });
+
+                    }
+
+
+                    /*
+                    Si la recherche correspond au domaine,
+                    on affiche tout.
+                    */
+
+                    if (
+                        search !== '' &&
+                        domainName.includes(search)
+                    ) {
+
+                        levelBlock.style.display = '';
+
+                        filiereVisible = true;
+
+                        domainVisible = true;
+
+                        moduleRows.forEach(function (row) {
+
+                            row.style.display = '';
+
+                        });
+
+                    } else {
+
+                        levelBlock.style.display =
+                            levelVisible
+                                ? ''
+                                : 'none';
+
+                    }
+
+                });
+
+
+                filiereCard.style.display =
+                    filiereVisible
+                        ? ''
+                        : 'none';
+
+            });
+
+
+            domainCard.style.display =
+                domainVisible || search === ''
+                    ? ''
+                    : 'none';
+
+        });
+
+
+        /*
+        Recherche vide
+        */
+
+        if (search === '') {
+
+            resultInfo.textContent =
+                'Recherche dans les modules';
+
+            emptyResult.style.display = 'none';
+
+        } else {
+
+            resultInfo.textContent =
+                totalModules +
+                (
+                    totalModules > 1
+                        ? ' module(s) trouvé(s)'
+                        : ' module trouvé'
+                );
+
+
+            emptyResult.style.display =
+                totalModules === 0
+                    ? 'flex'
+                    : 'none';
+
+        }
+
+
+        clearButton.style.display =
+            search !== ''
+                ? 'flex'
+                : 'none';
+
+    }
+
+
+    searchInput.addEventListener(
+        'input',
+        searchModules
+    );
+
+
+    clearButton.addEventListener(
+        'click',
+        function () {
+
+            searchInput.value = '';
+
+            searchInput.focus();
+
+            searchModules();
+
+        }
+    );
+
+
+    searchModules();
+
+});
+
+</script>
 
 @endsection

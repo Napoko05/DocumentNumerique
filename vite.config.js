@@ -29,6 +29,8 @@ export default defineConfig({
                 'resources/css/admin/style_edit_journaliste.css',
                 'resources/css/admin/style_ajout_matiere.css',
                 'resources/css/admin/create_matieres.css',
+                'resources/css/admin/style_list_filiere.css',
+    'resources/css/admin/style_list_module.css',
                 'resources/css/admin/edit_user.css',
                 'resources/css/profile.css',
                 'resources/css/contact.css',
@@ -73,6 +75,7 @@ export default defineConfig({
                  'resources/js/scrit_profil_menu.js',
                 'resources/js/journaliste/document-wizard.js',
                 'resources/js/journaliste/script_journaliste.js',
+                 'resources/js/admin/sidebar.js',
             ],
 
             refresh: true,
