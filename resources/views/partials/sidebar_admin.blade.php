@@ -390,7 +390,7 @@
                     <span>Ajouter une filière</span>
 
                 </a>
-                <a href="#" class="admin-submenu-link">
+                <a href="{{ route('admin.superieur.levels.index') }}" class="admin-submenu-link">
                     <span class="admin-nav-icon">
                         <i class="bi bi-layers"></i>
                     </span>
@@ -399,7 +399,7 @@
                     </span>
                 </a>
 
-                <a href="#" class="admin-submenu-link">
+                <a href="{{ route('admin.superieur.levels.create') }}" class="admin-submenu-link">
                     <span class="admin-nav-icon">
                         <i class="bi bi-plus-circle"></i>
                     </span>

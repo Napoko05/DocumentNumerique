@@ -30,6 +30,7 @@ use App\Http\Controllers\Admin\Secondaire\LevelController;
 use App\Http\Controllers\Admin\Secondaire\SubjectController;
 use App\Http\Controllers\Admin\Superieur\SubjectController as SuperieurSubjectController;
 use App\Http\Controllers\Admin\Superieur\FiliereController;
+use App\Http\Controllers\Admin\Superieur\SuperieurLevelController;
 
 
 /*
@@ -456,6 +457,28 @@ Route::prefix('admin/superieur')
             '/filieres/{filiere}/toggle',
             [FiliereController::class, 'toggle']
         )->name('filieres.toggle');
+        /*
+        |-----------------------------------------------------------------------------
+        Niveaux
+        |-----------------------------------------------------------------------------
+        */
+        Route::get('/', [SuperieurLevelController::class, 'index'])
+            ->name('levels.index');
+
+        Route::get('/create', [SuperieurLevelController::class, 'create'])
+            ->name('levels.create');
+
+        Route::post('/', [SuperieurLevelController::class, 'store'])
+            ->name('levels.store');
+
+        Route::get('/{level}/edit', [SuperieurLevelController::class, 'edit'])
+            ->name('levels.edit');
+
+        Route::put('/{level}', [SuperieurLevelController::class, 'update'])
+            ->name('levels.update');
+
+        Route::delete('/{level}', [SuperieurLevelController::class, 'destroy'])
+            ->name('levels.destroy');
 
         /*
         |--------------------------------------------------------------------------

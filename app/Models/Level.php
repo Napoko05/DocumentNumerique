@@ -18,6 +18,7 @@ class Level extends Model
     protected $fillable = [
         'formation_id',
         'filiere_id',
+        ' section',
         'specialite_id',
         'name',
         'slug',

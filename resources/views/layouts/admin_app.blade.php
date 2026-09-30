@@ -48,6 +48,7 @@
     'resources/css/admin/create_matieres.css',
     'resources/css/admin/style_list_filiere.css',
     'resources/css/admin/style_list_module.css',
+    'resources/css/admin/style_list_levels.css',
     'resources/css/admin/edit_user.css',
 ])
 
