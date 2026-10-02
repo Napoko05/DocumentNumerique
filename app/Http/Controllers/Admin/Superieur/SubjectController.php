@@ -35,9 +35,9 @@ class SubjectController extends Controller
                 $query->orderBy('position', 'asc');
             }
         ])
-        ->where('is_active', true)
-        ->orderBy('position', 'asc')
-        ->get();
+            ->where('is_active', true)
+            ->orderBy('position', 'asc')
+            ->get();
 
         return view(
             'admin.superieur.modules.index',
@@ -58,8 +58,8 @@ class SubjectController extends Controller
             'is_active',
             true
         )
-        ->orderBy('position', 'asc')
-        ->get();
+            ->orderBy('position', 'asc')
+            ->get();
 
         $levels = Level::whereHas(
             'filiere.academicDomain',
@@ -70,15 +70,15 @@ class SubjectController extends Controller
                 );
             }
         )
-        ->where(
-            'is_active',
-            true
-        )
-        ->with([
-            'filiere.academicDomain'
-        ])
-        ->orderBy('name')
-        ->get();
+            ->where(
+                'is_active',
+                true
+            )
+            ->with([
+                'filiere.academicDomain'
+            ])
+            ->orderBy('name')
+            ->get();
 
         return view(
             'admin.superieur.modules.create',
@@ -169,19 +169,19 @@ class SubjectController extends Controller
         Subject::create([
 
             'level_id' =>
-                $validated['level_id'],
+            $validated['level_id'],
 
             'name' =>
-                $validated['name'],
+            $validated['name'],
 
             'slug' =>
-                $slug,
+            $slug,
 
             'position' =>
-                $validated['position'] ?? 0,
+            $validated['position'] ?? 0,
 
             'is_active' =>
-                true,
+            true,
 
         ]);
 
@@ -209,8 +209,8 @@ class SubjectController extends Controller
             'is_active',
             true
         )
-        ->orderBy('position', 'asc')
-        ->get();
+            ->orderBy('position', 'asc')
+            ->get();
 
         $levels = Level::whereHas(
             'filiere.academicDomain',
@@ -221,15 +221,15 @@ class SubjectController extends Controller
                 );
             }
         )
-        ->where(
-            'is_active',
-            true
-        )
-        ->with([
-            'filiere.academicDomain'
-        ])
-        ->orderBy('name')
-        ->get();
+            ->where(
+                'is_active',
+                true
+            )
+            ->with([
+                'filiere.academicDomain'
+            ])
+            ->orderBy('name')
+            ->get();
 
         return view(
             'admin.superieur.modules.edit',
@@ -252,38 +252,27 @@ class SubjectController extends Controller
         Request $request,
         Subject $subject
     ) {
+        /*
+    |--------------------------------------------------------------------------
+    | VALIDATION
+    |--------------------------------------------------------------------------
+    | Seul le nom du module peut être modifié.
+    */
+
         $validated = $request->validate([
-
-            'level_id' => [
-                'required',
-                'exists:levels,id',
-            ],
-
             'name' => [
                 'required',
                 'string',
                 'max:150',
             ],
-
-            'position' => [
-                'nullable',
-                'integer',
-                'min:0',
-            ],
-
-            'is_active' => [
-                'required',
-                'boolean',
-            ],
-
         ]);
 
 
         /*
-        |--------------------------------------------------------------------------
-        | GÉNÉRATION DU SLUG
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | GÉNÉRATION DU SLUG
+    |--------------------------------------------------------------------------
+    */
 
         $slug = Str::slug(
             $validated['name']
@@ -295,71 +284,55 @@ class SubjectController extends Controller
 
 
         /*
-        |--------------------------------------------------------------------------
-        | ÉVITER LES DOUBLONS
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | ÉVITER LES DOUBLONS
+    |--------------------------------------------------------------------------
+    */
 
         while (
-            Subject::where(
-                'level_id',
-                $validated['level_id']
-            )
-            ->where(
-                'slug',
-                $slug
-            )
-            ->where(
-                'id',
-                '!=',
-                $subject->id
-            )
+            Subject::where('level_id', $subject->level_id)
+            ->where('slug', $slug)
+            ->where('id', '!=', $subject->id)
             ->exists()
         ) {
-            $slug = $originalSlug
-                . '-'
-                . $numero;
+            $slug = $originalSlug . '-' . $numero;
 
             $numero++;
         }
 
 
         /*
-        |--------------------------------------------------------------------------
-        | MISE À JOUR
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | MISE À JOUR
+    |--------------------------------------------------------------------------
+    | IMPORTANT :
+    | On ne modifie PAS :
+    | - level_id
+    | - position
+    | - is_active
+    |
+    | Seuls name et slug changent.
+    */
 
         $subject->update([
-
-            'level_id' =>
-                $validated['level_id'],
-
-            'name' =>
-                $validated['name'],
-
-            'slug' =>
-                $slug,
-
-            'position' =>
-                $validated['position'] ?? 0,
-
-            'is_active' =>
-                $validated['is_active'],
-
+            'name' => $validated['name'],
+            'slug' => $slug,
         ]);
 
 
+        /*
+    |--------------------------------------------------------------------------
+    | REDIRECTION
+    |--------------------------------------------------------------------------
+    */
+
         return redirect()
-            ->route(
-                'admin.superieur.modules.index'
-            )
+            ->route('admin.superieur.modules.index')
             ->with(
                 'success',
-                'Module modifié avec succès.'
+                'Le module a été modifié avec succès.'
             );
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -372,7 +345,7 @@ class SubjectController extends Controller
         $subject->update([
 
             'is_active' =>
-                ! $subject->is_active,
+            ! $subject->is_active,
 
         ]);
 
@@ -396,8 +369,8 @@ class SubjectController extends Controller
     {
         if (
             $subject
-                ->documents()
-                ->exists()
+            ->documents()
+            ->exists()
         ) {
             return back()
                 ->with(

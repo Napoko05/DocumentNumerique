@@ -1,384 +1,190 @@
 @extends('layouts.admin_app')
 
-@section('title', 'Ajouter un module')
-
 @section('content')
 
-<div class="container-fluid">
-
-    <div class="row">
-
-        <div class="col-lg-8">
-
-            <div class="card shadow-sm">
-
-                <div class="card-header">
-
-                    <h5 class="mb-0">
-
-                        Ajouter un module
-
-                    </h5>
-
-                </div>
-
-
-                <div class="card-body">
-
-                    <form
-                        action="{{ route(
-                            'admin.superieur.modules.store'
-                        ) }}"
-                        method="POST">
-
-                        @csrf
-
-
-                        {{-- DOMAINE --}}
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Domaine académique
-
-                            </label>
-
-
-                            <select
-                                id="academic_domain_id"
-                                class="form-select">
-
-                                <option value="">
-
-                                    Sélectionner un domaine
-
-                                </option>
-
-
-                                @foreach($domaines as $domaine)
-
-                                <option
-                                    value="{{ $domaine->id }}">
-
-                                    {{ $domaine->name }}
-
-                                </option>
-
-                                @endforeach
-
-                            </select>
-
-                        </div>
-
-
-                        {{-- FILIERE --}}
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Filière
-
-                            </label>
-
-
-                            <select
-                                id="filiere_id"
-                                name="filiere_id"
-                                class="form-select"
-                                required>
-
-                                <option value="">
-
-                                    Sélectionner une filière
-
-                                </option>
-
-
-
-                                @foreach($domaines as $domaine)
-
-                                @foreach($domaine->filieres as $filiere)
-
-                                <option
-                                    value="{{ $filiere->id }}"
-                                    data-domaine="{{ $domaine->id }}"
-                                    {{ old(
-                                                'filiere_id'
-                                            ) == $filiere->id
-                                                ? 'selected'
-                                                : ''
-                                            }}>
-
-                                    {{ $filiere->name }}
-
-                                </option>
-
-                                @endforeach
-
-                                @endforeach
-
-                            </select>
-
-
-                            @error('filiere_id')
-
-                            <div class="text-danger">
-
-                                {{ $message }}
-
-                            </div>
-
-                            @enderror
-
-                        </div>
-
-
-                        {{-- NIVEAU --}}
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Niveau
-
-                            </label>
-
-
-                            <select
-                                id="level_id"
-                                name="level_id"
-                                class="form-select"
-                                required>
-
-                                <option value="">
-
-                                    Sélectionner un niveau
-
-                                </option>
-
-                                @foreach($domaines as $domaine)
-
-                                @foreach($domaine->filieres as $filiere)
-
-                                @foreach($filiere->levels as $level)
-
-                                <option
-                                    value="{{ $level->id }}"
-                                    data-filiere="{{ $filiere->id }}"
-                                    {{ old(
-                                                    'level_id'
-                                                ) == $level->id
-                                                    ? 'selected'
-                                                    : ''
-                                                }}>
-
-                                    {{ $level->name }}
-
-                                </option>
-
-                                @endforeach
-
-                                @endforeach
-
-                                @endforeach
-
-                            </select>
-
-
-                            @error('level_id')
-
-                            <div class="text-danger">
-
-                                {{ $message }}
-
-                            </div>
-
-                            @enderror
-
-                        </div>
-
-
-                        {{-- MODULE --}}
-                        <div class="mb-3">
-
-                            <label class="form-label">
-
-                                Nom du module
-
-                            </label>
-
-
-                            <input
-                                type="text"
-                                name="name"
-                                class="form-control"
-                                value="{{ old('name') }}"
-                                placeholder="Exemple : Algorithmique"
-                                required>
-
-
-                            @error('name')
-
-                            <div class="text-danger">
-
-                                {{ $message }}
-
-                            </div>
-
-                            @enderror
-
-                        </div>
-
-
-                        {{-- ORDRE --}}
-                        <div class="mb-4">
-
-                            <label class="form-label">
-
-                                Ordre d'affichage
-
-                            </label>
-
-
-                            <input
-                                type="number"
-                                name="order"
-                                min="0"
-                                class="form-control"
-                                value="{{ old(
-                                    'order',
-                                    0
-                                ) }}">
-
-                        </div>
-
-
-                        {{-- BOUTONS --}}
-                        <div class="d-flex gap-2">
-
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
-
-                                Enregistrer
-
-                            </button>
-
-
-                            <a
-                                href="{{ route(
-                                    'admin.superieur.modules.index'
-                                ) }}"
-                                class="btn btn-secondary">
-
-                                Annuler
-
-                            </a>
-
-                        </div>
-
-                    </form>
-
-                </div>
-
-            </div>
-
+<div class="container-fluid py-4">
+
+    {{-- En-tête --}}
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+        <div>
+            <h1 class="h3 fw-bold mb-1">
+                <i class="bi bi-pencil-square me-2"></i>
+                Modifier le module
+            </h1>
+
+            <p class="text-muted mb-0">
+                Modification du module :
+                <strong>{{ $subject->name }}</strong>
+            </p>
         </div>
+
+        <a href="{{ route('admin.superieur.modules.index') }}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Retour aux modules
+        </a>
 
     </div>
 
+
+    {{-- Formulaire --}}
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-bottom py-3">
+            <h5 class="mb-0 fw-semibold">
+                <i class="bi bi-journal-text me-2"></i>
+                Informations du module
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form method="POST"
+                  action="{{ route('admin.superieur.modules.update', $subject) }}">
+
+                @csrf
+                @method('PUT')
+
+
+                {{-- Domaine --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Domaine
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control bg-light"
+                        value="{{ $subject->level?->filiere?->academicDomain?->name ?? 'Non renseigné' }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                {{-- Filière --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Filière
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control bg-light"
+                        value="{{ $subject->level?->filiere?->name ?? 'Non renseignée' }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                {{-- Niveau --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Niveau
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control bg-light"
+                        value="{{ $subject->level?->name ?? 'Non renseigné' }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                {{-- Nom du module --}}
+                <div class="mb-4">
+
+                    <label for="name" class="form-label fw-semibold">
+                        Nom du module
+                    </label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-control @error('name') is-invalid @enderror"
+                        value="{{ old('name', $subject->name) }}"
+                        placeholder="Exemple : Algorithmique"
+                        required
+                        autofocus
+                    >
+
+                    @error('name')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
+                </div>
+
+
+                {{-- Position --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Ordre d'affichage
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control bg-light"
+                        value="{{ $subject->position ?? 0 }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                {{-- Statut --}}
+                <div class="mb-4">
+
+                    <label class="form-label fw-semibold">
+                        Statut
+                    </label>
+
+                    <input
+                        type="text"
+                        class="form-control bg-light"
+                        value="{{ $subject->is_active ? 'Actif' : 'Inactif' }}"
+                        readonly
+                    >
+
+                </div>
+
+
+                {{-- Boutons --}}
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+
+                    <a
+                        href="{{ route('admin.superieur.modules.index') }}"
+                        class="btn btn-outline-secondary"
+                    >
+                        <i class="bi bi-x-lg me-1"></i>
+                        Annuler
+                    </a>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        <i class="bi bi-check-lg me-1"></i>
+                        Enregistrer les modifications
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
 </div>
-
-
-<script>
-    document.addEventListener(
-        'DOMContentLoaded',
-        function() {
-
-            const domaine = document.getElementById(
-                'academic_domain_id'
-            );
-
-            const filiere = document.getElementById(
-                'filiere_id'
-            );
-
-            const level = document.getElementById(
-                'level_id'
-            );
-
-
-            function filtrerFilieres() {
-                const domaineId = domaine.value;
-
-                Array.from(
-                    filiere.options
-                ).forEach(
-                    option => {
-
-                        if (
-                            !option.value
-                        ) {
-                            option.hidden = false;
-
-                            return;
-                        }
-
-                        option.hidden =
-                            option.dataset.domaine !==
-                            domaineId;
-
-                    }
-                );
-
-                filiere.value = '';
-
-                level.value = '';
-
-            }
-
-
-            function filtrerNiveaux() {
-                const filiereId =
-                    filiere.value;
-
-                Array.from(
-                    level.options
-                ).forEach(
-                    option => {
-
-                        if (
-                            !option.value
-                        ) {
-                            option.hidden = false;
-
-                            return;
-                        }
-
-                        option.hidden =
-                            option.dataset.filiere !==
-                            filiereId;
-
-                    }
-                );
-
-                level.value = '';
-
-            }
-
-
-            domaine.addEventListener(
-                'change',
-                filtrerFilieres
-            );
-
-
-            filiere.addEventListener(
-                'change',
-                filtrerNiveaux
-            );
-
-        }
-    );
-</script>
 
 @endsection
