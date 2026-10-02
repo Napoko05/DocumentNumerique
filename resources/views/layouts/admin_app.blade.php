@@ -35,7 +35,6 @@
 @vite([
     'resources/css/app.css',
     'resources/js/app.js',
-    'resources/js/admin/sidebar.js',
 
     'resources/css/admin/layout.css',
     'resources/css/admin/sidebar.css',
