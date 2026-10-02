@@ -18,12 +18,12 @@
     "isEntry": true
   },
   "resources/css/admin/layout.css": {
-    "file": "assets/layout-DvSc3M4I.css",
+    "file": "assets/layout-Cix6d8I-.css",
     "src": "resources/css/admin/layout.css",
     "isEntry": true
   },
   "resources/css/admin/sidebar.css": {
-    "file": "assets/sidebar-DxkZc1co.css",
+    "file": "assets/sidebar-DBKcheWq.css",
     "src": "resources/css/admin/sidebar.css",
     "isEntry": true
   },
@@ -47,13 +47,28 @@
     "src": "resources/css/admin/style_edit_journaliste.css",
     "isEntry": true
   },
+  "resources/css/admin/style_list_filiere.css": {
+    "file": "assets/style_list_filiere-Bp0vkHMc.css",
+    "src": "resources/css/admin/style_list_filiere.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_list_levels.css": {
+    "file": "assets/style_list_levels-BBZ1mB1f.css",
+    "src": "resources/css/admin/style_list_levels.css",
+    "isEntry": true
+  },
+  "resources/css/admin/style_list_module.css": {
+    "file": "assets/style_list_module-F4uskeKd.css",
+    "src": "resources/css/admin/style_list_module.css",
+    "isEntry": true
+  },
   "resources/css/admin/style_list_user.css": {
     "file": "assets/style_list_user-r6ExlOpW.css",
     "src": "resources/css/admin/style_list_user.css",
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-CaQPiKHu.css",
+    "file": "assets/app-_ahv0ANO.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
@@ -157,13 +172,24 @@
     "src": "resources/css/profile.css",
     "isEntry": true
   },
+  "resources/css/show_doc_public_document.css": {
+    "file": "assets/show_doc_public_document-DVaLheDE.css",
+    "src": "resources/css/show_doc_public_document.css",
+    "isEntry": true
+  },
   "resources/css/yaascientia-home.css": {
     "file": "assets/yaascientia-home-DiqbuE8-.css",
     "src": "resources/css/yaascientia-home.css",
     "isEntry": true
   },
+  "resources/js/admin/sidebar.js": {
+    "file": "assets/sidebar-CY-WoWjj.js",
+    "name": "sidebar",
+    "src": "resources/js/admin/sidebar.js",
+    "isEntry": true
+  },
   "resources/js/app.js": {
-    "file": "assets/app-CT29BviE.js",
+    "file": "assets/app--8zP0b5E.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

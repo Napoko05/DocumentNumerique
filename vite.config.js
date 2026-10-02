@@ -30,10 +30,12 @@ export default defineConfig({
                 'resources/css/admin/style_ajout_matiere.css',
                 'resources/css/admin/create_matieres.css',
                 'resources/css/admin/style_list_filiere.css',
-    'resources/css/admin/style_list_module.css',
+                'resources/css/admin/style_list_module.css',
                 'resources/css/admin/edit_user.css',
                 'resources/css/profile.css',
                 'resources/css/contact.css',
+                'resources/css/show_doc_public_document.css',
+                'resources/css/admin/style_list_levels.css',
 
                 // =========================================================
                 // JOURNALISTE

@@ -314,6 +314,12 @@ Route::prefix('admin')
         |--------------------------------------------------------------------------
         */
 
+        /*
+|--------------------------------------------------------------------------
+| ROLES
+|--------------------------------------------------------------------------
+*/
+
         Route::get('/roles', [RoleController::class, 'index'])
             ->name('roles.index');
 
@@ -323,8 +329,14 @@ Route::prefix('admin')
         Route::post('/roles', [RoleController::class, 'store'])
             ->name('roles.store');
 
-        Route::post('/roles/edit', [RoleController::class, 'edit'])
+        Route::get('/roles/{id}/edit', [RoleController::class, 'edit'])
             ->name('roles.edit');
+
+        Route::put('/roles/{id}', [RoleController::class, 'update'])
+            ->name('roles.update');
+
+        Route::delete('/roles/{id}', [RoleController::class, 'destroy'])
+            ->name('roles.destroy');
 
         /*
         |--------------------------------------------------------------------------
@@ -337,6 +349,15 @@ Route::prefix('admin')
 
         Route::get('/permissions/create', [PermissionController::class, 'create'])
             ->name('permissions.create');
+
+        Route::get('/permissions/{id}/edit', [PermissionController::class, 'edit'])
+            ->name('permissions.edit');
+
+        Route::put('/permissions/{id}', [PermissionController::class, 'update'])
+            ->name('permissions.update');
+
+        Route::delete('/permissions/{id}', [PermissionController::class, 'destroy'])
+            ->name('permissions.destroy');
 
         Route::post('/permissions', [PermissionController::class, 'store'])
             ->name('permissions.store');
@@ -367,7 +388,6 @@ Route::prefix('admin')
             ->name('products.destroy');
     });
 
-
 /*==========================
      Edition du profile user
      =========================
@@ -391,7 +411,6 @@ Route::middleware('auth')->group(function () {
         ->name('profile.password.update');
 });
 
-
 /*
 |--------------------------------------------------------------------------
 | ADMIN — ENSEIGNEMENT SECONDAIRE
@@ -411,7 +430,6 @@ Route::prefix('admin/secondaire')
         | CLASSES
         |--------------------------------------------------------------------------
         */
-
         Route::resource('classes', LevelController::class);
 
         Route::patch(

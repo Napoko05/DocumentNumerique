@@ -2,69 +2,235 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
-
+    /**
+     * Liste des rôles web + staff.
+     */
     public function index()
     {
-        $roles = Role::with('permissions')->paginate(10);
+        $roles = Role::with('permissions')
+            ->whereIn('guard_name', ['web', 'staff'])
+            ->orderBy('guard_name')
+            ->orderBy('name')
+            ->get();
+
         return view('role.index', compact('roles'));
     }
 
+    /**
+     * Formulaire de création d'un rôle.
+     */
     public function create()
     {
-        $permissions = Permission::all();
+        $permissions = Permission::whereIn('guard_name', ['web', 'staff'])
+            ->orderBy('guard_name')
+            ->orderBy('name')
+            ->get();
+
         return view('role.create', compact('permissions'));
     }
 
+    /**
+     * Création d'un rôle.
+     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|unique:roles,name',
-            'permissions' => 'array',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'guard_name' => [
+                'required',
+                'in:web,staff',
+            ],
+
+            'permissions' => [
+                'nullable',
+                'array',
+            ],
+
+            'permissions.*' => [
+                'string',
+            ],
         ]);
 
-        $role = Role::create(['name' => $validated['name']]);
-        if (!empty($validated['permissions'])) {
-            $role->syncPermissions($validated['permissions']);
+        /*
+        |--------------------------------------------------------------------------
+        | Vérifier que le nom n'existe pas déjà pour ce guard
+        |--------------------------------------------------------------------------
+        */
+        $exists = Role::where('name', $validated['name'])
+            ->where('guard_name', $validated['guard_name'])
+            ->exists();
+
+        if ($exists) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'name' => 'Ce rôle existe déjà pour ce guard.',
+                ]);
         }
 
-        return redirect()->route('admin.roles.index')->with('success', 'Rôle créé.');
-    }
-
-    public function edit(Role $role)
-    {
-        $permissions = Permission::all();
-        return view('role.edit', compact('role', 'permissions'));
-    }
-
-    public function update(Request $request, Role $role)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|unique:roles,name,'.$role->id,
-            'permissions' => 'array',
+        /*
+        |--------------------------------------------------------------------------
+        | Création du rôle
+        |--------------------------------------------------------------------------
+        */
+        $role = Role::create([
+            'name' => $validated['name'],
+            'guard_name' => $validated['guard_name'],
         ]);
 
-        $role->name = $validated['name'];
-        $role->save();
+        /*
+        |--------------------------------------------------------------------------
+        | Permissions compatibles avec le guard du rôle
+        |--------------------------------------------------------------------------
+        */
+        $permissionNames = $request->input('permissions', []);
 
-        $role->syncPermissions($validated['permissions'] ?? []);
+        if (!empty($permissionNames)) {
+            $permissions = Permission::whereIn('name', $permissionNames)
+                ->where('guard_name', $role->guard_name)
+                ->get();
 
-        return redirect()->route('admin.roles.index')->with('success', 'Rôle mis à jour.');
+            $role->syncPermissions($permissions);
+        }
+
+        return redirect()
+            ->route('admin.roles.index')
+            ->with('success', 'Rôle créé avec succès.');
     }
 
-    public function destroy(Role $role)
+    /**
+     * Formulaire de modification d'un rôle.
+     */
+    public function edit($id)
     {
+        $role = Role::whereIn('guard_name', ['web', 'staff'])
+            ->findOrFail($id);
+
+        /*
+        |--------------------------------------------------------------------------
+        | On affiche uniquement les permissions du même guard
+        |--------------------------------------------------------------------------
+        */
+        $permissions = Permission::where(
+                'guard_name',
+                $role->guard_name
+            )
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'role.edit',
+            compact('role', 'permissions')
+        );
+    }
+
+    /**
+     * Modification d'un rôle.
+     */
+    public function update(Request $request, $id)
+    {
+        $role = Role::whereIn('guard_name', ['web', 'staff'])
+            ->findOrFail($id);
+
+        $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+
+                Rule::unique('roles', 'name')
+                    ->where(function ($query) use ($role) {
+                        return $query->where(
+                            'guard_name',
+                            $role->guard_name
+                        );
+                    })
+                    ->ignore($role->id),
+            ],
+
+            'permissions' => [
+                'nullable',
+                'array',
+            ],
+
+            'permissions.*' => [
+                'string',
+            ],
+        ], [
+            'name.required' => 'Le nom du rôle est obligatoire.',
+            'name.unique' => 'Ce rôle existe déjà pour ce guard.',
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Modifier le nom
+        |--------------------------------------------------------------------------
+        */
+        $role->update([
+            'name' => $request->name,
+        ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Récupérer les permissions sélectionnées
+        | uniquement pour le même guard
+        |--------------------------------------------------------------------------
+        */
+        $permissionNames = $request->input('permissions', []);
+
+        $permissions = Permission::whereIn(
+                'name',
+                $permissionNames
+            )
+            ->where(
+                'guard_name',
+                $role->guard_name
+            )
+            ->get();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Synchroniser les permissions
+        |--------------------------------------------------------------------------
+        */
+        $role->syncPermissions($permissions);
+
+        return redirect()
+            ->route('admin.roles.index')
+            ->with(
+                'success',
+                'Rôle modifié avec succès.'
+            );
+    }
+
+    /**
+     * Suppression d'un rôle.
+     */
+    public function destroy($id)
+    {
+        $role = Role::whereIn('guard_name', ['web', 'staff'])
+            ->findOrFail($id);
+
         $role->delete();
-        return redirect()->route('admin.roles.index')->with('success', 'Rôle supprimé.');
+
+        return redirect()
+            ->route('admin.roles.index')
+            ->with(
+                'success',
+                'Rôle supprimé avec succès.'
+            );
     }
 }
